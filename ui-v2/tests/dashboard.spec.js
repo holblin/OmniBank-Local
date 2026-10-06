@@ -102,3 +102,24 @@ test('locked profile returns to V1 before loading financial data', async ({ page
   await expect(page).toHaveURL(/\?view=dashboard/);
   expect(financeRequests).toEqual([]);
 });
+
+
+test('theme selection changes Astryx and dashboard colors and survives reload', async ({ page }) => {
+  await page.goto('/v2');
+  await expect(page.getByRole('heading', { name: 'Dernières opérations' })).toBeVisible();
+  const themes = page.getByRole('combobox', { name: 'Thème', exact: true });
+  await expect(themes).toHaveValue('matcha');
+  await expect(page.locator('html')).toHaveAttribute('data-astryx-theme', 'matcha');
+  const matchaCanvas = await page.locator('html').evaluate(el => getComputedStyle(el).backgroundColor);
+  await themes.selectOption('neutral');
+  await expect(page.locator('html')).toHaveAttribute('data-astryx-theme', 'neutral');
+  expect(await page.locator('html').evaluate(el => getComputedStyle(el).backgroundColor)).not.toBe(matchaCanvas);
+  await page.reload();
+  await expect(themes).toHaveValue('neutral');
+  await page.getByRole('button', { name: 'Switch to English' }).click();
+  await expect(page.getByRole('combobox', { name: 'Theme', exact: true })).toHaveValue('neutral');
+  await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption('matcha');
+  await page.setViewportSize({ width: 320, height: 844 });
+  await expect(page.getByRole('combobox', { name: 'Theme', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+});

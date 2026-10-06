@@ -37,3 +37,12 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
 - GitHub fork: `holblin/OmniBank-Local`; branch: `codex/ui-v2-dashboard`.
 - Docker and native Tauri packaging hooks were updated but those builds were not
   executed in this environment.
+
+
+## Theme switcher follow-up
+
+- Added the official Astryx Matcha package as the default, with Neutral selectable
+  in the header. The choice persists locally across reloads and language changes.
+- Dashboard surfaces and TanStack chart colors follow the selected palette.
+- Production build and eight Chrome browser checks passed. Updated and reviewed
+  desktop/mobile screenshots; no browser errors or horizontal overflow.

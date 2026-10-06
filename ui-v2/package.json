@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astryxdesign/core": "0.6.5",
+    "@astryxdesign/theme-matcha": "0.6.5",
     "@astryxdesign/theme-neutral": "0.6.5",
     "@stylexjs/stylex": "0.19.1",
     "@tanstack/charts": "1.0.0",

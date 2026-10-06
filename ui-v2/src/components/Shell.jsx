@@ -4,11 +4,13 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@tanstack/react-router';
 import { Icon } from './Icon';
 import { useLanguage } from '../lib/i18n';
+import { useAppTheme } from '../lib/theme';
 import { legacyUrl } from '../lib/api';
 import s from './Shell.module.css';
 
 export function Shell({ children, profile }) {
   const { t, language, setLanguage } = useLanguage();
+  const { name, setTheme } = useAppTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [['all_operations', 'arrows', 'transactions'], ['accounts', 'wallet', 'accounts'], ['budgets', 'target', 'budgets'], ['analytics', 'chart', 'analytics'], ['recurrences', 'calendar', 'recurrences']];
   return <div className={s.shell}>
@@ -35,7 +37,7 @@ export function Shell({ children, profile }) {
     <div className={s.main}>
       <header className={s.topbar}>
         <div className={s.breadcrumb}><Button className={s.menu} label={menuOpen ? t('close_menu') : t('open_menu')} isIconOnly icon={<Icon name={menuOpen ? 'close' : 'menu'}/>} onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}/><span>{t('workspace')}</span><Icon name="chevron" size={13}/><strong>{t('dashboard')}</strong></div>
-        <div className={s.topActions}><Badge label={t('beta')} variant="neutral"/><span className={s.local}><i/>{t('local_storage')}</span><button className={s.lang} onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')} aria-label={t('change_language')}>{language.toUpperCase()} <span>⌄</span></button></div>
+        <div className={s.topActions}><select className={s.theme} aria-label={t('theme')} value={name} onChange={event => setTheme(event.target.value)}><option value="matcha">Matcha</option><option value="neutral">{t('theme_neutral')}</option></select><Badge label={t('beta')} variant="neutral"/><span className={s.local}><i/>{t('local_storage')}</span><button className={s.lang} onClick={() => setLanguage(language === 'fr' ? 'en' : 'fr')} aria-label={t('change_language')}>{language.toUpperCase()} <span>⌄</span></button></div>
       </header>
       <main id="main" className={s.content}>{children}</main>
       <footer className={s.footer}><span>OmniBank Local <span>·</span> {t('footer')}</span><span><Icon name="shield" size={13}/>{t('private')}</span></footer>

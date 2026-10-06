@@ -34,6 +34,12 @@ pnpm --dir ui-v2 dev
 Open `http://127.0.0.1:5173/v2`. The Vite server proxies local API requests to
 port 8434; links to classic workflows open the backend's original interface.
 
+## Themes
+
+The header theme selector uses the official Astryx Matcha (default) and Neutral
+packages. Selection is stored locally as `omni_v2_theme` and applies to controls,
+dashboard surfaces and chart colors. Both theme stylesheets are bundled offline.
+
 ## Structure
 
 | Directory | Responsibility |

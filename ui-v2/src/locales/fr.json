@@ -86,5 +86,7 @@
   "v2_beta": "V2 · Bêta",
   "v2_migration_note": "Le tableau de bord se réinvente. Les autres écrans restent accessibles dans l’interface classique.",
   "v2_page_not_found": "Page introuvable",
-  "v2_page_not_found_body": "Cet écran n’existe pas encore dans la V2."
+  "v2_page_not_found_body": "Cet écran n’existe pas encore dans la V2.",
+  "v2_theme": "Thème",
+  "v2_theme_neutral": "Neutre"
 }

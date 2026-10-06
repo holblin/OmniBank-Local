@@ -11,6 +11,9 @@ importers:
       '@astryxdesign/core':
         specifier: 0.6.5
         version: 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@astryxdesign/theme-matcha':
+        specifier: 0.6.5
+        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       '@astryxdesign/theme-neutral':
         specifier: 0.6.5
         version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
@@ -67,6 +70,12 @@ packages:
       '@stylexjs/stylex': ^0.19.0
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
+
+  '@astryxdesign/theme-matcha@0.6.5':
+    resolution: {integrity: sha512-Q28eAuhrhS+jeoixlhgYOdsDy+qg5W2iQsa1ZT/wmkpZpdf2gJU1qzdLLoNk3vPzkz4X7X0OfanBBCGk94jp7A==}
+    peerDependencies:
+      '@astryxdesign/core': 0.6.5
+      react: '>=19'
 
   '@astryxdesign/theme-neutral@0.6.5':
     resolution: {integrity: sha512-8Ylen70//sYhVJvst2prflxng5t3ryRlsJJkS44vvY0/9A4KGjCs7bxfRAfSrFxF/dSXZ8sQHuGxbXZiRn7PHQ==}
@@ -1110,6 +1119,14 @@ snapshots:
       intl-messageformat: 11.2.15
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
+
+  '@astryxdesign/theme-matcha@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      lucide-react: 1.52.0(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@astryxdesign/theme-neutral@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
     dependencies:
