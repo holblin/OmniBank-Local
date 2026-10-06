@@ -36,9 +36,16 @@ port 8434; links to classic workflows open the backend's original interface.
 
 ## Themes
 
-The header theme selector uses the official Astryx Matcha (default) and Neutral
-packages. Selection is stored locally as `omni_v2_theme` and applies to controls,
-dashboard surfaces and chart colors. Both theme stylesheets are bundled offline.
+The header selector offers official Astryx Neutral, Stone, Gothic, Matcha,
+Y2K and Butter themes. Matcha is the default. Gothic uses its dark palette.
+Theme stylesheets are bundled locally, with no external runtime requests.
+
+The **Compact** toggle reduces card spacing, sidebar rows and transaction row
+height. Its preference is saved independently for each theme in
+`omni_v2_compact_themes`; the selected theme is saved in `omni_v2_theme`.
+
+Run `node tests/capture-themes.mjs` from `ui-v2` against the isolated synthetic
+preview to capture compact screenshots for all six themes.
 
 ## Structure
 

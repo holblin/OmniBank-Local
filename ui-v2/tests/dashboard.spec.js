@@ -123,3 +123,41 @@ test('theme selection changes Astryx and dashboard colors and survives reload', 
   await expect(page.getByRole('combobox', { name: 'Theme', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+
+test('all six themes support compact layouts with independent saved preferences', async ({ page }) => {
+  const errors = [];
+  const external = [];
+  page.on('pageerror', e => errors.push(e.message));
+  page.on('request', req => { if (!req.url().startsWith('http://127.0.0.1:8436/')) external.push(req.url()); });
+  await page.goto('/v2');
+  await expect(page.getByRole('heading', { name: 'Dernières opérations' })).toBeVisible();
+  const selector = page.getByRole('combobox', { name: 'Thème', exact: true });
+  const compact = page.getByRole('button', { name: 'Compact', exact: true });
+  const metric = page.getByRole('article').first();
+  for (const theme of ['neutral', 'stone', 'gothic', 'matcha', 'y2k', 'butter']) {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await selector.selectOption(theme);
+    await expect(page.locator('html')).toHaveAttribute('data-astryx-theme', theme);
+    await expect(compact).toHaveAttribute('aria-pressed', 'false');
+    const roomyHeight = (await metric.boundingBox()).height;
+    await compact.click();
+    await expect(compact).toHaveAttribute('aria-pressed', 'true');
+    expect((await metric.boundingBox()).height).toBeLessThan(roomyHeight);
+    await expect(page.getByRole('img', { name: 'Évolution quotidienne du solde du compte' })).toBeVisible();
+    await page.setViewportSize({ width: 320, height: 844 });
+    await expect(compact).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  }
+  await page.reload();
+  await expect(selector).toHaveValue('butter');
+  await expect(compact).toHaveAttribute('aria-pressed', 'true');
+  await compact.click();
+  await selector.selectOption('gothic');
+  await expect(compact).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await selector.selectOption('butter');
+  await expect(compact).toHaveAttribute('aria-pressed', 'false');
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});

@@ -2618,5 +2618,6 @@
   "v2_page_not_found": "Page introuvable",
   "v2_page_not_found_body": "Cet écran n’existe pas encore dans la V2.",
   "v2_theme": "Thème",
-  "v2_theme_neutral": "Neutre"
+  "v2_theme_neutral": "Neutre",
+  "v2_compact": "Compact"
 }

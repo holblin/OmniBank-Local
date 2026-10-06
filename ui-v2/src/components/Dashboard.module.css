@@ -75,9 +75,9 @@
 .account strong { font-size: 12px; display: block; font-weight: 500; overflow-wrap: anywhere; }
 .account small { color: var(--muted); font-size: 11px; display: block; margin-top: 5px; }
 .account b { margin-left: auto; font-size: 13px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.accountIcon { width: 33px; height: 33px; border-radius: 8px; display: grid; place-items: center; background: #f1f4f2; color: #63806c; flex-shrink: 0; }
+.accountIcon { width: 33px; height: 33px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-soft); color: var(--muted); flex-shrink: 0; }
 .savings { background: var(--color-background-muted); border-top: 1px solid var(--border); padding: 18px; display: flex; align-items: center; gap: 11px; }
-.savingsIcon { color: #698b70; display: grid; place-items: center; }
+.savingsIcon { color: var(--muted); display: grid; place-items: center; }
 .savings strong { font-size: 12px; font-weight: 600; }
 .savings p { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
 .savings b { margin-left: auto; white-space: nowrap; font-size: 14px; font-weight: 600; }
@@ -145,3 +145,16 @@
   .migrationNote a { margin-left: auto; }
   .skeletonGrid { grid-template-columns: repeat(2, 1fr); }
 }
+
+:global([data-ui-density="compact"]) .pageHeading { margin-bottom: 20px; gap: 16px; }
+:global([data-ui-density="compact"]) .metrics { gap: 10px; margin-bottom: 16px; }
+:global([data-ui-density="compact"]) .metric { padding: 14px 12px; }
+:global([data-ui-density="compact"]) .metricTop { margin-bottom: 10px; }
+:global([data-ui-density="compact"]) .metric > strong { font-size: clamp(18px, 1.6vw, 24px); }
+:global([data-ui-density="compact"]) .midGrid, :global([data-ui-density="compact"]) .bottomGrid { gap: 14px; margin-bottom: 14px; }
+:global([data-ui-density="compact"]) .panelHeading { padding: 15px 16px 12px; }
+:global([data-ui-density="compact"]) .budgetList { gap: 16px; padding: 6px 16px 16px; }
+:global([data-ui-density="compact"]) .transactions td { padding-block: 9px; }
+:global([data-ui-density="compact"]) .panelFooter { padding-block: 10px; }
+:global([data-ui-density="compact"]) .account { padding-block: 8px; }
+:global([data-ui-density="compact"]) .savings { padding: 12px; }

@@ -11,10 +11,22 @@ importers:
       '@astryxdesign/core':
         specifier: 0.6.5
         version: 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@astryxdesign/theme-butter':
+        specifier: 0.6.5
+        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      '@astryxdesign/theme-gothic':
+        specifier: 0.6.5
+        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       '@astryxdesign/theme-matcha':
         specifier: 0.6.5
         version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       '@astryxdesign/theme-neutral':
+        specifier: 0.6.5
+        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      '@astryxdesign/theme-stone':
+        specifier: 0.6.5
+        version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      '@astryxdesign/theme-y2k':
         specifier: 0.6.5
         version: 0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       '@stylexjs/stylex':
@@ -71,6 +83,18 @@ packages:
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
+  '@astryxdesign/theme-butter@0.6.5':
+    resolution: {integrity: sha512-J2uWHK63IOJ1s8CeoasJUGzA6bQik+Vz2YgQ36XaKiL+qTzyfPdW7qRhrPJPfF0kLVS8XIFuAsIfiA4zwyPd9Q==}
+    peerDependencies:
+      '@astryxdesign/core': 0.6.5
+      react: '>=19'
+
+  '@astryxdesign/theme-gothic@0.6.5':
+    resolution: {integrity: sha512-5QqCKKW34QlQ31lSZ4EAoM9k+jBojL19RwTWwin4CtV4+zIewIP6OzjUkyZmhOWU88tmUE5wyXqKO6R2Y1Dy/A==}
+    peerDependencies:
+      '@astryxdesign/core': 0.6.5
+      react: '>=19'
+
   '@astryxdesign/theme-matcha@0.6.5':
     resolution: {integrity: sha512-Q28eAuhrhS+jeoixlhgYOdsDy+qg5W2iQsa1ZT/wmkpZpdf2gJU1qzdLLoNk3vPzkz4X7X0OfanBBCGk94jp7A==}
     peerDependencies:
@@ -79,6 +103,18 @@ packages:
 
   '@astryxdesign/theme-neutral@0.6.5':
     resolution: {integrity: sha512-8Ylen70//sYhVJvst2prflxng5t3ryRlsJJkS44vvY0/9A4KGjCs7bxfRAfSrFxF/dSXZ8sQHuGxbXZiRn7PHQ==}
+    peerDependencies:
+      '@astryxdesign/core': 0.6.5
+      react: '>=19'
+
+  '@astryxdesign/theme-stone@0.6.5':
+    resolution: {integrity: sha512-GtgcyNW4BfJOcyAG9OM2Q4gewJZUgXDtjjUff7I4hKCxXH2O/bvxC96drc+ucoO+MKjrd7zh7Ct5zvRDNpHtQg==}
+    peerDependencies:
+      '@astryxdesign/core': 0.6.5
+      react: '>=19'
+
+  '@astryxdesign/theme-y2k@0.6.5':
+    resolution: {integrity: sha512-45kII+N13Kjn8uz8yGN1sqvYeroDDi3EfQkKLVfM6QDJ8xX5fVAe48zjdggElGOwz8cQHSkUQpEmm+YDWzDv/Q==}
     peerDependencies:
       '@astryxdesign/core': 0.6.5
       react: '>=19'
@@ -1120,6 +1156,22 @@ snapshots:
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
 
+  '@astryxdesign/theme-butter@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      lucide-react: 1.52.0(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@astryxdesign/theme-gothic@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      lucide-react: 1.52.0(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@types/react'
+
   '@astryxdesign/theme-matcha@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1129,6 +1181,22 @@ snapshots:
       - '@types/react'
 
   '@astryxdesign/theme-neutral@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      lucide-react: 1.52.0(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@astryxdesign/theme-stone@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    dependencies:
+      '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      lucide-react: 1.52.0(react@19.3.0)
+      react: 19.3.0
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@astryxdesign/theme-y2k@0.6.5(@astryxdesign/core@0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@astryxdesign/core': 0.6.5(@stylexjs/stylex@0.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       lucide-react: 1.52.0(react@19.3.0)

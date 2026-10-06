@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TRANSLATIONS = {
+    "compact": ("Compact", "Compact"),
     "theme": ("Thème", "Theme"),
     "theme_neutral": ("Neutre", "Neutral"),
     "try": ("Essayer la V2", "Try V2"),

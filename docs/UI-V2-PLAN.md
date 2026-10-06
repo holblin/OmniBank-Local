@@ -46,3 +46,14 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
 - Dashboard surfaces and TanStack chart colors follow the selected palette.
 - Production build and eight Chrome browser checks passed. Updated and reviewed
   desktop/mobile screenshots; no browser errors or horizontal overflow.
+
+
+## Six themes and compact layouts
+
+- Added official Stone, Gothic, Y2K and Butter alongside Neutral and Matcha.
+- Compact spacing is independently saved for each theme; Gothic uses dark mode.
+- Production build and all nine browser checks passed, including all six themes
+  at 320px and separate compact preferences surviving reloads.
+- Captured and visually inspected all six compact desktop layouts plus Gothic
+  mobile in `screenshots/ui-v2/themes/`. No external runtime requests or browser
+  errors were observed.

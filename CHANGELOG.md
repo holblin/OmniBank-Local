@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- Switch the V2 dashboard between Astryx Matcha (default) and Neutral themes, with a saved local preference.
+- Choose between six Astryx dashboard themes: Neutral, Stone, Gothic, Matcha, Y2K and Butter. Save a compact layout preference for each theme.
 - Opt-in V2 dashboard with clearer financial summaries, account balance charts, budgets, recent activity, and a responsive layout. Switch between V2 and the classic interface at any time.
 - French and English support throughout the new dashboard.
 

@@ -88,5 +88,6 @@
   "v2_page_not_found": "Page not found",
   "v2_page_not_found_body": "This screen is not available in V2 yet.",
   "v2_theme": "Theme",
-  "v2_theme_neutral": "Neutral"
+  "v2_theme_neutral": "Neutral",
+  "v2_compact": "Compact"
 }
