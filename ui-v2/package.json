@@ -1,0 +1,28 @@
+{
+  "name": "omnibank-ui-v2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "playwright test",
+    "astryx": "node node_modules/@astryxdesign/cli/clients/cli/bin/astryx.mjs"
+  },
+  "dependencies": {
+    "@astryxdesign/core": "0.6.5",
+    "@astryxdesign/theme-neutral": "0.6.5",
+    "@stylexjs/stylex": "0.19.1",
+    "@tanstack/charts": "1.0.0",
+    "@tanstack/react-router": "^1.170.41",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@astryxdesign/cli": "0.6.5",
+    "@playwright/test": "^1.62.1",
+    "vite": "8.3.2"
+  },
+  "packageManager": "pnpm@11.19.0"
+}

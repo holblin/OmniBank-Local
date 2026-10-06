@@ -33,3 +33,16 @@
 /* 5. Responsive & Media Queries */
 @import url('./responsive/mobile.css');
 @import url('./responsive/print.css');
+/* Opt-in entry to the isolated Vite/Astryx dashboard. */
+.ui-v2-switch {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 7px 10px;
+    border: 1px solid var(--accent);
+    border-radius: 7px;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+}

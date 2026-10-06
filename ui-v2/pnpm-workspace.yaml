@@ -1,0 +1,4 @@
+# These scripts print agent-setup reminders only; no runtime compilation required.
+allowBuilds:
+  '@astryxdesign/cli': false
+  '@astryxdesign/core': false

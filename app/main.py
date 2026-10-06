@@ -345,6 +345,19 @@ def health_check():
     return {"status": "ok"}
 
 
+@app.get("/v2", include_in_schema=False)
+@app.get("/v2/", include_in_schema=False)
+@app.get("/v2/{path:path}", include_in_schema=False)
+def serve_ui_v2():
+    index_path = os.path.join(static_dir, "v2", "index.html")
+    if not os.path.isfile(index_path):
+        raise HTTPException(
+            status_code=503,
+            detail="L'interface V2 n'est pas compilée. Exécutez npm run build:v2.",
+        )
+    return FileResponse(index_path, headers={"Cache-Control": "no-cache"})
+
+
 @app.get("/api/version")
 def get_version():
     """Return the app version from package.json."""

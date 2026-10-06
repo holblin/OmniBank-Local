@@ -5,3 +5,6 @@ venv/
 env/
 .pytest_cache/
 tests/
+ui-v2/node_modules/
+ui-v2/test-results/
+ui-v2/build.log
