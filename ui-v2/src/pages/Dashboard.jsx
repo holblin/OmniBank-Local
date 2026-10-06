@@ -7,6 +7,7 @@ import { MetricCard } from '../components/MetricCard';
 import { BudgetList } from '../components/BudgetList';
 import { TransactionList } from '../components/TransactionList';
 import { get, legacyUrl, loadDashboard, loadTransactions, localDate } from '../lib/api';
+import { useProfileLock } from '../lib/useResource';
 import { useLanguage } from '../lib/i18n';
 import s from '../components/Dashboard.module.css';
 
@@ -22,26 +23,7 @@ export function Dashboard() {
   const [days, setDays] = useState(30);
   const [trend, setTrend] = useState({ loading: true, history: [] });
   const [transactions, setTransactions] = useState({ loading: true, items: [] });
-  useEffect(() => {
-    const profile = data?.profile;
-    if (!profile?.has_pin) return;
-    const configured = localStorage.getItem(`${profile.id}_omni_autolock_minutes`) ?? (profile.id === 'default' ? localStorage.getItem('omni_autolock_minutes') : null) ?? '5';
-    if (configured === 'off') return;
-    const minutes = Number.parseInt(configured, 10);
-    if (!Number.isFinite(minutes) || minutes <= 0) return;
-    let timer;
-    const reset = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        sessionStorage.setItem('omni_is_locked', 'true');
-        window.location.replace(legacyUrl());
-      }, minutes * 60 * 1000);
-    };
-    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-    events.forEach(event => window.addEventListener(event, reset, { passive: true }));
-    reset();
-    return () => { clearTimeout(timer); events.forEach(event => window.removeEventListener(event, reset)); };
-  }, [data?.profile]);
+  useProfileLock(data?.profile);
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
@@ -81,7 +63,7 @@ export function Dashboard() {
   return <Shell profile={data?.profile}>
     <div className={s.pageHeading}>
       <div><div className={s.eyebrow}>{new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date())}</div><h1>{t('dashboard')}</h1><p>{t('intro')}</p></div>
-      <div className={s.actions}><Button label={t('refresh')} icon={<Icon name="refresh" size={16}/>} variant="secondary" isLoading={loading} onClick={() => setRevision(v => v + 1)}/><Button label={t('new_transaction')} icon={<Icon name="plus" size={17}/>} variant="primary" href={legacyUrl('dashboard', 'new')}/></div>
+      <div className={s.actions}><Button label={t('refresh')} icon={<Icon name="refresh" size={16}/>} variant="secondary" isLoading={loading} onClick={() => setRevision(v => v + 1)}/><Button label={t('new_transaction')} icon={<Icon name="plus" size={17}/>} variant="primary" href="/v2/history?new=1"/></div>
     </div>
     {error ? <section className={`${s.panel} ${s.error}`} role="alert"><Icon name="refresh" size={30}/><h2>{t('connection_error')}</h2><p>{t('connection_error_body')}</p><Button label={t('retry')} onClick={() => setRevision(v => v + 1)}/></section> : loading ? <div role="status" className={s.loading}>{t('loading')}<div className={s.skeletonGrid}>{[0, 1, 2, 3].map(i => <div key={i}/>)}</div></div> : <>
       <div className={s.sectionLabel}><span>{t('overview')}</span><span><Icon name="check" size={12}/>{t('reconciled_balances')}</span></div>

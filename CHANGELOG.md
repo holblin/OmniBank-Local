@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- V2 budget management, financial summaries and transaction history, with filters, editing, reconciliation, CSV summaries and mobile layouts.
 - Choose between six Astryx dashboard themes: Neutral, Stone, Gothic, Matcha, Y2K and Butter. Save a compact layout preference for each theme.
 - Opt-in V2 dashboard with clearer financial summaries, account balance charts, budgets, recent activity, and a responsive layout. Switch between V2 and the classic interface at any time.
 - French and English support throughout the new dashboard.

@@ -77,3 +77,5 @@
   .breadcrumb { flex: 1; }
 }
 @media (max-width: 400px) { .topActions { width: 100%; justify-content: flex-end; } }
+
+@media print { .sidebar, .topbar, .footer { display: none; } .main { width: 100%; margin: 0; } .content { padding: 0; max-width: none; } }

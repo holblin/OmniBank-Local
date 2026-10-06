@@ -1,6 +1,6 @@
 # OmniBank UI V2
 
-An opt-in dashboard built with React 19, Vite, Astryx, TanStack Charts and
+An opt-in interface built with React 19, Vite, Astryx, TanStack Charts and
 TanStack Router. The existing interface remains the entry point; click
 **Essayer la V2 / Try V2** to open `/v2`.
 
@@ -66,9 +66,31 @@ recent activity; summary cards and budgets cover the active profile. Each accoun
 uses its own currency. A savings envelope total is distinct from savings account
 balances. Recent activity excludes future transactions through `date_end`.
 
-The other screens and transaction form still open in V1. Existing PIN lock state,
-PIN idle timeout and organisation user selection are respected. No profile switch,
-edit or banking sync is introduced in V2.
+## Migrated pages
+
+- `/v2/budgets`: envelope progress by month, spending/project/savings/archive
+  filters, create/edit/archive/reopen/delete, associated transactions and funding
+  adjustments. Custom periods, category/account scope and reservation are editable.
+- `/v2/summary`: annual or custom date ranges, account/reconciliation filters,
+  monthly income/expense chart and tables, category breakdowns, CSV export and print.
+  Transfers are excluded from the net result. Forecast transactions follow the
+  selected reconciliation filter, matching V1. Derived totals use integer cents.
+- `/v2/history`: server-side search/date/account/type/reconciliation filters,
+  40-row pagination, create/edit/delete, reconciliation and project/savings
+  assignment. Mobile uses stacked rows with all actions accessible.
+
+The dashboard and V1 switch now link to the corresponding migrated pages.
+Attachments, recurrence setup, AI budget tools and other advanced workflows remain
+accessible in V1. Existing PIN lock state, idle timeout and organisation user
+selection are respected; transaction writes carry the selected user's audit name.
+No profile switching or banking sync is introduced in V2.
+
+`useResource` handles guarded loading, cancellation, retry and idle lock for the
+new pages. Form failures retain the editor and its unsaved input. Delete buttons
+require confirmation; budget archive/reopen remains reversible.
+
+Run `node tests/capture-pages.mjs` from `ui-v2` against the isolated preview to
+capture desktop/mobile screenshots of the three pages.
 
 When adding a translation, update `scripts/setup_ui_v2_i18n.py` and run it with
 Python from the root. It preserves existing keys and writes French/English JSON

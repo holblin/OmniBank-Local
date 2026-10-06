@@ -1,0 +1,318 @@
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.heading h1 {
+  margin: 0;
+  font-size: 29px;
+}
+.heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+.heading p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.actions,
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+}
+.filters {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 22px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  min-width: 0;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.field select[multiple] {
+  min-height: 95px;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.card,
+.editor,
+.panel {
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 0;
+}
+.card h2 {
+  margin: 0 0 7px;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+.card p,
+.note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.card strong {
+  display: block;
+  font-size: 24px;
+  margin: 15px 0;
+}
+.card dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  font-size: 12px;
+}
+.card dt {
+  color: var(--muted);
+}
+.card dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.card .actions {
+  margin-top: 20px;
+}
+.editor {
+  margin-bottom: 22px;
+}
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.form > .actions,
+.form > .error,
+.form > fieldset {
+  grid-column: 1 / -1;
+}
+.form fieldset {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.form legend {
+  font-size: 12px;
+  color: var(--muted);
+}
+.error {
+  color: var(--color-text-error, var(--text));
+  padding: 12px;
+  border: 1px solid var(--color-error);
+  border-radius: 6px;
+}
+.empty {
+  padding: 36px 22px;
+  text-align: center;
+  color: var(--muted);
+}
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.table caption {
+  text-align: left;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.table th,
+.table td {
+  padding: 13px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.table th {
+  background: var(--color-background-muted);
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.table td {
+  font-variant-numeric: tabular-nums;
+}
+.table td small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.table .number {
+  text-align: right;
+  white-space: nowrap;
+}
+.table .selected {
+  background: var(--accent-soft);
+}
+.pagination {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-size: 12px;
+}
+.rowActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.rowActions button,
+.actions button {
+  font-size: 12px;
+}
+.closed {
+  opacity: 0.65;
+}
+:global([data-ui-density="compact"]) .card,
+:global([data-ui-density="compact"]) .panel {
+  padding: 15px;
+}
+:global([data-ui-density="compact"]) .table td,
+:global([data-ui-density="compact"]) .table th {
+  padding-block: 8px;
+}
+:global([data-ui-density="compact"]) .grid {
+  gap: 12px;
+}
+:global([data-ui-density="compact"]) .filters {
+  padding: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+  .filters > * {
+    flex: 1 1 120px;
+  }
+  .card,
+  .editor,
+  .panel {
+    padding: 16px;
+  }
+  .heading h1 {
+    font-size: 25px;
+  }
+}
+@media print {
+  .filters,
+  .actions,
+  .rowActions,
+  .pagination {
+    display: none;
+  }
+  .tableWrap {
+    overflow: visible;
+  }
+}
+
+.historyTable {
+  min-width: 980px;
+}
+.historyTable td:first-child {
+  min-width: 170px;
+}
+@media (max-width: 600px) {
+  .historyTable {
+    min-width: 0;
+  }
+  .historyTable thead {
+    display: none;
+  }
+  .historyTable tbody {
+    display: block;
+  }
+  .historyTable tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 9px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .historyTable td {
+    display: block;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .historyTable td:first-child {
+    grid-column: 1 / -1;
+    min-width: 0;
+    font-weight: 600;
+  }
+  .historyTable td:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .historyTable td:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
+    color: var(--muted);
+  }
+  .historyTable td:nth-child(4) {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .historyTable td:nth-child(5) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .historyTable td:last-child {
+    grid-column: 1 / -1;
+  }
+  .historyTable td small {
+    font-weight: 400;
+  }
+  :global([data-ui-density="compact"]) .historyTable td {
+    padding: 0;
+  }
+  :global([data-ui-density="compact"]) .historyTable tr {
+    padding: 12px;
+    gap: 7px;
+  }
+}

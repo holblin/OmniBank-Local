@@ -57,3 +57,18 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
 - Captured and visually inspected all six compact desktop layouts plus Gothic
   mobile in `screenshots/ui-v2/themes/`. No external runtime requests or browser
   errors were observed.
+
+
+## Budgets, summary and transaction history
+
+- Migrated core budget management, envelope details/adjustments, financial summary
+  filters/chart/tables/export, and paginated transaction management to V2 routes.
+- V1 switch opens the corresponding V2 page; sidebar and dashboard links use
+  TanStack Router. Reused existing backend accounting and audit APIs.
+- Added optional transaction date/type/reconciliation query filters, applied before
+  pagination. Fixed a missing HTTPException import in the budget router.
+- Shared guarded loading and idle lock across pages; retained failed form input.
+- Production build, sixteen Chrome browser checks and eleven CSV/accounting checks
+  passed. Captured desktop/mobile screenshots with synthetic data and corrected
+  crowded history rows on mobile.
+- Attachments, recurrence setup and AI budget tools remain available in V1.

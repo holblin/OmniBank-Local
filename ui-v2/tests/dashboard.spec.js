@@ -38,18 +38,21 @@ test('French/English preference survives navigation and reload', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Transactions', exact: true }).click();
+  await page.getByRole('link', { name: 'History', exact: true }).click();
+  await expect(page).toHaveURL(/\/v2\/history/);
+  await expect(page.getByRole('heading', { name: 'History', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Classic interface', exact: true }).first().click();
   await expect(page).toHaveURL(/\?view=all_operations/);
   await expect(page.locator('button[data-view="all_operations"]').first()).toHaveClass(/active/);
   await page.locator('.ui-v2-switch').click();
-  await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'History', exact: true })).toBeVisible();
 });
 
-test('new transaction opens the working V1 form', async ({ page }) => {
+test('new transaction opens the V2 form', async ({ page }) => {
   await page.goto('/v2');
   await page.getByRole('link', { name: 'Nouvelle opération', exact: true }).first().click();
-  await expect(page).toHaveURL(/view=dashboard&action=new/);
-  await expect(page.locator('#op_desc')).toBeVisible();
+  await expect(page).toHaveURL(/\/v2\/history\?new=1/);
+  await expect(page.getByRole('textbox', { name: 'Libellé', exact: true })).toBeVisible();
 });
 
 test('mobile sidebar, controls and content fit 390px and 320px', async ({ page }) => {
@@ -59,7 +62,7 @@ test('mobile sidebar, controls and content fit 390px and 320px', async ({ page }
     await expect(page.getByRole('heading', { name: 'Dernières opérations' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button', { name: 'Ouvrir le menu', exact: true }).click();
-    await expect(page.getByRole('link', { name: 'Opérations', exact: true })).toBeInViewport();
+    await expect(page.getByRole('link', { name: 'Historique', exact: true })).toBeInViewport();
     await page.getByRole('button', { name: 'Fermer le menu', exact: true }).first().click();
     await expect(page.getByRole('button', { name: 'Ouvrir le menu', exact: true })).toBeVisible();
   }

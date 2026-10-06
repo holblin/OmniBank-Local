@@ -521,6 +521,8 @@ class App {
             viewName = 'dashboard';
         }
         this.currentView = viewName;
+        const v2Routes = { budgets: '/v2/budgets', analytics: '/v2/summary', all_operations: '/v2/history' };
+        document.querySelectorAll('.ui-v2-switch').forEach(link => { link.href = v2Routes[viewName] || '/v2'; });
 
         if (window.ErrorReporter && typeof window.ErrorReporter.recordBreadcrumb === 'function') {
             window.ErrorReporter.recordBreadcrumb('NAV', `Navigated to view: ${viewName}`);
