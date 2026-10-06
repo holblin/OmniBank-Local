@@ -6,6 +6,12 @@ import {
   textSizeVars,
 } from "@astryxdesign/core/theme/tokens.stylex";
 export const styles = stylex.create({
+  diagnostic: {
+    whiteSpace: "pre-wrap",
+    overflowWrap: "anywhere",
+    maxWidth: "100%",
+    fontSize: textSizeVars["--font-size-sm"],
+  },
   heatRange: { accentColor: colorVars["--color-accent"], maxWidth: "100%" },
   heatIncome: (percent) => ({
     backgroundColor: `color-mix(in srgb, ${colorVars["--color-success"]} ${percent}%, ${colorVars["--color-background-card"]})`,
@@ -309,6 +315,14 @@ export const styles = stylex.create({
   },
   chartLegend: {
     fontSize: textSizeVars["--font-size-sm"],
+    color: colorVars["--color-text-secondary"],
+  },
+  recordActions: {
+    minWidth: "260px",
+    width: "260px",
+  },
+  recordEmpty: {
+    padding: spacingVars["--spacing-4"],
     color: colorVars["--color-text-secondary"],
   },
 });

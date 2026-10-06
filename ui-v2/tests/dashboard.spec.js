@@ -99,7 +99,7 @@ test('failed API load can recover and route fallback links to dashboard', async 
   await expect(page.getByRole('heading', { name: 'Dernières opérations' })).toBeVisible();
 });
 
-test('locked profile returns to V1 before loading financial data', async ({ page, request }) => {
+test('locked profile opens V2 access screen before loading financial data', async ({ page, request }) => {
   const profile = await (await request.get('/api/profiles/active')).json();
   const financeRequests = [];
   await page.route('**/api/profiles/active', route => route.fulfill({ json: { ...profile, has_pin: true } }));
@@ -107,7 +107,7 @@ test('locked profile returns to V1 before loading financial data', async ({ page
   await page.addInitScript(() => sessionStorage.setItem('omni_is_locked', 'true'));
   page.on('request', req => { if (req.url().includes('/api/stats/dashboard')) financeRequests.push(req.url()); });
   await page.goto('/v2');
-  await expect(page).toHaveURL(/\?view=dashboard/);
+  await expect(page).toHaveURL(/\/v2\/unlock/);
   expect(financeRequests).toEqual([]);
 });
 

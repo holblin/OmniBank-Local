@@ -120,11 +120,34 @@ CSV exports are unaffected.
   40-row pagination, create/edit/delete, reconciliation and project/savings
   assignment. Horizontal scrolling keeps columns and row actions accessible on mobile.
 
-The dashboard and V1 switch now link to the corresponding migrated pages.
-Attachments, recurrence setup, AI budget tools and other advanced workflows remain
-accessible in V1. Existing PIN lock state, idle timeout and organisation user
-selection are respected; transaction writes carry the selected user's audit name.
-No profile switching or banking sync is introduced in V2.
+- `/v2/accounts`: account creation, editing, closure and deletion, main-account
+  selection, loan details, savings interest and balance adjustments.
+- `/v2/categories` and `/v2/recurrences`: category management, recurring templates,
+  duplication, closure and explicit transaction generation.
+- `/v2/trends`, `/v2/overview` and `/v2/simulator`: balance charts, account/budget
+  overview, scenarios, events and projections from the local simulation engine.
+- `/v2/assistant`: conversations, streamed local responses, message editing,
+  memory and explicit review/confirmation of suggested financial actions.
+- `/v2/settings`: preferences, profiles and PINs, backups and restore, diagnostics,
+  license, organization users, label rules, exchange rates, shared storage and
+  maintenance previews with confirmed corrections.
+- `/v2/bank-sync`: encrypted connection setup, vault access, streamed discovery
+  and synchronization, account mapping, two-factor prompts and statement review.
+- `/v2/imports`, `/v2/notifications`, `/v2/journal`, `/v2/setup` and `/v2/unlock`:
+  staged statement imports/exports, notification management, audit undo/redo,
+  first-run steps and native profile access.
+
+Navigation stays in V2. The explicit classic-interface link remains available.
+History supports attachment upload/removal and recurrence associations. PIN lock,
+idle timeout and organization selection are respected before financial queries;
+profile changes clear the query cache. Writes carry the selected user's audit name.
+
+Bank-provider authentication and Ollama inference require the user's configured
+services. Browser tests exercise stream/review protocols with local mocks and
+financial workflows against the real isolated backend; they do not contact banks.
+V1's specialized recurrence timeline/renewal wizard and bank bulk-review helpers
+are not reproduced; V2 exposes the corresponding individual template, generation,
+mapping and review workflows.
 
 TanStack Query owns all V2 server state. Domain keys include the active profile
 and server filters; shared account and budget queries deduplicate requests across
@@ -150,7 +173,8 @@ nested modals. Closing a dialog restores focus to its trigger, or the table view
 if the original record was removed.
 
 Run `node tests/capture-pages.mjs` from `ui-v2` against the isolated preview to
-capture desktop/mobile screenshots of the three pages.
+capture desktop/mobile screenshots of the original three pages. Use
+`node tests/capture-completion.mjs` for the remaining pages.
 
 When adding a translation, update `scripts/setup_ui_v2_i18n.py` and run it with
 Python from the root. It preserves existing keys and writes French/English JSON

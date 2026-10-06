@@ -110,11 +110,8 @@ export function Budgets() {
               )}
             </select>
           </Field>
-          <a
-            href={legacyUrl("budgets")}
-            {...stylex.props(s.note, s.filtersChild)}
-          >
-            {t("advanced_budget_tools")}
+          <a href="/v2/assistant" {...stylex.props(s.note, s.filtersChild)}>
+            {t("assistant")}
           </a>
         </div>
         {error && !editor && !pending && (

@@ -6,6 +6,7 @@ export const styles = stylex.create({
     maxHeight: { default: "min(65vh, 560px)", "@media print": "none" },
     overflow: { default: "auto", "@media print": "visible" },
     position: "relative",
+    backgroundColor: colorVars["--color-background-card"],
     borderRadius: radiusVars["--radius-element"],
     scrollbarGutter: "stable",
     overscrollBehavior: "contain",

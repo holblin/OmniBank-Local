@@ -267,11 +267,11 @@ Ce projet est disponible en accès partagé (**Source-Available**) sous la licen
 
 ## Aperçu UI V2 / UI V2 preview
 
-L’interface V2 réunit tableau de bord, budgets, synthèse et historique avec Vite, Astryx, TanStack Charts et TanStack Router.
+L’interface V2 couvre les pages principales : finances, récurrences, simulation, assistant local, synchronisation bancaire et paramètres. Elle utilise Vite, Astryx, StyleX et TanStack Router, Query, Charts et Virtual.
 Installez les dépendances avec `pnpm --dir ui-v2 install --frozen-lockfile`, puis
 compilez avec `pnpm --dir ui-v2 build`. Ouvrez **Essayer la V2** dans l’interface
 actuelle ou accédez à `/v2`.
 
-The opt-in V2 interface includes dashboard, budgets, summary and transaction history, using Vite, Astryx, TanStack Charts and TanStack Router.
+The opt-in V2 interface covers the main finance, recurrence, simulation, local assistant, bank synchronization and settings pages. It uses Vite, Astryx, StyleX and TanStack Router, Query, Charts and Virtual.
 Run the install and build commands above, then open **Try V2** in the existing
 header or visit `/v2`. See [UI V2 setup and architecture](ui-v2/README.md).

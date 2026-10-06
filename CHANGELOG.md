@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Native V2 accounts, categories, recurrences, trends, scenarios, local assistant, bank statement review, imports, notifications, audit journal, setup and profile unlock.
+- V2 settings for profiles, backups, diagnostics, license, teams, label rules, exchange rates, assistant memory, shared storage and confirmed maintenance corrections.
+- Attachment handling, loan details, savings interest and balance adjustments in V2.
 - V2 budget management, financial summaries and transaction history, with filters, editing, reconciliation, CSV summaries and mobile layouts.
 - Choose between six Astryx dashboard themes: Neutral, Stone, Gothic, Matcha, Y2K and Butter. Save a compact layout preference for each theme.
 - Opt-in V2 dashboard with clearer financial summaries, account balance charts, budgets, recent activity, and a responsive layout. Switch between V2 and the classic interface at any time.

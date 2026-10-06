@@ -12,12 +12,13 @@ export async function get<T = unknown>(
 export async function mutate(
   path: string,
   method: string,
-  body?: Record<string, unknown>,
+  body?: Record<string, unknown> | number[],
 ): Promise<unknown> {
   const user = sessionStorage.getItem("omni_current_user");
   if (
     user &&
     body &&
+    !Array.isArray(body) &&
     /^\/api\/transactions\/(?:\d+)?$/.test(path) &&
     (method === "POST" || method === "PUT")
   ) {

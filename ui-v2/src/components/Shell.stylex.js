@@ -117,19 +117,19 @@ export const styles = stylex.create({
   nav: {
     display: "grid",
     gap: spacingVars["--spacing-1"],
-    marginBottom: spacingVars["--spacing-7"],
+    marginBottom: spacingVars["--spacing-4"],
   },
   navA: {
     display: "flex",
     alignItems: "center",
-    gap: spacingVars["--spacing-3"],
-    padding: "var(--spacing-3) var(--spacing-3)",
+    gap: spacingVars["--spacing-2"],
+    padding: "var(--spacing-2) var(--spacing-3)",
     borderRadius: radiusVars["--radius-element"],
     color: {
       default: colorVars["--color-text-secondary"],
       ":hover": colorVars["--color-text-primary"],
     },
-    fontSize: textSizeVars["--font-size-base"],
+    fontSize: textSizeVars["--font-size-sm"],
     fontWeight: "500",
     backgroundColor: {
       default: null,

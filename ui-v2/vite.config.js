@@ -16,6 +16,7 @@ export default defineConfig(({ command }) => ({
     port: 5173,
     proxy: {
       "/api": "http://127.0.0.1:8434",
+      '/uploads':'http://127.0.0.1:8434',
       "/static/i18n": "http://127.0.0.1:8434",
       "/static/vendor": "http://127.0.0.1:8434",
       "/static/favicon.ico": "http://127.0.0.1:8434",

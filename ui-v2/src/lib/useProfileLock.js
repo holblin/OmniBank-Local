@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { legacyUrl } from "./navigation";
 
 export function useProfileLock(profile) {
   const client = useQueryClient();
@@ -20,7 +19,7 @@ export function useProfileLock(profile) {
       timer = setTimeout(() => {
         sessionStorage.setItem("omni_is_locked", "true");
         client.clear();
-        window.location.replace(legacyUrl());
+        window.location.replace('/v2/unlock');
       }, minutes * 60000);
     };
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];

@@ -5,6 +5,8 @@ import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import { useSearch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 import React, { useState, useRef } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Badge } from "@astryxdesign/core/Badge";
@@ -415,6 +417,24 @@ function TransactionEditor({
   const [type, setType] = useState(transaction.type || "expense_var");
   const [from, setFrom] = useState(String(transaction.from_account_id || ""));
   const [to, setTo] = useState(String(transaction.to_account_id || ""));
+  const [attachments, setAttachments] = useState(
+    (transaction.attachments || "").split(",").filter(Boolean),
+  );
+  const [removeAttachment, setRemoveAttachment] = useState(null);
+  const upload = useMutation({
+    mutationKey: ["transactions", transaction.id, "attachment"],
+    mutationFn: async (file) => {
+      const data = new FormData();
+      data.set("file", file);
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: data,
+      });
+      if (!response.ok) throw new Error("Téléversement impossible");
+      return response.json();
+    },
+    onSuccess: (data) => setAttachments((paths) => [...paths, data.path]),
+  });
   function submit(event) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -430,6 +450,11 @@ function TransactionEditor({
       budget_id: form.get("budget") ? Number(form.get("budget")) : null,
       reconciliation_date: form.get("reconciliation") || null,
       is_skipped: form.has("skipped"),
+      attachments: attachments.join(",") || null,
+      check_slip_number: form.get("check_slip_number") || null,
+      recurrence_id: form.get("recurrence_id")
+        ? Number(form.get("recurrence_id"))
+        : null,
     };
     if (!transaction.id) payload.date_saisie = localDate();
     onSave(payload);
@@ -559,6 +584,55 @@ function TransactionEditor({
           />
           {t("skipped")}
         </label>
+        <Field label={t("recurrence_id")}>
+          <input
+            name="recurrence_id"
+            type="number"
+            min="1"
+            step="1"
+            defaultValue={transaction.recurrence_id || ""}
+            {...stylex.props(s.fieldInput)}
+          />
+        </Field>
+        <Field label={t("check_slip_number")}>
+          <input
+            name="check_slip_number"
+            defaultValue={transaction.check_slip_number || ""}
+            {...stylex.props(s.fieldInput)}
+          />
+        </Field>
+        <Field label={t("attachments")}>
+          <input
+            type="file"
+            disabled={upload.isPending || busy}
+            onChange={(event) => {
+              const file = event.target.files[0];
+              if (file) upload.mutate(file);
+              event.target.value = "";
+            }}
+          />
+        </Field>
+        {attachments.map((path) => (
+          <span key={path}>
+            {/^\/?uploads\//.test(path) ? (
+              <a
+                href={path.startsWith("/") ? path : `/${path}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {path.split("/").pop()}
+              </a>
+            ) : (
+              path.split("/").pop()
+            )}
+            <ActionButton
+              label={t("remove_attachment")}
+              icon="delete"
+              onClick={() => setRemoveAttachment(path)}
+            />
+          </span>
+        ))}
+        {upload.isError && <p role="alert">{t("upload_error")}</p>}
         {from && from === to && (
           <p role="alert" {...stylex.props(s.formError, s.error)}>
             {t("different_accounts")}
@@ -570,13 +644,31 @@ function TransactionEditor({
             variant="primary"
             type="submit"
             isLoading={busy}
+            isDisabled={upload.isPending}
             xstyle={[s.actionsButton]}
           />
-          <a href={legacyUrl("all_operations")} {...stylex.props(s.note)}>
-            {t("advanced_transaction_tools")}
-          </a>
+          <Link to="/recurrences" {...stylex.props(s.note)}>
+            {t("recurrences")}
+          </Link>
         </div>
       </form>
+      <Confirmation
+        pending={
+          removeAttachment
+            ? {
+                label: t("remove_attachment"),
+                description: t("remove_attachment_warning"),
+              }
+            : null
+        }
+        onClose={() => setRemoveAttachment(null)}
+        onConfirm={() => {
+          setAttachments((paths) =>
+            paths.filter((path) => path !== removeAttachment),
+          );
+          setRemoveAttachment(null);
+        }}
+      />
     </Editor>
   );
 }

@@ -2,9 +2,11 @@ import React from "react";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Icon } from "./Icon";
 import { useAppTheme } from "../lib/theme";
+import {useIsMutating} from '@tanstack/react-query';
 
 export function ActionButton({ label, icon, ...props }) {
   const { compact } = useAppTheme();
+  const writing=useIsMutating()>0;
   return (
     <IconButton
       label={label}
@@ -13,6 +15,7 @@ export function ActionButton({ label, icon, ...props }) {
       variant="ghost"
       size={compact ? "sm" : "md"}
       {...props}
+      isDisabled={writing || props.isDisabled}
     />
   );
 }

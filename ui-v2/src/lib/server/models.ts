@@ -7,6 +7,13 @@ export interface Account {
   currency: string;
   current_balance: number;
   is_closed: boolean;
+  initial_balance:number;
+  color?:string;
+  interest_rate?:number;
+  borrowed_amount?:number;
+  monthly_payment?:number;
+  loan_insurance?:number;
+  loan_end_date?:string;
 }
 export interface AccountBalance extends Omit<Account, "current_balance"> {
   balance: number;
@@ -24,6 +31,9 @@ export interface Transaction {
   to_account_id: number | null;
   budget_id: number | null;
   is_skipped: boolean;
+  attachments?:string;
+  check_slip_number?:string;
+  recurrence_id?:number;
 }
 export interface Budget {
   id: number;

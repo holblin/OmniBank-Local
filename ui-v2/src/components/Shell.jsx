@@ -25,13 +25,29 @@ export function Shell({ children, profile }) {
       budgets: "budgets",
       summary: "summary",
       history: "history",
+      accounts: "accounts",
+      categories: "categories",
+      recurrences: "recurrences",
+      trends: "trends",
+      simulator: "simulator",
+      assistant: "assistant",
+      settings: "settings",
+      "bank-sync": "bank_sync",
+      journal: "journal",
+      imports: "imports",
+      notifications: "notifications",
+      overview: "overview",
+      setup:'setup',unlock:'unlock_workspace',
     }[page] || "dashboard";
   const links = [
     ["/history", "arrows", "history"],
-    ["accounts", "wallet", "accounts"],
+    ["/accounts", "wallet", "accounts"],
     ["/budgets", "target", "budgets"],
     ["/summary", "chart", "summary"],
-    ["recurrences", "calendar", "recurrences"],
+    ["/recurrences", "calendar", "recurrences"],
+    ["/categories", "target", "categories"],
+    ["/trends", "chart", "trends"],
+    ["/simulator", "chart", "simulator"],
   ];
   return (
     <div
@@ -64,7 +80,10 @@ export function Shell({ children, profile }) {
             OmniBank<small {...stylex.props(s.brandSmall)}>LOCAL</small>
           </span>
         </Link>
-        <div {...stylex.props(s.workspace, compact && s.compactWorkspace)}>
+        <Link
+          to="/settings"
+          {...stylex.props(s.workspace, compact && s.compactWorkspace)}
+        >
           <span {...stylex.props(s.avatar)}>
             {(profile?.name || "O").slice(0, 1).toUpperCase()}
           </span>
@@ -77,7 +96,7 @@ export function Shell({ children, profile }) {
             </small>
           </div>
           <Icon name="chevron" size={15} />
-        </div>
+        </Link>
         <p {...stylex.props(s.navLabel)}>{t("finance")}</p>
         <nav {...stylex.props(s.nav, compact && s.compactNav)}>
           <Link
@@ -126,24 +145,24 @@ export function Shell({ children, profile }) {
         </nav>
         <p {...stylex.props(s.navLabel)}>{t("tools")}</p>
         <nav {...stylex.props(s.nav, compact && s.compactNav)}>
-          <a
-            href={legacyUrl("chat")}
-            title={t("opens_v1")}
-            {...stylex.props(s.navA, compact && s.compactNavA)}
+          <Link
+            to="/assistant"
+            onClick={()=>setMenuOpen(false)}
+            aria-current={pageKey==='assistant'?'page':undefined}
+            {...stylex.props(s.navA,pageKey==='assistant'&&s.navActive, compact && s.compactNavA)}
           >
             <Icon name="spark" />
             <span>{t("assistant")}</span>
-            <span {...stylex.props(s.legacyLabel)}>V1</span>
-          </a>
-          <a
-            href={legacyUrl("config")}
-            title={t("opens_v1")}
-            {...stylex.props(s.navA, compact && s.compactNavA)}
+          </Link>
+          <Link
+            to="/settings"
+            onClick={()=>setMenuOpen(false)}
+            aria-current={pageKey==='settings'?'page':undefined}
+            {...stylex.props(s.navA,pageKey==='settings'&&s.navActive, compact && s.compactNavA)}
           >
             <Icon name="settings" />
             <span>{t("settings")}</span>
-            <span {...stylex.props(s.legacyLabel)}>V1</span>
-          </a>
+          </Link>
         </nav>
         <div {...stylex.props(s.sidebarBottom)}>
           <div {...stylex.props(s.privacy)}>
@@ -163,6 +182,16 @@ export function Shell({ children, profile }) {
                 history: "all_operations",
                 summary: "analytics",
                 budgets: "budgets",
+                accounts: "accounts",
+                categories: "categories",
+                recurrences: "recurrences",
+                trends: "trends",
+                simulator: "simulator",
+                assistant: "chat",
+                settings: "config",
+                "bank-sync": "bank_sync",
+                journal: "history",
+                overview: "overview",
               }[page] || "dashboard",
             )}
             {...stylex.props(s.return)}

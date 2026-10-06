@@ -248,10 +248,7 @@ export function Dashboard() {
               ) : !history.length ? (
                 <div {...stylex.props(s.chartPlaceholder)}>
                   {t(data.accounts.length ? "no_chart_data" : "no_accounts")}
-                  <a
-                    href={legacyUrl("accounts")}
-                    {...stylex.props(s.chartPlaceholderA)}
-                  >
+                  <a href="/v2/accounts" {...stylex.props(s.chartPlaceholderA)}>
                     {t("manage_accounts")}
                     <Icon name="arrow" size={14} />
                   </a>
@@ -302,7 +299,7 @@ export function Dashboard() {
                   </p>
                 </div>
                 <a
-                  href={legacyUrl("accounts")}
+                  href="/v2/accounts"
                   aria-label={t("manage_accounts")}
                   {...stylex.props(s.iconLink)}
                 >
@@ -345,14 +342,14 @@ export function Dashboard() {
                   <strong {...stylex.props(s.emptyStrong)}>
                     {t("no_accounts")}
                   </strong>
-                  <a href={legacyUrl("accounts")} {...stylex.props(s.emptyA)}>
+                  <a href="/v2/accounts" {...stylex.props(s.emptyA)}>
                     {t("add_account")}
                     <Icon name="plus" size={14} />
                   </a>
                 </div>
               )}
               <a
-                href={legacyUrl("accounts")}
+                href="/v2/accounts"
                 {...stylex.props(
                   s.panelFooter,
                   compact && s.compactPanelFooter,

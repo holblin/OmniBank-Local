@@ -11,6 +11,7 @@ const legacyViews = new Set([
   "chat",
   "recurrences",
   "config",
+  'categories','trends','simulator','overview','history','bank_sync',
 ]);
 export function legacyUrl(view = "dashboard", action) {
   const params = new URLSearchParams({

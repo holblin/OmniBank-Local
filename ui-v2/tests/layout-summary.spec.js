@@ -100,22 +100,18 @@ test("summary shading follows relative amounts, keeps zero neutral and can be di
   await expect(table).toContainText("100,00");
 });
 
-test("V1 destinations are marked while V2 navigation stays unmarked, and short pages anchor the footer", async ({
+test("migrated navigation stays in V2 and short pages anchor the footer", async ({
   page,
 }) => {
   await page.goto("/v2/budgets");
-  for (const name of [
-    "Comptes V1",
-    "Récurrences V1",
-    "Assistant IA V1",
-    "Paramètres V1",
+  for (const [name,path] of [
+    ['Comptes','accounts'],
+    ['Récurrences','recurrences'],
+    ['Assistant IA','assistant'],
+    ['Paramètres','settings'],
   ]) {
-    const link = page.getByRole("link", { name, exact: true });
-    await expect(link).toHaveAttribute("href", /\?view=/);
-    await expect(link).toHaveAttribute(
-      "title",
-      "Ouvre l’interface classique V1",
-    );
+    const link = page.locator('aside').getByRole("link", { name, exact: true });
+    await expect(link).toHaveAttribute('href',`/v2/${path}`);
   }
   await expect(
     page.getByRole("link", { name: "Budgets", exact: true }),

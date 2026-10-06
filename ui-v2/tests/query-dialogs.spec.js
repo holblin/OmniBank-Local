@@ -35,7 +35,7 @@ test("refresh cannot bypass the session guard while the profile is loading", asy
   await page.goto("/v2/history");
   await page.getByRole("button", { name: "Actualiser", exact: true }).click();
   release();
-  await expect(page).toHaveURL(/\?view=dashboard/);
+  await expect(page).toHaveURL(/\/v2\/unlock/);
   expect(finance).toEqual([]);
 });
 

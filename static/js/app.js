@@ -521,7 +521,7 @@ class App {
             viewName = 'dashboard';
         }
         this.currentView = viewName;
-        const v2Routes = { budgets: '/v2/budgets', analytics: '/v2/summary', all_operations: '/v2/history' };
+        const v2Routes = { budgets: '/v2/budgets', analytics: '/v2/summary', all_operations: '/v2/history', accounts:'/v2/accounts', categories:'/v2/categories', recurrences:'/v2/recurrences', trends:'/v2/trends', simulator:'/v2/simulator', chat:'/v2/assistant', config:'/v2/settings', history:'/v2/journal', bank_sync:'/v2/bank-sync', overview:'/v2/overview' };
         document.querySelectorAll('.ui-v2-switch').forEach(link => { link.href = v2Routes[viewName] || '/v2'; });
 
         if (window.ErrorReporter && typeof window.ErrorReporter.recordBreadcrumb === 'function') {

@@ -20,7 +20,7 @@ import {
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { get, mutate } from "../http";
-import { legacyUrl, localDate } from "../navigation";
+import { localDate } from "../navigation";
 import { useProfileLock } from "../useProfileLock";
 
 type ProfileId = string;
@@ -128,14 +128,14 @@ export function useSession() {
   });
   const blocked = Boolean(
     (profile.data?.has_pin &&
-      sessionStorage.getItem("omni_is_locked") === "true") ||
+      sessionStorage.getItem("omni_is_locked") !== "false") ||
       (config.data?.enable_org_mode === "true" &&
         !sessionStorage.getItem("omni_current_user")),
   );
   useEffect(() => {
     if (blocked) {
       client.clear();
-      window.location.replace(legacyUrl());
+      window.location.replace('/v2/unlock');
     }
   }, [blocked, client]);
   useProfileLock(profile.data);

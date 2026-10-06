@@ -340,7 +340,7 @@ test("new pages return locked profiles before requesting financial data", async 
   });
   for (const path of ["budgets", "summary", "history"]) {
     await page.goto(`/v2/${path}`);
-    await expect(page).toHaveURL(/\?view=dashboard/);
+    await expect(page).toHaveURL(/\/v2\/unlock/);
   }
   expect(finance).toEqual([]);
 });
