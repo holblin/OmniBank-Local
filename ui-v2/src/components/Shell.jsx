@@ -114,10 +114,12 @@ export function Shell({ children, profile }) {
               <a
                 key={view}
                 href={legacyUrl(view)}
+                title={t("opens_v1")}
                 {...stylex.props(s.navA, compact && s.compactNavA)}
               >
                 <Icon name={icon} />
                 <span>{t(key)}</span>
+                <span {...stylex.props(s.legacyLabel)}>V1</span>
               </a>
             ),
           )}
@@ -126,18 +128,21 @@ export function Shell({ children, profile }) {
         <nav {...stylex.props(s.nav, compact && s.compactNav)}>
           <a
             href={legacyUrl("chat")}
+            title={t("opens_v1")}
             {...stylex.props(s.navA, compact && s.compactNavA)}
           >
             <Icon name="spark" />
             <span>{t("assistant")}</span>
-            <Badge label={t("local")} variant="neutral" />
+            <span {...stylex.props(s.legacyLabel)}>V1</span>
           </a>
           <a
             href={legacyUrl("config")}
+            title={t("opens_v1")}
             {...stylex.props(s.navA, compact && s.compactNavA)}
           >
             <Icon name="settings" />
             <span>{t("settings")}</span>
+            <span {...stylex.props(s.legacyLabel)}>V1</span>
           </a>
         </nav>
         <div {...stylex.props(s.sidebarBottom)}>
@@ -231,7 +236,7 @@ export function Shell({ children, profile }) {
         >
           {children}
         </main>
-        <footer {...stylex.props(s.footer)}>
+        <footer data-app-footer {...stylex.props(s.footer)}>
           <span {...stylex.props(s.footerSpan)}>
             OmniBank Local <span {...stylex.props(s.footerSpanSpan)}>·</span>{" "}
             {t("footer")}

@@ -72,6 +72,9 @@ export function VirtualTable({
   unknownTotal = false,
   label,
   columnWidths,
+  fillViewport = false,
+  bottomRef,
+  emptyState,
 }) {
   const { compact } = useAppTheme();
   const { t } = useLanguage();
@@ -80,6 +83,38 @@ export function VirtualTable({
   const head = useRef(null);
   const captionId = useId();
   const printing = usePrinting();
+  const [availableHeight, setAvailableHeight] = useState(320);
+  useLayoutEffect(() => {
+    if (!fillViewport) return;
+    const element = viewport.current;
+    const main = element.closest("main");
+    const footer = document.querySelector("[data-app-footer]");
+    const measure = () => {
+      const bottom = bottomRef?.current;
+      const bottomStyle = bottom && getComputedStyle(bottom);
+      const reserve =
+        (footer?.offsetHeight || 0) +
+        (bottom?.offsetHeight || 0) +
+        (parseFloat(bottomStyle?.marginTop) || 0) +
+        (parseFloat(bottomStyle?.marginBottom) || 0) +
+        (parseFloat(getComputedStyle(main).paddingBottom) || 0);
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      setAvailableHeight(Math.max(240, window.innerHeight - top - reserve));
+    };
+    const observer = new ResizeObserver(measure);
+    [main, footer, bottomRef?.current, ...main.children]
+      .filter(Boolean)
+      .forEach((node) => observer.observe(node));
+    window.addEventListener("resize", measure);
+    const changes = new MutationObserver(measure);
+    changes.observe(main, { childList: true });
+    measure();
+    return () => {
+      observer.disconnect();
+      changes.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [fillViewport, bottomRef]);
   const [bodyOffset, setBodyOffset] = useState(0);
   const [focusedIndex, setFocusedIndex] = useState(null);
   const virtualized = rows.length > 12 && !printing;
@@ -151,7 +186,10 @@ export function VirtualTable({
       aria-labelledby={caption ? captionId : undefined}
       aria-label={caption ? undefined : label || t("table_scroll")}
       data-virtualized={virtualized}
-      {...stylex.props(styles.viewport)}
+      {...stylex.props(
+        styles.viewport,
+        fillViewport && styles.fillViewport(availableHeight),
+      )}
       onFocusCapture={(event) => {
         const index = event.target.closest("[data-index]")?.dataset.index;
         if (index !== undefined) setFocusedIndex(Number(index));
@@ -216,6 +254,7 @@ export function VirtualTable({
           {spacer(bottom)}
         </TableBody>
       </Table>
+      {emptyState}
     </div>
   );
 }

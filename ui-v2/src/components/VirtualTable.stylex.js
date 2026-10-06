@@ -11,6 +11,11 @@ export const styles = stylex.create({
     overscrollBehavior: "contain",
   },
   table: { width: "100%", borderCollapse: "separate", borderSpacing: 0 },
+  fillViewport: (height) => ({
+    height: { default: `${height}px`, "@media print": "auto" },
+    maxHeight: { default: "none", "@media print": "none" },
+    backgroundColor: colorVars["--color-background-card"],
+  }),
   column: (width) => ({ width }),
   wide: (count) => ({ minWidth: `${count * 96 + 120}px` }),
   header: {

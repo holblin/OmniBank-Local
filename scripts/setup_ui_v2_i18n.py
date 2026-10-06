@@ -4,6 +4,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TRANSLATIONS = {
+    "opens_v1": ("Ouvre l’interface classique V1", "Opens the classic V1 interface"),
+    "color_intensity": ("Intensité des couleurs", "Color intensity"),
+    "heatmap_help": ("Une couleur plus intense indique un montant plus élevé au sein de chaque tableau. Les cellules à zéro restent neutres.", "Stronger color indicates a larger amount within each table. Zero cells remain neutral."),
     "stale_data": ("L’actualisation a échoué. Les dernières données disponibles restent affichées. Réessayez avec Actualiser.", "Refresh failed. The last available data is still displayed. Use Refresh to try again."),
     "refreshing": ("Actualisation en cours…", "Refreshing…"),
     "duplicate": ("Dupliquer", "Duplicate"),

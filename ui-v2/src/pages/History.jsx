@@ -5,7 +5,7 @@ import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import { useSearch } from "@tanstack/react-router";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Badge } from "@astryxdesign/core/Badge";
 import { Page, Field, Editor } from "../components/Page";
@@ -22,6 +22,7 @@ export const transactionTypes = [
 ];
 const PAGE_SIZE = 40;
 export function History() {
+  const pagination = useRef(null);
   const { compact } = useAppTheme();
   const { t, money, date } = useLanguage();
   const [filters, setFilters] = useState({
@@ -371,12 +372,16 @@ export function History() {
             resetKey={query.toString()}
             rowOffset={offset}
             unknownTotal
+            fillViewport
+            bottomRef={pagination}
+            emptyState={
+              !data?.transactions.length && (
+                <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
+              )
+            }
           />
-          {!data?.transactions.length && (
-            <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
-          )}
         </div>
-        <div {...stylex.props(s.pagination)}>
+        <div ref={pagination} {...stylex.props(s.pagination)}>
           <Button
             label={t("previous")}
             variant="secondary"

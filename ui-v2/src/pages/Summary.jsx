@@ -13,6 +13,7 @@ import { styles as s } from "../components/Pages.stylex.js";
 const SummaryChart = lazy(() => import("../components/SummaryChart"));
 const cents = (amount) => Math.round((amount || 0) * 100);
 export function Summary() {
+  const [colorIntensity, setColorIntensity] = useState(70);
   const { compact } = useAppTheme();
   const { t, money, locale } = useLanguage();
   const [year, setYear] = useState(String(new Date().getFullYear()));
@@ -303,70 +304,94 @@ export function Summary() {
           }
         />
       </div>
-      {transactionTypes.map(
-        (type) =>
-          data?.by_type[type] && (
-            <section key={type} {...stylex.props(s.sectionSpacing)}>
-              <div {...stylex.props(s.tableWrap)}>
-                <VirtualTable
-                  rows={Object.entries(data.by_type[type].categories)}
-                  renderRow={([category, months]) => (
-                    <TableRow key={category}>
-                      <TableHeaderCell
-                        scope="row"
-                        xstyle={[s.tableTh, compact && s.compactTableTh]}
-                      >
-                        {category}
-                      </TableHeaderCell>
-                      {data.months.map((month) => (
-                        <TableCell
-                          key={month}
-                          xstyle={[
-                            s.tableTd,
-                            s.tableNumber,
-                            compact && s.compactTableTd,
-                          ]}
-                        >
-                          {money(months[month] || 0, currency)}
-                        </TableCell>
-                      ))}
+      <div {...stylex.props(s.filters)}>
+        <Field label={t("color_intensity")}>
+          <input
+            type="range"
+            {...stylex.props(s.heatRange)}
+            min="0"
+            max="100"
+            step="10"
+            value={colorIntensity}
+            onChange={(event) => setColorIntensity(Number(event.target.value))}
+          />
+        </Field>
+        <p {...stylex.props(s.note)}>{t("heatmap_help")}</p>
+      </div>
+      {transactionTypes.map((type) => {
+        const group = data?.by_type[type];
+        if (!group) return null;
+        const peak = Math.max(
+          0,
+          ...Object.values(group.categories).flatMap((months) =>
+            Object.values(months).map(Math.abs),
+          ),
+        );
+        const shade =
+          type === "income"
+            ? s.heatIncome
+            : type.startsWith("expense")
+              ? s.heatExpense
+              : s.heatTransfer;
+        return (
+          <section key={type} {...stylex.props(s.sectionSpacing)}>
+            <div {...stylex.props(s.tableWrap)}>
+              <VirtualTable
+                rows={Object.entries(data.by_type[type].categories)}
+                renderRow={([category, months]) => (
+                  <TableRow key={category}>
+                    <TableHeaderCell
+                      scope="row"
+                      xstyle={[s.tableTh, compact && s.compactTableTh]}
+                    >
+                      {category}
+                    </TableHeaderCell>
+                    {data.months.map((month) => (
                       <TableCell
+                        key={month}
                         xstyle={[
                           s.tableTd,
                           s.tableNumber,
                           compact && s.compactTableTd,
+                          months[month] &&
+                            shade(
+                              Math.round(
+                                Math.sqrt(Math.abs(months[month]) / peak) *
+                                  colorIntensity *
+                                  0.5,
+                              ),
+                            ),
                         ]}
                       >
-                        {money(
-                          data.by_type[type].totals_per_cat[category],
-                          currency,
-                        )}
+                        {money(months[month] || 0, currency)}
                       </TableCell>
-                    </TableRow>
-                  )}
-                  header={
-                    <>
-                      <TableRow isHeaderRow>
+                    ))}
+                    <TableCell
+                      xstyle={[
+                        s.tableTd,
+                        s.tableNumber,
+                        compact && s.compactTableTd,
+                      ]}
+                    >
+                      {money(
+                        data.by_type[type].totals_per_cat[category],
+                        currency,
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )}
+                header={
+                  <>
+                    <TableRow isHeaderRow>
+                      <TableHeaderCell
+                        xstyle={[s.tableTh, compact && s.compactTableTh]}
+                        scope="col"
+                      >
+                        {t("category")}
+                      </TableHeaderCell>
+                      {data.months.map((month) => (
                         <TableHeaderCell
-                          xstyle={[s.tableTh, compact && s.compactTableTh]}
-                          scope="col"
-                        >
-                          {t("category")}
-                        </TableHeaderCell>
-                        {data.months.map((month) => (
-                          <TableHeaderCell
-                            key={month}
-                            xstyle={[
-                              s.tableTh,
-                              s.tableNumber,
-                              compact && s.compactTableTh,
-                            ]}
-                            scope="col"
-                          >
-                            {monthLabel(month)}
-                          </TableHeaderCell>
-                        ))}
-                        <TableHeaderCell
+                          key={month}
                           xstyle={[
                             s.tableTh,
                             s.tableNumber,
@@ -374,24 +399,35 @@ export function Summary() {
                           ]}
                           scope="col"
                         >
-                          {t("total")}
+                          {monthLabel(month)}
                         </TableHeaderCell>
-                      </TableRow>
-                    </>
-                  }
-                  columnCount={data.months.length + 2}
-                  xstyle={[s.table]}
-                  caption={
-                    <caption {...stylex.props(s.tableCaption)}>
-                      {t(type)} ·{" "}
-                      {money(data.by_type[type].grand_total, currency)}
-                    </caption>
-                  }
-                />
-              </div>
-            </section>
-          ),
-      )}
+                      ))}
+                      <TableHeaderCell
+                        xstyle={[
+                          s.tableTh,
+                          s.tableNumber,
+                          compact && s.compactTableTh,
+                        ]}
+                        scope="col"
+                      >
+                        {t("total")}
+                      </TableHeaderCell>
+                    </TableRow>
+                  </>
+                }
+                columnCount={data.months.length + 2}
+                xstyle={[s.table]}
+                caption={
+                  <caption {...stylex.props(s.tableCaption)}>
+                    {t(type)} ·{" "}
+                    {money(data.by_type[type].grand_total, currency)}
+                  </caption>
+                }
+              />
+            </div>
+          </section>
+        );
+      })}
       {data && !Object.keys(data.by_type).length && (
         <p {...stylex.props(s.empty)}>{t("no_summary_data")}</p>
       )}

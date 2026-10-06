@@ -2712,5 +2712,8 @@
   "v2_refreshing": "Refreshing…",
   "v2_duplicate": "Duplicate",
   "v2_copy": "Copy",
-  "v2_confirm_archive_budget": "This envelope will move to archived envelopes. You can reopen it."
+  "v2_confirm_archive_budget": "This envelope will move to archived envelopes. You can reopen it.",
+  "v2_opens_v1": "Opens the classic V1 interface",
+  "v2_color_intensity": "Color intensity",
+  "v2_heatmap_help": "Stronger color indicates a larger amount within each table. Zero cells remain neutral."
 }

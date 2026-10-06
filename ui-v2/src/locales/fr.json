@@ -182,5 +182,8 @@
   "v2_refreshing": "Actualisation en cours…",
   "v2_duplicate": "Dupliquer",
   "v2_copy": "Copie",
-  "v2_confirm_archive_budget": "Cette enveloppe sera déplacée vers les enveloppes archivées. Vous pourrez la réouvrir."
+  "v2_confirm_archive_budget": "Cette enveloppe sera déplacée vers les enveloppes archivées. Vous pourrez la réouvrir.",
+  "v2_opens_v1": "Ouvre l’interface classique V1",
+  "v2_color_intensity": "Intensité des couleurs",
+  "v2_heatmap_help": "Une couleur plus intense indique un montant plus élevé au sein de chaque tableau. Les cellules à zéro restent neutres."
 }

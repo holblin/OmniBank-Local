@@ -130,3 +130,21 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
   delayed-access refresh safety and six-theme compact dialog checks at 320px.
 - Captured desktop/mobile pages and edit/delete dialogs against isolated synthetic
   preview data; no browser errors or mobile dialog overflow were reported.
+
+## Browser review refinements
+
+- Made the shared shell grow to viewport height and keep the footer after long
+  content. History measures available space below filters while reserving room
+  for pagination/footer, leaving blank space inside short and empty table views.
+  Resize, density, theme and filter/status changes update its measured height.
+- Restored relative-value summary shading from V1 using theme success/error/accent
+  colors, neutral zero cells and an adjustable color-intensity control. Financial
+  values and exports are unchanged; the stronger tint follows the larger amount
+  within each transaction-type table.
+- Marked Accounts, Recurrences, Assistant and Settings links as V1 and provided
+  translated explanations of the interface switch.
+- TypeScript checking, production build and all twenty-eight Chrome checks passed.
+  Added short/empty table fill and footer checks at the reported viewport sizes,
+  six-theme shading and intensity-disable checks, and V1-link checks. Reviewed
+  refreshed screenshots; the compact 1279x1111 preview footer ends at pixel 1111,
+  with no browser errors and blank space inside one-row/empty table views.

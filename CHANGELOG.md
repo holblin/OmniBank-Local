@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - French and English support throughout the new dashboard.
 
 ### Improved
+- V2 short pages keep the footer at the bottom, history tables fill available space, and links to the classic interface are marked V1.
+- Summary tables shade larger values more strongly, with adjustable color intensity and theme-aware colors.
 - V2 keeps loaded data visible during refreshes and reports refresh failures without clearing the page. Reconciliation updates immediately and rolls back if saving fails.
 - V2 editing opens in dialogs, with icon actions and tooltips, transaction/budget duplication, and confirmations for deletion and archiving.
 - V2 tables now keep column headings visible while scrolling and render long lists efficiently, with keyboard navigation and complete printing.

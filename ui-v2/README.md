@@ -96,6 +96,17 @@ History keeps its existing server pagination, with virtualization inside each
 40-row page. Wide tables scroll horizontally on mobile without overflowing the
 page. All layout and virtualization geometry use StyleX.
 
+History measures the space below its filters and reserves room for pagination
+and the footer, retaining blank space inside the scroll viewport for short/empty
+results. The shared shell grows short pages to the viewport bottom; long pages
+keep the footer after their content. Sidebar links to the classic UI show V1.
+
+Summary category tables shade monthly cells relative to the largest absolute
+amount in each transaction type. Income uses success colors, expenses error
+colors, and transfers accent colors from the selected theme. Zero values remain
+neutral; the color-intensity slider can reduce or disable shading. Values and
+CSV exports are unaffected.
+
 ## Migrated pages
 
 - `/v2/budgets`: envelope progress by month, spending/project/savings/archive

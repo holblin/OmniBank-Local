@@ -200,6 +200,9 @@ export const styles = stylex.create({
     color: colorVars["--color-text-secondary"],
   },
   main: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100dvh",
     marginLeft: {
       default: "238px",
       "@media (max-width: 1100px)": "210px",
@@ -214,6 +217,7 @@ export const styles = stylex.create({
     margin: null,
   },
   topbar: {
+    flexShrink: 0,
     height: {
       default: "73px",
       "@media (max-width: 800px)": "62px",
@@ -318,6 +322,8 @@ export const styles = stylex.create({
     color: colorVars["--color-text-secondary"],
   },
   content: {
+    flex: 1,
+    width: "100%",
     maxWidth: "1500px",
     margin: "0 auto",
     padding: {
@@ -329,6 +335,7 @@ export const styles = stylex.create({
     },
   },
   footer: {
+    flexShrink: 0,
     display: {
       default: "flex",
       "@media print": "none",
@@ -463,6 +470,14 @@ export const styles = stylex.create({
   },
   compactContent: {
     paddingBlock: "var(--spacing-5) var(--spacing-2)",
+  },
+  legacyLabel: {
+    marginInlineStart: "auto",
+    fontSize: textSizeVars["--font-size-xs"],
+    color: colorVars["--color-text-secondary"],
+    border: "1px solid var(--color-border)",
+    borderRadius: radiusVars["--radius-inner"],
+    paddingInline: spacingVars["--spacing-1"],
   },
   compactSidebar: {
     paddingBlock: "var(--spacing-5) var(--spacing-3)",

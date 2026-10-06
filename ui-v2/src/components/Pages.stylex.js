@@ -6,6 +6,16 @@ import {
   textSizeVars,
 } from "@astryxdesign/core/theme/tokens.stylex";
 export const styles = stylex.create({
+  heatRange: { accentColor: colorVars["--color-accent"], maxWidth: "100%" },
+  heatIncome: (percent) => ({
+    backgroundColor: `color-mix(in srgb, ${colorVars["--color-success"]} ${percent}%, ${colorVars["--color-background-card"]})`,
+  }),
+  heatExpense: (percent) => ({
+    backgroundColor: `color-mix(in srgb, ${colorVars["--color-error"]} ${percent}%, ${colorVars["--color-background-card"]})`,
+  }),
+  heatTransfer: (percent) => ({
+    backgroundColor: `color-mix(in srgb, ${colorVars["--color-accent"]} ${percent}%, ${colorVars["--color-background-card"]})`,
+  }),
   heading: {
     display: "flex",
     justifyContent: "space-between",
