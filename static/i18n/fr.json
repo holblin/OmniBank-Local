@@ -2706,5 +2706,6 @@
   "v2_summary": "Synthèse",
   "v2_history": "Historique",
   "v2_delete_allocation": "Supprimer l’ajustement",
-  "v2_confirm_delete_allocation": "Supprimer cet ajustement d’enveloppe ?"
+  "v2_confirm_delete_allocation": "Supprimer cet ajustement d’enveloppe ?",
+  "v2_table_scroll": "Données du tableau"
 }

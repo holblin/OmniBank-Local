@@ -1,3 +1,5 @@
+import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
+import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import React, { useState } from "react";
@@ -475,45 +477,53 @@ function BudgetDetail({ budget, month, currency, onClose, onRefresh }) {
       ) : (
         <>
           <div {...stylex.props(s.tableWrap)}>
-            <table {...stylex.props(s.table)}>
-              <caption {...stylex.props(s.tableCaption)}>
-                {t("assigned_operations")}
-              </caption>
-              <thead>
-                <tr>
-                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                    {t("transaction")}
-                  </th>
-                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                    {t("date")}
-                  </th>
-                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                    {t("amount")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {resource.data.transactions.map((tx) => (
-                  <tr key={tx.id}>
-                    <td
-                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+            <VirtualTable
+              rows={resource.data.transactions}
+              renderRow={(tx) => (
+                <TableRow key={tx.id}>
+                  <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                    {tx.description}
+                  </TableCell>
+                  <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                    {date(tx.date)}
+                  </TableCell>
+                  <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                    {money(tx.amount, currency)}
+                  </TableCell>
+                </TableRow>
+              )}
+              header={
+                <>
+                  <TableRow isHeaderRow>
+                    <TableHeaderCell
+                      xstyle={[s.tableTh, compact && s.compactTableTh]}
+                      scope="col"
                     >
-                      {tx.description}
-                    </td>
-                    <td
-                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+                      {t("transaction")}
+                    </TableHeaderCell>
+                    <TableHeaderCell
+                      xstyle={[s.tableTh, compact && s.compactTableTh]}
+                      scope="col"
                     >
-                      {date(tx.date)}
-                    </td>
-                    <td
-                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+                      {t("date")}
+                    </TableHeaderCell>
+                    <TableHeaderCell
+                      xstyle={[s.tableTh, compact && s.compactTableTh]}
+                      scope="col"
                     >
-                      {money(tx.amount, currency)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      {t("amount")}
+                    </TableHeaderCell>
+                  </TableRow>
+                </>
+              }
+              columnCount={3}
+              xstyle={[s.table]}
+              caption={
+                <caption {...stylex.props(s.tableCaption)}>
+                  {t("assigned_operations")}
+                </caption>
+              }
+            />
             {!resource.data.transactions.length && (
               <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
             )}

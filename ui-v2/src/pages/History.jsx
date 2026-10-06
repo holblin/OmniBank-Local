@@ -1,3 +1,5 @@
+import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
+import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import { useSearch } from "@tanstack/react-router";
@@ -197,186 +199,158 @@ export function History() {
         />
       )}
       <div {...stylex.props(s.tableWrap)}>
-        <table {...stylex.props(s.table, s.historyTable)}>
-          <caption {...stylex.props(s.tableCaption)}>{t("history")}</caption>
-          <thead {...stylex.props(s.historyTableThead)}>
-            <tr
-              {...stylex.props(
-                s.historyTableTr,
-                compact && s.compactHistoryTableTr,
-              )}
-            >
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("transaction")}
-              </th>
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("date")}
-              </th>
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("accounts")}
-              </th>
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("status")}
-              </th>
-              <th
-                {...stylex.props(
-                  s.tableTh,
-                  compact && s.compactTableTh,
-                  s.tableNumber,
-                )}
-              >
-                {t("amount")}
-              </th>
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("actions")}
-              </th>
-            </tr>
-          </thead>
-          <tbody {...stylex.props(s.historyTableTbody)}>
-            {data?.transactions.slice(0, PAGE_SIZE).map((tx) => {
-              const account = data.accounts.find(
-                (a) =>
-                  a.id ===
-                  (tx.type === "income"
-                    ? tx.to_account_id
-                    : tx.from_account_id),
-              );
-              return (
-                <tr
-                  key={tx.id}
-                  {...stylex.props(
-                    s.historyTableTr,
-                    compact && s.compactHistoryTableTr,
-                  )}
+        <VirtualTable
+          rows={data?.transactions.slice(0, PAGE_SIZE)}
+          renderRow={(tx) => {
+            const account = data.accounts.find(
+              (a) =>
+                a.id ===
+                (tx.type === "income" ? tx.to_account_id : tx.from_account_id),
+            );
+            return (
+              <TableRow key={tx.id}>
+                <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                  {tx.description}
+                  <small {...stylex.props(s.tableTdSmall)}>
+                    {tx.category || t("uncategorised")} · {t(tx.type)}
+                    {tx.is_skipped ? ` · ${t("skipped")}` : ""}
+                  </small>
+                </TableCell>
+                <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                  {date(tx.date_operation)}
+                </TableCell>
+                <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                  {accountName(tx.from_account_id)}
+                  {tx.to_account_id
+                    ? ` → ${accountName(tx.to_account_id)}`
+                    : ""}
+                </TableCell>
+                <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                  <Badge
+                    label={t(tx.reconciliation_date ? "reconciled" : "pending")}
+                    variant={tx.reconciliation_date ? "success" : "neutral"}
+                  />
+                </TableCell>
+                <TableCell
+                  xstyle={[
+                    s.tableTd,
+                    compact && s.compactTableTd,
+                    s.tableNumber,
+                  ]}
                 >
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                    )}
-                  >
-                    {tx.description}
-                    <small
-                      {...stylex.props(s.tableTdSmall, s.historyTableTdSmall)}
-                    >
-                      {tx.category || t("uncategorised")} · {t(tx.type)}
-                      {tx.is_skipped ? ` · ${t("skipped")}` : ""}
-                    </small>
-                  </td>
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                    )}
-                  >
-                    {date(tx.date_operation)}
-                  </td>
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                    )}
-                  >
-                    {accountName(tx.from_account_id)}
-                    {tx.to_account_id
-                      ? ` → ${accountName(tx.to_account_id)}`
+                  {tx.type === "income"
+                    ? "+ "
+                    : tx.type.startsWith("expense")
+                      ? "− "
                       : ""}
-                  </td>
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                    )}
-                  >
-                    <Badge
-                      label={t(
-                        tx.reconciliation_date ? "reconciled" : "pending",
-                      )}
-                      variant={tx.reconciliation_date ? "success" : "neutral"}
+                  {money(
+                    Math.abs(tx.amount),
+                    account?.currency || resource.profile?.currency || "EUR",
+                  )}
+                </TableCell>
+                <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                  <div {...stylex.props(s.rowActions)}>
+                    <Button
+                      label={t("edit")}
+                      variant="secondary"
+                      isDisabled={busy}
+                      onClick={() => {
+                        setEditor(tx);
+                        setError(false);
+                      }}
+                      xstyle={[s.rowActionsButton]}
                     />
-                  </td>
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                      s.tableNumber,
-                    )}
-                  >
-                    {tx.type === "income"
-                      ? "+ "
-                      : tx.type.startsWith("expense")
-                        ? "− "
-                        : ""}
-                    {money(
-                      Math.abs(tx.amount),
-                      account?.currency || resource.profile?.currency || "EUR",
-                    )}
-                  </td>
-                  <td
-                    {...stylex.props(
-                      s.tableTd,
-                      compact && s.compactTableTd,
-                      s.historyTableTd,
-                      compact && s.compactHistoryTableTd,
-                    )}
-                  >
-                    <div {...stylex.props(s.rowActions)}>
-                      <Button
-                        label={t("edit")}
-                        variant="secondary"
-                        isDisabled={busy}
-                        onClick={() => {
-                          setEditor(tx);
-                          setError(false);
-                        }}
-                        xstyle={[s.rowActionsButton]}
-                      />
-                      <Button
-                        label={t(
-                          tx.reconciliation_date ? "unreconcile" : "reconcile",
-                        )}
-                        variant="secondary"
-                        isDisabled={busy}
-                        onClick={() =>
-                          action(`/api/transactions/${tx.id}`, "PUT", {
-                            reconciliation_date: tx.reconciliation_date
-                              ? null
-                              : localDate(),
-                          })
-                        }
-                        xstyle={[s.rowActionsButton]}
-                      />
-                      <Button
-                        label={t("delete")}
-                        variant="secondary"
-                        isDisabled={busy}
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              `${t("confirm_delete_transaction")} ${tx.description}`,
-                            )
+                    <Button
+                      label={t(
+                        tx.reconciliation_date ? "unreconcile" : "reconcile",
+                      )}
+                      variant="secondary"
+                      isDisabled={busy}
+                      onClick={() =>
+                        action(`/api/transactions/${tx.id}`, "PUT", {
+                          reconciliation_date: tx.reconciliation_date
+                            ? null
+                            : localDate(),
+                        })
+                      }
+                      xstyle={[s.rowActionsButton]}
+                    />
+                    <Button
+                      label={t("delete")}
+                      variant="secondary"
+                      isDisabled={busy}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `${t("confirm_delete_transaction")} ${tx.description}`,
                           )
-                            action(`/api/transactions/${tx.id}`, "DELETE");
-                        }}
-                        xstyle={[s.rowActionsButton]}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        )
+                          action(`/api/transactions/${tx.id}`, "DELETE");
+                      }}
+                      xstyle={[s.rowActionsButton]}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          }}
+          header={
+            <>
+              <TableRow isHeaderRow>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
+                >
+                  {t("transaction")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
+                >
+                  {t("date")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
+                >
+                  {t("accounts")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
+                >
+                  {t("status")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[
+                    s.tableTh,
+                    compact && s.compactTableTh,
+                    s.tableNumber,
+                  ]}
+                  scope="col"
+                >
+                  {t("amount")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
+                >
+                  {t("actions")}
+                </TableHeaderCell>
+              </TableRow>
+            </>
+          }
+          columnCount={6}
+          columnWidths={["26%", "10%", "14%", "14%", "12%", "24%"]}
+          xstyle={[s.table, s.historyTable]}
+          caption={
+            <caption {...stylex.props(s.tableCaption)}>{t("history")}</caption>
+          }
+          estimateSize={100}
+          resetKey={query.toString()}
+          rowOffset={offset}
+          unknownTotal
+        />
         {!data?.transactions.length && (
           <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
         )}

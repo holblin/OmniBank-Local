@@ -282,7 +282,8 @@ test("history date/type/status filters apply before pagination without skipped r
       .getByRole("searchbox", { name: "Rechercher", exact: true })
       .fill("Pagination V2");
     await page.getByRole("button", { name: "Rechercher", exact: true }).click();
-    await expect(page.locator("tbody tr")).toHaveCount(40);
+    await expect(page.locator('[data-virtualized="true"]')).toBeVisible();
+    expect(await page.locator("tbody tr[data-index]").count()).toBeLessThan(40);
     await page.getByRole("button", { name: "Suivant", exact: true }).click();
     await expect(page.locator("tbody tr")).toHaveCount(5);
     await page

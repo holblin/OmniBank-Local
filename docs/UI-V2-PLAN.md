@@ -90,3 +90,20 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
 - Production build and all seventeen Chrome browser checks passed. Production
   and Vite hot reload both rendered without browser errors or horizontal overflow.
 - Refreshed dashboard, migrated-page and six-theme screenshots with synthetic data.
+
+
+## Shared virtualized tables and clean UI diff
+
+- Pushed project skills and GSD cleanup directly to the holblin fork's main as
+  `75440b0`, then merged that baseline into the UI branch. `.agents` and `.planning`
+  no longer appear in the UI diff; no V2 implementation was merged into main.
+- Replaced every V2 table with the shared Astryx/TanStack Virtual component.
+  Long tables use measured rows and overscan; headers stay in one scroll region.
+  Spacer rows retain native table layout and the full sticky containing block.
+- Kept server pagination and financial APIs. Preserved record keys, offscreen
+  focused actions, keyboard Home/End, theme density and full loaded-row printing.
+- Production build and nineteen Chrome checks passed, including a 1,000-row
+  variable-height fixture, reaching the last row, complete printing, sticky
+  headers in all six compact themes on desktop/mobile and correct edited records.
+- Refreshed table screenshots and verified sticky headers in production and
+  the Vite development server with no browser errors.

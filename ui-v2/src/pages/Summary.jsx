@@ -1,3 +1,5 @@
+import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
+import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import React, { lazy, Suspense, useState } from "react";
@@ -233,170 +235,169 @@ export function Summary() {
         </Suspense>
       </section>
       <div {...stylex.props(s.tableWrap, s.sectionSpacing)}>
-        <table {...stylex.props(s.table)}>
-          <caption {...stylex.props(s.tableCaption)}>
-            {t("monthly_cashflow")}
-          </caption>
-          <thead>
-            <tr>
-              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
-                {t("month")}
-              </th>
-              <th
-                {...stylex.props(
-                  s.tableTh,
-                  s.tableNumber,
-                  compact && s.compactTableTh,
-                )}
+        <VirtualTable
+          rows={points}
+          renderRow={(point) => (
+            <TableRow key={point.month}>
+              <TableCell xstyle={[s.tableTd, compact && s.compactTableTd]}>
+                {monthLabel(point.month)}
+              </TableCell>
+              <TableCell
+                xstyle={[s.tableTd, s.tableNumber, compact && s.compactTableTd]}
               >
-                {t("income")}
-              </th>
-              <th
-                {...stylex.props(
-                  s.tableTh,
-                  s.tableNumber,
-                  compact && s.compactTableTh,
-                )}
+                {money(point.income, currency)}
+              </TableCell>
+              <TableCell
+                xstyle={[s.tableTd, s.tableNumber, compact && s.compactTableTd]}
               >
-                {t("expenses")}
-              </th>
-              <th
-                {...stylex.props(
-                  s.tableTh,
-                  s.tableNumber,
-                  compact && s.compactTableTh,
-                )}
+                {money(point.expense, currency)}
+              </TableCell>
+              <TableCell
+                xstyle={[s.tableTd, s.tableNumber, compact && s.compactTableTd]}
               >
-                {t("net_result")}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {points.map((point) => (
-              <tr key={point.month}>
-                <td {...stylex.props(s.tableTd, compact && s.compactTableTd)}>
-                  {monthLabel(point.month)}
-                </td>
-                <td
-                  {...stylex.props(
-                    s.tableTd,
-                    s.tableNumber,
-                    compact && s.compactTableTd,
-                  )}
+                {money(
+                  (cents(point.income) - cents(point.expense)) / 100,
+                  currency,
+                )}
+              </TableCell>
+            </TableRow>
+          )}
+          header={
+            <>
+              <TableRow isHeaderRow>
+                <TableHeaderCell
+                  xstyle={[s.tableTh, compact && s.compactTableTh]}
+                  scope="col"
                 >
-                  {money(point.income, currency)}
-                </td>
-                <td
-                  {...stylex.props(
-                    s.tableTd,
+                  {t("month")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[
+                    s.tableTh,
                     s.tableNumber,
-                    compact && s.compactTableTd,
-                  )}
+                    compact && s.compactTableTh,
+                  ]}
+                  scope="col"
                 >
-                  {money(point.expense, currency)}
-                </td>
-                <td
-                  {...stylex.props(
-                    s.tableTd,
+                  {t("income")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[
+                    s.tableTh,
                     s.tableNumber,
-                    compact && s.compactTableTd,
-                  )}
+                    compact && s.compactTableTh,
+                  ]}
+                  scope="col"
                 >
-                  {money(
-                    (cents(point.income) - cents(point.expense)) / 100,
-                    currency,
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  {t("expenses")}
+                </TableHeaderCell>
+                <TableHeaderCell
+                  xstyle={[
+                    s.tableTh,
+                    s.tableNumber,
+                    compact && s.compactTableTh,
+                  ]}
+                  scope="col"
+                >
+                  {t("net_result")}
+                </TableHeaderCell>
+              </TableRow>
+            </>
+          }
+          columnCount={4}
+          xstyle={[s.table]}
+          caption={
+            <caption {...stylex.props(s.tableCaption)}>
+              {t("monthly_cashflow")}
+            </caption>
+          }
+        />
       </div>
       {transactionTypes.map(
         (type) =>
           data?.by_type[type] && (
             <section key={type} {...stylex.props(s.sectionSpacing)}>
               <div {...stylex.props(s.tableWrap)}>
-                <table {...stylex.props(s.table)}>
-                  <caption {...stylex.props(s.tableCaption)}>
-                    {t(type)} ·{" "}
-                    {money(data.by_type[type].grand_total, currency)}
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th
-                        {...stylex.props(
-                          s.tableTh,
-                          compact && s.compactTableTh,
-                        )}
+                <VirtualTable
+                  rows={Object.entries(data.by_type[type].categories)}
+                  renderRow={([category, months]) => (
+                    <TableRow key={category}>
+                      <TableHeaderCell
+                        scope="row"
+                        xstyle={[s.tableTh, compact && s.compactTableTh]}
                       >
-                        {t("category")}
-                      </th>
+                        {category}
+                      </TableHeaderCell>
                       {data.months.map((month) => (
-                        <th
+                        <TableCell
                           key={month}
-                          {...stylex.props(
+                          xstyle={[
+                            s.tableTd,
+                            s.tableNumber,
+                            compact && s.compactTableTd,
+                          ]}
+                        >
+                          {money(months[month] || 0, currency)}
+                        </TableCell>
+                      ))}
+                      <TableCell
+                        xstyle={[
+                          s.tableTd,
+                          s.tableNumber,
+                          compact && s.compactTableTd,
+                        ]}
+                      >
+                        {money(
+                          data.by_type[type].totals_per_cat[category],
+                          currency,
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  header={
+                    <>
+                      <TableRow isHeaderRow>
+                        <TableHeaderCell
+                          xstyle={[s.tableTh, compact && s.compactTableTh]}
+                          scope="col"
+                        >
+                          {t("category")}
+                        </TableHeaderCell>
+                        {data.months.map((month) => (
+                          <TableHeaderCell
+                            key={month}
+                            xstyle={[
+                              s.tableTh,
+                              s.tableNumber,
+                              compact && s.compactTableTh,
+                            ]}
+                            scope="col"
+                          >
+                            {monthLabel(month)}
+                          </TableHeaderCell>
+                        ))}
+                        <TableHeaderCell
+                          xstyle={[
                             s.tableTh,
                             s.tableNumber,
                             compact && s.compactTableTh,
-                          )}
+                          ]}
+                          scope="col"
                         >
-                          {monthLabel(month)}
-                        </th>
-                      ))}
-                      <th
-                        {...stylex.props(
-                          s.tableTh,
-                          s.tableNumber,
-                          compact && s.compactTableTh,
-                        )}
-                      >
-                        {t("total")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(data.by_type[type].categories).map(
-                      ([category, months]) => (
-                        <tr key={category}>
-                          <th
-                            scope="row"
-                            {...stylex.props(
-                              s.tableTh,
-                              compact && s.compactTableTh,
-                            )}
-                          >
-                            {category}
-                          </th>
-                          {data.months.map((month) => (
-                            <td
-                              key={month}
-                              {...stylex.props(
-                                s.tableTd,
-                                s.tableNumber,
-                                compact && s.compactTableTd,
-                              )}
-                            >
-                              {money(months[month] || 0, currency)}
-                            </td>
-                          ))}
-                          <td
-                            {...stylex.props(
-                              s.tableTd,
-                              s.tableNumber,
-                              compact && s.compactTableTd,
-                            )}
-                          >
-                            {money(
-                              data.by_type[type].totals_per_cat[category],
-                              currency,
-                            )}
-                          </td>
-                        </tr>
-                      ),
-                    )}
-                  </tbody>
-                </table>
+                          {t("total")}
+                        </TableHeaderCell>
+                      </TableRow>
+                    </>
+                  }
+                  columnCount={data.months.length + 2}
+                  xstyle={[s.table]}
+                  caption={
+                    <caption {...stylex.props(s.tableCaption)}>
+                      {t(type)} ·{" "}
+                      {money(data.by_type[type].grand_total, currency)}
+                    </caption>
+                  }
+                />
               </div>
             </section>
           ),

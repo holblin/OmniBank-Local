@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TRANSLATIONS = {
+    "table_scroll": ("Données du tableau", "Table data"),
     "delete_allocation": ("Supprimer l’ajustement", "Delete adjustment"),
     "confirm_delete_allocation": ("Supprimer cet ajustement d’enveloppe ?", "Delete this envelope adjustment?"),
     "print": ("Imprimer", "Print"),

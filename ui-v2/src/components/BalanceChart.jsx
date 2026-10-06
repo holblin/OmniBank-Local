@@ -1,3 +1,5 @@
+import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
+import { VirtualTable } from "./VirtualTable";
 import * as stylex from "@stylexjs/stylex";
 import React, { useMemo } from "react";
 import { areaY, defineChart, dot, lineY } from "@tanstack/charts";
@@ -102,24 +104,31 @@ export function BalanceChart({ history, currency }) {
         <summary {...stylex.props(s.chartDataSummary)}>
           {t("chart_data")}
         </summary>
-        <table {...stylex.props(s.chartDataTable)}>
-          <thead>
-            <tr>
-              <th {...stylex.props(s.chartDataTh)}>{t("date")}</th>
-              <th {...stylex.props(s.chartDataTh)}>{t("balance")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.map((point) => (
-              <tr key={point.date}>
-                <td {...stylex.props(s.chartDataTd)}>{date(point.date)}</td>
-                <td {...stylex.props(s.chartDataTd)}>
-                  {money(point.balance, currency)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <VirtualTable
+          rows={history}
+          renderRow={(point) => (
+            <TableRow key={point.date}>
+              <TableCell xstyle={[s.chartDataTd]}>{date(point.date)}</TableCell>
+              <TableCell xstyle={[s.chartDataTd]}>
+                {money(point.balance, currency)}
+              </TableCell>
+            </TableRow>
+          )}
+          header={
+            <>
+              <TableRow isHeaderRow>
+                <TableHeaderCell xstyle={[s.chartDataTh]} scope="col">
+                  {t("date")}
+                </TableHeaderCell>
+                <TableHeaderCell xstyle={[s.chartDataTh]} scope="col">
+                  {t("balance")}
+                </TableHeaderCell>
+              </TableRow>
+            </>
+          }
+          columnCount={2}
+          xstyle={[s.chartDataTable]}
+        />
       </details>
     </div>
   );

@@ -176,5 +176,6 @@
   "v2_summary": "Summary",
   "v2_history": "History",
   "v2_delete_allocation": "Delete adjustment",
-  "v2_confirm_delete_allocation": "Delete this envelope adjustment?"
+  "v2_confirm_delete_allocation": "Delete this envelope adjustment?",
+  "v2_table_scroll": "Table data"
 }

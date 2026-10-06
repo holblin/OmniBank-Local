@@ -1,3 +1,5 @@
+import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
+import { VirtualTable } from "./VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
 import { Link } from "@tanstack/react-router";
@@ -51,92 +53,104 @@ export function TransactionList({ transactions, accounts, loading, error }) {
         </div>
       ) : (
         <div {...stylex.props(s.tableScroll)}>
-          <table {...stylex.props(s.transactions)}>
-            <thead>
-              <tr>
-                <th {...stylex.props(s.transactionsTh)}>{t("transaction")}</th>
-                <th {...stylex.props(s.transactionsTh)}>{t("date")}</th>
-                <th {...stylex.props(s.transactionsTh)}>{t("status")}</th>
-                <th {...stylex.props(s.transactionsTh)}>{t("amount")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((tx) => {
-                const income = tx.type === "income";
-                const transfer = tx.type === "transfer";
-                const account = accounts.find(
-                  (a) =>
-                    a.id === (income ? tx.to_account_id : tx.from_account_id),
-                );
-                return (
-                  <tr key={tx.id}>
-                    <td
-                      {...stylex.props(
-                        s.transactionsTd,
-                        compact && s.compactTransactionsTd,
-                      )}
-                    >
-                      <div {...stylex.props(s.transactionCell)}>
-                        <span
-                          {...stylex.props(
-                            s.transactionIcon,
-                            income && s.incomeIcon,
-                            !income && transfer && s.transferIcon,
-                          )}
-                        >
-                          <Icon
-                            name={transfer ? "arrows" : income ? "down" : "up"}
-                            size={17}
-                          />
-                        </span>
-                        <div>
-                          <strong {...stylex.props(s.transactionCellStrong)}>
-                            {tx.description}
-                          </strong>
-                          <small {...stylex.props(s.transactionCellSmall)}>
-                            {tx.category || t("uncategorised")}
-                            {account ? ` · ${account.name}` : ""}
-                          </small>
-                        </div>
-                      </div>
-                    </td>
-                    <td
-                      {...stylex.props(
-                        s.transactionsTd,
-                        compact && s.compactTransactionsTd,
-                      )}
-                    >
-                      {date(tx.date_operation)}
-                    </td>
-                    <td
-                      {...stylex.props(
-                        s.transactionsTd,
-                        compact && s.compactTransactionsTd,
-                      )}
-                    >
-                      <Badge
-                        label={t(
-                          tx.reconciliation_date ? "reconciled" : "pending",
+          <VirtualTable
+            rows={transactions}
+            renderRow={(tx) => {
+              const income = tx.type === "income";
+              const transfer = tx.type === "transfer";
+              const account = accounts.find(
+                (a) =>
+                  a.id === (income ? tx.to_account_id : tx.from_account_id),
+              );
+              return (
+                <TableRow key={tx.id}>
+                  <TableCell
+                    xstyle={[
+                      s.transactionsTd,
+                      compact && s.compactTransactionsTd,
+                    ]}
+                  >
+                    <div {...stylex.props(s.transactionCell)}>
+                      <span
+                        {...stylex.props(
+                          s.transactionIcon,
+                          income && s.incomeIcon,
+                          !income && transfer && s.transferIcon,
                         )}
-                        variant={tx.reconciliation_date ? "success" : "neutral"}
-                      />
-                    </td>
-                    <td
-                      {...stylex.props(
-                        s.transactionsTd,
-                        s.amount,
-                        income && s.income,
-                        compact && s.compactTransactionsTd,
+                      >
+                        <Icon
+                          name={transfer ? "arrows" : income ? "down" : "up"}
+                          size={17}
+                        />
+                      </span>
+                      <div>
+                        <strong {...stylex.props(s.transactionCellStrong)}>
+                          {tx.description}
+                        </strong>
+                        <small {...stylex.props(s.transactionCellSmall)}>
+                          {tx.category || t("uncategorised")}
+                          {account ? ` · ${account.name}` : ""}
+                        </small>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell
+                    xstyle={[
+                      s.transactionsTd,
+                      compact && s.compactTransactionsTd,
+                    ]}
+                  >
+                    {date(tx.date_operation)}
+                  </TableCell>
+                  <TableCell
+                    xstyle={[
+                      s.transactionsTd,
+                      compact && s.compactTransactionsTd,
+                    ]}
+                  >
+                    <Badge
+                      label={t(
+                        tx.reconciliation_date ? "reconciled" : "pending",
                       )}
-                    >
-                      {transfer ? "" : income ? "+ " : "− "}
-                      {money(Math.abs(tx.amount), account?.currency || "EUR")}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      variant={tx.reconciliation_date ? "success" : "neutral"}
+                    />
+                  </TableCell>
+                  <TableCell
+                    xstyle={[
+                      s.transactionsTd,
+                      s.amount,
+                      income && s.income,
+                      compact && s.compactTransactionsTd,
+                    ]}
+                  >
+                    {transfer ? "" : income ? "+ " : "− "}
+                    {money(Math.abs(tx.amount), account?.currency || "EUR")}
+                  </TableCell>
+                </TableRow>
+              );
+            }}
+            header={
+              <>
+                <TableRow isHeaderRow>
+                  <TableHeaderCell xstyle={[s.transactionsTh]} scope="col">
+                    {t("transaction")}
+                  </TableHeaderCell>
+                  <TableHeaderCell xstyle={[s.transactionsTh]} scope="col">
+                    {t("date")}
+                  </TableHeaderCell>
+                  <TableHeaderCell xstyle={[s.transactionsTh]} scope="col">
+                    {t("status")}
+                  </TableHeaderCell>
+                  <TableHeaderCell xstyle={[s.transactionsTh]} scope="col">
+                    {t("amount")}
+                  </TableHeaderCell>
+                </TableRow>
+              </>
+            }
+            columnCount={4}
+            xstyle={[s.transactions]}
+            label={t("recent_transactions")}
+          />
         </div>
       )}
     </section>

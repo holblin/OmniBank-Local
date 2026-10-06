@@ -20,7 +20,9 @@ test('dashboard uses real local totals and no external runtime requests', async 
   await page.getByRole('button', { name: '90 jours', exact: true }).click();
   await expect(page.getByRole('button', { name: '90 jours', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByText('Voir les données', { exact: true }).click();
-  await expect(page.getByRole('table').first().getByRole('row')).toHaveCount(91);
+  const chartTable = page.getByRole('table').first();
+  await expect(chartTable).toHaveAttribute('aria-rowcount', '91');
+  expect(await chartTable.locator('tbody [data-index]').count()).toBeLessThan(90);
   await page.getByText('Voir les données', { exact: true }).click();
   await page.getByRole('combobox', { name: 'Sélectionner un compte' }).selectOption(String(accounts[1].id));
   await expect(page.getByRole('table').last()).toContainText('Virement épargne');

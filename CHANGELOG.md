@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - French and English support throughout the new dashboard.
 
 ### Improved
+- V2 tables now keep column headings visible while scrolling and render long lists efficiently, with keyboard navigation and complete printing.
 - V2 spacing, typography and rounded surfaces now follow the selected Astryx theme throughout the dashboard, budgets, summaries and history.
 
 ## [1.1.8] - 2026-09-10

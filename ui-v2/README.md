@@ -79,6 +79,21 @@ recent activity; summary cards and budgets cover the active profile. Each accoun
 uses its own currency. A savings envelope total is distinct from savings account
 balances. Recent activity excludes future transactions through `date_end`.
 
+## Tables
+
+`VirtualTable` composes Astryx Table/Header/Body/Row/Cell with TanStack Virtual.
+A single keyboard-focusable viewport owns both scroll axes and pins the header.
+Tables with more than twelve rows render a measured window plus four overscan
+rows; small tables keep all their rows. Semantic spacer rows preserve the full
+table height, so the header remains sticky through the final virtual row.
+
+Row keys stay tied to records, focused row actions remain mounted, and Home/End
+move to the first/last row. Density, wrapping and viewport changes are measured.
+Printing renders every loaded row; CSV exports operate on the complete data.
+History keeps its existing server pagination, with virtualization inside each
+40-row page. Wide tables scroll horizontally on mobile without overflowing the
+page. All layout and virtualization geometry use StyleX.
+
 ## Migrated pages
 
 - `/v2/budgets`: envelope progress by month, spending/project/savings/archive
@@ -90,7 +105,7 @@ balances. Recent activity excludes future transactions through `date_end`.
   selected reconciliation filter, matching V1. Derived totals use integer cents.
 - `/v2/history`: server-side search/date/account/type/reconciliation filters,
   40-row pagination, create/edit/delete, reconciliation and project/savings
-  assignment. Mobile uses stacked rows with all actions accessible.
+  assignment. Horizontal scrolling keeps columns and row actions accessible on mobile.
 
 The dashboard and V1 switch now link to the corresponding migrated pages.
 Attachments, recurrence setup, AI budget tools and other advanced workflows remain
