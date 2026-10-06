@@ -68,7 +68,9 @@ preview to capture compact screenshots for all six themes.
 | `src/pages/` | Page composition and dashboard state |
 | `src/components/` | Reusable UI pieces and compiled StyleX styles |
 | `src/styles/tokens.css` | Document reset and print framing |
-| `src/lib/` | Same-origin API client, formatting and language context |
+| `src/lib/server/` | Typed TanStack Query keys, query functions, mutations and read models |
+| `src/lib/http.ts` | Thin same-origin fetch transport with audit attribution |
+| `src/lib/` | Navigation, formatting, idle lock and language context |
 | `src/locales/` | Small generated V2 dictionaries, extracted from shared i18n |
 | `tests/` | Synthetic fixtures, browser checks and screenshot capture |
 
@@ -113,9 +115,28 @@ accessible in V1. Existing PIN lock state, idle timeout and organisation user
 selection are respected; transaction writes carry the selected user's audit name.
 No profile switching or banking sync is introduced in V2.
 
-`useResource` handles guarded loading, cancellation, retry and idle lock for the
-new pages. Form failures retain the editor and its unsaved input. Delete buttons
-require confirmation; budget archive/reopen remains reversible.
+TanStack Query owns all V2 server state. Domain keys include the active profile
+and server filters; shared account and budget queries deduplicate requests across
+routes. Queries consume cancellation signals, remain fresh for thirty seconds,
+and refresh in the background on focus. Cached data stays visible during refresh
+and after a refresh error, with explicit status and retry controls. Initial loading,
+errors and empty results have separate states. Queries work against the local
+backend even when the machine has no internet connection. The cache is in memory
+only and clears before PIN-lock redirects; server data is absent from client
+contexts and browser storage.
+
+Mutations invalidate affected profile/domain keys. Reconciliation updates
+unfiltered cached lists optimistically and restores snapshots on failure; amounts
+and balances always wait for the backend. Mutations never retry automatically.
+PIN and organisation access checks finish before financial queries are enabled.
+
+Astryx form dialogs keep editing out of the page layout and retain failed input.
+Row actions use IconButton with translated tooltips. Duplication opens a separate
+creation draft; transaction copies are not reconciled. Deletion and archiving use
+AlertDialog, initially focus Cancel, and remain open while saving or after failure.
+Allocation deletion replaces the details dialog with a confirmation step to avoid
+nested modals. Closing a dialog restores focus to its trigger, or the table viewport
+if the original record was removed.
 
 Run `node tests/capture-pages.mjs` from `ui-v2` against the isolated preview to
 capture desktop/mobile screenshots of the three pages.
@@ -129,6 +150,7 @@ with the required UTF-8 BOM. Commit the generated dictionaries with the change.
 After building:
 
 ```sh
+pnpm --dir ui-v2 run typecheck
 pnpm --dir ui-v2 exec playwright install chromium
 pnpm --dir ui-v2 test
 ```

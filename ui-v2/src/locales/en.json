@@ -177,5 +177,10 @@
   "v2_history": "History",
   "v2_delete_allocation": "Delete adjustment",
   "v2_confirm_delete_allocation": "Delete this envelope adjustment?",
-  "v2_table_scroll": "Table data"
+  "v2_table_scroll": "Table data",
+  "v2_stale_data": "Refresh failed. The last available data is still displayed. Use Refresh to try again.",
+  "v2_refreshing": "Refreshing…",
+  "v2_duplicate": "Duplicate",
+  "v2_copy": "Copy",
+  "v2_confirm_archive_budget": "This envelope will move to archived envelopes. You can reopen it."
 }

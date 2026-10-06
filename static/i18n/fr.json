@@ -2707,5 +2707,10 @@
   "v2_history": "Historique",
   "v2_delete_allocation": "Supprimer l’ajustement",
   "v2_confirm_delete_allocation": "Supprimer cet ajustement d’enveloppe ?",
-  "v2_table_scroll": "Données du tableau"
+  "v2_table_scroll": "Données du tableau",
+  "v2_stale_data": "L’actualisation a échoué. Les dernières données disponibles restent affichées. Réessayez avec Actualiser.",
+  "v2_refreshing": "Actualisation en cours…",
+  "v2_duplicate": "Dupliquer",
+  "v2_copy": "Copie",
+  "v2_confirm_archive_budget": "Cette enveloppe sera déplacée vers les enveloppes archivées. Vous pourrez la réouvrir."
 }

@@ -6,7 +6,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Icon } from "./Icon";
 import { useLanguage } from "../lib/i18n";
 import { useAppTheme, themeNames } from "../lib/theme";
-import { legacyUrl } from "../lib/api";
+import { legacyUrl } from "../lib/navigation";
 import { styles as s } from "./Shell.stylex.js";
 export function Shell({ children, profile }) {
   const { t, language, setLanguage } = useLanguage();

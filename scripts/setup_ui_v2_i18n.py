@@ -4,6 +4,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TRANSLATIONS = {
+    "stale_data": ("L’actualisation a échoué. Les dernières données disponibles restent affichées. Réessayez avec Actualiser.", "Refresh failed. The last available data is still displayed. Use Refresh to try again."),
+    "refreshing": ("Actualisation en cours…", "Refreshing…"),
+    "duplicate": ("Dupliquer", "Duplicate"),
+    "copy": ("Copie", "Copy"),
+    "confirm_archive_budget": ("Cette enveloppe sera déplacée vers les enveloppes archivées. Vous pourrez la réouvrir.", "This envelope will move to archived envelopes. You can reopen it."),
     "table_scroll": ("Données du tableau", "Table data"),
     "delete_allocation": ("Supprimer l’ajustement", "Delete adjustment"),
     "confirm_delete_allocation": ("Supprimer cet ajustement d’enveloppe ?", "Delete this envelope adjustment?"),

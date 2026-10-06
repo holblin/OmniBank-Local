@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - French and English support throughout the new dashboard.
 
 ### Improved
+- V2 keeps loaded data visible during refreshes and reports refresh failures without clearing the page. Reconciliation updates immediately and rolls back if saving fails.
+- V2 editing opens in dialogs, with icon actions and tooltips, transaction/budget duplication, and confirmations for deletion and archiving.
 - V2 tables now keep column headings visible while scrolling and render long lists efficiently, with keyboard navigation and complete printing.
 - V2 spacing, typography and rounded surfaces now follow the selected Astryx theme throughout the dashboard, budgets, summaries and history.
 

@@ -1,6 +1,6 @@
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
-import React, { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import React, { lazy, Suspense, useMemo, useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Badge } from "@astryxdesign/core/Badge";
 import { Shell } from "../components/Shell";
@@ -8,14 +8,8 @@ import { Icon } from "../components/Icon";
 import { MetricCard } from "../components/MetricCard";
 import { BudgetList } from "../components/BudgetList";
 import { TransactionList } from "../components/TransactionList";
-import {
-  get,
-  legacyUrl,
-  loadDashboard,
-  loadTransactions,
-  localDate,
-} from "../lib/api";
-import { useProfileLock } from "../lib/useResource";
+import { legacyUrl, localDate } from "../lib/navigation";
+import { useDashboard, useTrend, useRecent } from "../lib/server/queries";
 import { useLanguage } from "../lib/i18n";
 import { styles as s } from "../components/Dashboard.stylex.js";
 const BalanceChart = lazy(() =>
@@ -26,95 +20,41 @@ const BalanceChart = lazy(() =>
 export function Dashboard() {
   const { compact } = useAppTheme();
   const { t, money, date, locale } = useLanguage();
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [revision, setRevision] = useState(0);
-  const [accountId, setAccountId] = useState("");
+  const resource = useDashboard();
+  const data = resource.data && {
+    ...resource.data,
+    profile: resource.profile,
+    accounts: resource.data.accounts.filter((a) => !a.is_closed),
+    budgets: resource.data.budgets.budgets,
+  };
+  const loading = resource.loading;
+  const error = resource.error && !data;
+  const [selectedAccount, setAccountId] = useState("");
+  const accountId = data?.accounts.some((a) => String(a.id) === selectedAccount)
+    ? selectedAccount
+    : String(data?.stats.main_account_id || data?.accounts[0]?.id || "");
   const [days, setDays] = useState(30);
-  const [trend, setTrend] = useState({
-    loading: true,
-    history: [],
-  });
-  const [transactions, setTransactions] = useState({
-    loading: true,
-    items: [],
-  });
-  useProfileLock(data?.profile);
-  useEffect(() => {
-    const controller = new AbortController();
-    setLoading(true);
-    setError(false);
-    loadDashboard(controller.signal)
-      .then((result) => {
-        setData(result);
-        setAccountId((previous) =>
-          result.accounts.some((a) => String(a.id) === previous)
-            ? previous
-            : String(
-                result.stats.main_account_id || result.accounts[0]?.id || "",
-              ),
-        );
-      })
-      .catch((e) => {
-        if (e.name !== "AbortError") setError(true);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
-      });
-    return () => controller.abort();
-  }, [revision]);
-  useEffect(() => {
-    if (!data || loading || error) return;
-    const controller = new AbortController();
-    setTransactions({
-      loading: true,
-      items: [],
-    });
-    loadTransactions(accountId, controller.signal)
-      .then((items) =>
-        setTransactions({
-          loading: false,
-          items,
-        }),
-      )
-      .catch((e) => {
-        if (e.name !== "AbortError")
-          setTransactions({
-            loading: false,
-            items: [],
-            error: true,
-          });
-      });
-    setTrend({
-      loading: true,
-      history: [],
-    });
-    if (accountId) {
-      get(`/api/stats/trends/${accountId}`, controller.signal)
-        .then((result) => {
-          if (result.error) throw new Error(result.error);
-          setTrend({
-            loading: false,
-            history: result.history,
-            balance: result.current_balance,
-          });
-        })
-        .catch((e) => {
-          if (e.name !== "AbortError")
-            setTrend({
-              loading: false,
-              history: [],
-              error: true,
-            });
-        });
-    } else
-      setTrend({
-        loading: false,
-        history: [],
-      });
-    return () => controller.abort();
-  }, [data, accountId, loading, error]);
+  const trendQuery = useTrend(accountId);
+  const recentQuery = useRecent(accountId);
+  const trend = {
+    loading: Boolean(accountId) && trendQuery.isPending,
+    error: trendQuery.isError && !trendQuery.data,
+    history: trendQuery.data?.history || [],
+    balance: trendQuery.data?.current_balance,
+  };
+  const transactions = {
+    loading: recentQuery.isPending,
+    error: recentQuery.isError && !recentQuery.data,
+    items: recentQuery.data || [],
+  };
+  const refresh = () =>
+    !data
+      ? resource.refresh()
+      : Promise.all([
+          resource.refresh(),
+          ...(accountId ? [trendQuery.refetch()] : []),
+          recentQuery.refetch(),
+        ]);
   const account = data?.accounts.find((a) => String(a.id) === accountId);
   const currency = data?.profile.currency || "EUR";
   const chartCurrency = account?.currency || currency;
@@ -146,8 +86,8 @@ export function Dashboard() {
             label={t("refresh")}
             icon={<Icon name="refresh" size={16} />}
             variant="secondary"
-            isLoading={loading}
-            onClick={() => setRevision((v) => v + 1)}
+            isLoading={resource.fetching}
+            onClick={() => refresh()}
             xstyle={[s.actionsButton]}
           />
           <Button
@@ -159,15 +99,20 @@ export function Dashboard() {
           />
         </div>
       </div>
+      {data &&
+        (resource.error || trendQuery.isError || recentQuery.isError) && (
+          <p role="alert">{t("stale_data")}</p>
+        )}
+      {data &&
+        (resource.fetching ||
+          trendQuery.isFetching ||
+          recentQuery.isFetching) && <p role="status">{t("refreshing")}</p>}
       {error ? (
         <section role="alert" {...stylex.props(s.panel, s.error)}>
           <Icon name="refresh" size={30} {...stylex.props(s.errorSvg)} />
           <h2 {...stylex.props(s.errorH2)}>{t("connection_error")}</h2>
           <p {...stylex.props(s.errorP)}>{t("connection_error_body")}</p>
-          <Button
-            label={t("retry")}
-            onClick={() => setRevision((v) => v + 1)}
-          />
+          <Button label={t("retry")} onClick={() => refresh()} />
         </section>
       ) : loading ? (
         <div role="status" {...stylex.props(s.loading)}>

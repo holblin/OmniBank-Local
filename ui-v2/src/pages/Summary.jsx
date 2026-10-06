@@ -6,8 +6,7 @@ import React, { lazy, Suspense, useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Page, Field } from "../components/Page";
 import { MetricCard } from "../components/MetricCard";
-import { get } from "../lib/api";
-import { useResource } from "../lib/useResource";
+import { useSummary } from "../lib/server/queries";
 import { useLanguage } from "../lib/i18n";
 import { transactionTypes } from "./History";
 import { styles as s } from "../components/Pages.stylex.js";
@@ -34,16 +33,7 @@ export function Summary() {
         }),
   });
   if (account) params.set("account_ids", account);
-  const resource = useResource(async (signal) => {
-    const [summary, accounts] = await Promise.all([
-      get(`/api/stats/categories_by_month?${params}`, signal),
-      get("/api/accounts/", signal),
-    ]);
-    return {
-      summary,
-      accounts,
-    };
-  }, params.toString());
+  const resource = useSummary(Object.fromEntries(params));
   const data = resource.data?.summary;
   const currency =
     resource.data?.accounts.find((a) => String(a.id) === account)?.currency ||

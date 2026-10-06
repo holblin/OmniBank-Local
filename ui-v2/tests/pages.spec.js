@@ -44,14 +44,21 @@ test("budget creation, amount editing, archive and savings funding use local API
   ).toBeVisible();
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
   await card.getByRole("button", { name: "Archiver", exact: true }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: "Archiver", exact: true })
+    .click();
   await expect(card).toHaveCount(0);
   await page.getByRole("combobox", { name: "Afficher" }).selectOption("closed");
   await expect(card).toBeVisible();
   await card.getByRole("button", { name: "Réouvrir", exact: true }).click();
   await page.getByRole("combobox", { name: "Afficher" }).selectOption("active");
   await expect(card).toBeVisible();
-  page.on("dialog", (dialog) => dialog.accept());
   await card.getByRole("button", { name: "Supprimer", exact: true }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: "Supprimer", exact: true })
+    .click();
   await expect(card).toHaveCount(0);
   await page
     .getByRole("button", { name: "Nouvelle enveloppe", exact: true })
@@ -72,7 +79,7 @@ test("budget creation, amount editing, archive and savings funding use local API
     .getByRole("spinbutton", { name: "Montant", exact: true })
     .fill("50.25");
   await page.getByRole("button", { name: "Enregistrer", exact: true }).click();
-  await expect(card).toContainText("50,25");
+  await expect(page.getByRole("dialog")).toContainText("50,25");
   const budgets = await (await request.get("/api/budgets/")).json();
   const saved = budgets.find((b) => b.name === "Épargne V2 test");
   const allocations = await (
@@ -82,7 +89,11 @@ test("budget creation, amount editing, archive and savings funding use local API
   await page
     .getByRole("button", { name: "Supprimer l’ajustement", exact: true })
     .click();
-  await expect(card.locator("strong").first()).toContainText("0,00");
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: "Supprimer l’ajustement", exact: true })
+    .click();
+  await expect(page.getByRole("dialog").getByRole("list")).toBeEmpty();
   await page.getByRole("button", { name: "Annuler", exact: true }).click();
   await request.delete(`/api/budgets/${saved.id}`);
 });
@@ -131,13 +142,19 @@ test("summary totals match backend, filters update and CSV exports locally", asy
   await expect(page.getByLabel("Du", { exact: true })).toBeVisible();
 });
 
-test("summary print layout hides controls and uses the full page", async ({ page }) => {
+test("summary print layout hides controls and uses the full page", async ({
+  page,
+}) => {
   await page.goto("/v2/summary");
   await expect(page.getByRole("table").first()).toBeVisible();
   await page.emulateMedia({ media: "print" });
   await expect(page.getByRole("complementary")).toBeHidden();
-  await expect(page.getByRole("button", { name: "Exporter CSV", exact: true })).toBeHidden();
-  await expect(page.getByRole("combobox", { name: "Année", exact: true })).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "Exporter CSV", exact: true }),
+  ).toBeHidden();
+  await expect(
+    page.getByRole("combobox", { name: "Année", exact: true }),
+  ).toBeHidden();
   const box = await page.locator("main").boundingBox();
   expect(box.x).toBe(0);
   expect(box.width).toBe(await page.evaluate(() => innerWidth));
@@ -198,8 +215,11 @@ test("history filters and pagination then transaction create edit reconcile dele
   )[0];
   expect(saved.amount).toBe(23.45);
   expect(saved.reconciliation_date).toBeTruthy();
-  page.once("dialog", (d) => d.accept());
   await row.getByRole("button", { name: "Supprimer", exact: true }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: "Supprimer", exact: true })
+    .click();
   await expect(page.locator("tbody tr")).toHaveCount(0);
 });
 

@@ -1,6 +1,9 @@
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
 import { Button } from "@astryxdesign/core/Button";
+import { Dialog, DialogHeader } from "@astryxdesign/core/Dialog";
+import { Layout, LayoutContent, LayoutFooter } from "@astryxdesign/core/Layout";
+import { useRestoreFocus } from "../lib/useRestoreFocus";
 import { Shell } from "./Shell";
 import { useLanguage } from "../lib/i18n";
 import { styles as s } from "./Pages.stylex.js";
@@ -17,14 +20,22 @@ export function Page({ title, subtitle, resource, actions, children }) {
           <Button
             label={t("refresh")}
             onClick={resource.refresh}
-            isLoading={resource.loading}
+            isLoading={resource.fetching}
             variant="secondary"
             xstyle={[s.actionsButton]}
           />
           {actions}
         </div>
       </div>
-      {resource.error ? (
+      {resource.data && resource.error && (
+        <p role="alert" {...stylex.props(s.error)}>
+          {t("stale_data")}
+        </p>
+      )}
+      {resource.data && resource.fetching && (
+        <p role="status">{t("refreshing")}</p>
+      )}
+      {resource.error && !resource.data ? (
         <div role="alert" {...stylex.props(s.empty)}>
           <h2>{t("connection_error")}</h2>
           <p>{t("connection_error_body")}</p>
@@ -46,15 +57,57 @@ export function Field({ label, children, xstyle }) {
     </label>
   );
 }
-export function Editor({ title, onClose, children }) {
+export function Editor({ title, onClose, children, busy, error }) {
+  useRestoreFocus();
   const { t } = useLanguage();
   return (
-    <section aria-label={title} {...stylex.props(s.editor)}>
-      <div {...stylex.props(s.heading)}>
-        <h2 {...stylex.props(s.headingH2)}>{title}</h2>
-        <Button label={t("cancel")} variant="secondary" onClick={onClose} />
-      </div>
-      {children}
-    </section>
+    <Dialog
+      isOpen
+      purpose={busy ? "required" : "form"}
+      width={720}
+      maxHeight="85dvh"
+      padding={0}
+      onOpenChange={(open) => {
+        if (!open && !busy) onClose();
+      }}
+    >
+      <Layout
+        padding={4}
+        header={
+          <DialogHeader
+            title={title}
+            hasDivider
+            paddingBlockEnd={6}
+            onOpenChange={
+              busy
+                ? undefined
+                : (open) => {
+                    if (!open) onClose();
+                  }
+            }
+          />
+        }
+        content={
+          <LayoutContent>
+            {error && (
+              <p role="alert" {...stylex.props(s.error)}>
+                {t("save_error")}
+              </p>
+            )}
+            {children}
+          </LayoutContent>
+        }
+        footer={
+          <LayoutFooter>
+            <Button
+              label={t("cancel")}
+              variant="secondary"
+              isDisabled={busy}
+              onClick={onClose}
+            />
+          </LayoutFooter>
+        }
+      />
+    </Dialog>
   );
 }

@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { loadContext, legacyUrl } from "./api";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { legacyUrl } from "./navigation";
 
 export function useProfileLock(profile) {
+  const client = useQueryClient();
   useEffect(() => {
     if (!profile?.has_pin) return;
     const configured =
@@ -17,6 +19,7 @@ export function useProfileLock(profile) {
       clearTimeout(timer);
       timer = setTimeout(() => {
         sessionStorage.setItem("omni_is_locked", "true");
+        client.clear();
         window.location.replace(legacyUrl());
       }, minutes * 60000);
     };
@@ -29,26 +32,5 @@ export function useProfileLock(profile) {
       clearTimeout(timer);
       events.forEach((event) => window.removeEventListener(event, reset));
     };
-  }, [profile]);
-}
-
-export function useResource(load, key) {
-  const [revision, setRevision] = useState(0);
-  const [state, setState] = useState({ loading: true });
-  useEffect(() => {
-    const controller = new AbortController();
-    setState((previous) => ({ ...previous, loading: true, error: false }));
-    (async () => {
-      const context = await loadContext(controller.signal);
-      const data = await load(controller.signal);
-      if (!controller.signal.aborted)
-        setState({ ...context, data, loading: false });
-    })().catch((error) => {
-      if (!controller.signal.aborted && error.name !== "AbortError")
-        setState((previous) => ({ ...previous, error: true, loading: false }));
-    });
-    return () => controller.abort();
-  }, [key, revision]);
-  useProfileLock(state.profile);
-  return { ...state, refresh: () => setRevision((value) => value + 1) };
+  }, [profile, client]);
 }

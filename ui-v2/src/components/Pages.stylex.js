@@ -113,17 +113,6 @@ export const styles = stylex.create({
     borderRadius: radiusVars["--radius-container"],
     minWidth: "0",
   },
-  editor: {
-    padding: {
-      default: spacingVars["--spacing-5"],
-      "@media (max-width: 600px)": spacingVars["--spacing-4"],
-    },
-    backgroundColor: colorVars["--color-background-card"],
-    border: "1px solid var(--color-border)",
-    borderRadius: radiusVars["--radius-container"],
-    minWidth: "0",
-    marginBottom: spacingVars["--spacing-5"],
-  },
   panel: {
     padding: {
       default: spacingVars["--spacing-5"],
@@ -270,9 +259,6 @@ export const styles = stylex.create({
     },
     gap: spacingVars["--spacing-1-5"],
     flexWrap: "wrap",
-  },
-  rowActionsButton: {
-    fontSize: textSizeVars["--font-size-sm"],
   },
   actionsButton: {
     fontSize: textSizeVars["--font-size-sm"],

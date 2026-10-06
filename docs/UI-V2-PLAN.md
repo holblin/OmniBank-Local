@@ -107,3 +107,26 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
   headers in all six compact themes on desktop/mobile and correct edited records.
 - Refreshed table screenshots and verified sticky headers in production and
   the Vite development server with no browser errors.
+
+## TanStack Query and dialog actions
+
+- Replaced the custom resource loader and React fetch effects with TanStack
+  Query. Added a strict TypeScript server-state layer with domain/profile/filter
+  keys and colocated query functions; kept a thin same-origin fetch transport.
+- Shared account/budget queries reuse their cache across routes. Refreshes retain
+  data and expose background/stale states. Initial loading, errors, empty results,
+  cancellation, local offline access and guarded financial queries are preserved.
+- Mutation invalidation targets affected domains within the active profile.
+  Reconciliation uses optimistic snapshots and rollback; financial amounts and
+  balances remain authoritative. The in-memory cache clears on PIN lock.
+- Replaced inline editors with Astryx Dialog and native header/content/footer
+  layout. Added IconButton tooltips and separate transaction/budget copy drafts.
+  Deletion and archive actions use AlertDialog, including allocation deletion as
+  a separate step. Failed writes retain drafts or confirmations; focus returns
+  after closing. Fixed a narrow-screen header overlap found in screenshots.
+- TypeScript checking, production build and twenty-five Chrome checks passed.
+  Added cache reuse, failed background refresh, optimistic rollback, targeted
+  invalidation, confirmation cancellation/failure, duplication, focus restoration,
+  delayed-access refresh safety and six-theme compact dialog checks at 320px.
+- Captured desktop/mobile pages and edit/delete dialogs against isolated synthetic
+  preview data; no browser errors or mobile dialog overflow were reported.
