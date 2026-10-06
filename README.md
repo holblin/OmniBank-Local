@@ -264,3 +264,14 @@ Ce projet est disponible en accès partagé (**Source-Available**) sous la licen
 * **Usage Personnel / Personal Use** : Gratuit et autorisé pour un usage strictement individuel et privé. / Free and permitted for strictly individual and private use.
 * **Usage Organisation / Organizational Use** : L'utilisation collective, par une association (Loi 1901, CSE) ou une entreprise (y compris l'activation du "Mode Organisation") requiert l'acquisition d'une clé de licence commerciale. / Any group, non-profit, or corporate use (including enabling "Organisation Mode") requires a commercial license key.
 * **Détails / Details** : Voir le fichier [LICENSE](LICENSE) pour les termes complets. / See the [LICENSE](LICENSE) file for full terms.
+
+## Aperçu UI V2 / UI V2 preview
+
+L’interface V2 couvre les pages principales : finances, récurrences, simulation, assistant local, synchronisation bancaire et paramètres. Elle utilise Vite, Astryx, StyleX et TanStack Router, Query, Charts et Virtual.
+Installez les dépendances avec `pnpm --dir ui-v2 install --frozen-lockfile`, puis
+compilez avec `pnpm --dir ui-v2 build`. Ouvrez **Essayer la V2** dans l’interface
+actuelle ou accédez à `/v2`.
+
+The opt-in V2 interface covers the main finance, recurrence, simulation, local assistant, bank synchronization and settings pages. It uses Vite, Astryx, StyleX and TanStack Router, Query, Charts and Virtual.
+Run the install and build commands above, then open **Try V2** in the existing
+header or visit `/v2`. See [UI V2 setup and architecture](ui-v2/README.md).

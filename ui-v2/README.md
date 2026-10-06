@@ -1,0 +1,208 @@
+# OmniBank UI V2
+
+An opt-in interface built with React 19, Vite, Astryx, StyleX, TanStack Charts and
+TanStack Router. The existing interface remains the entry point; click
+**Essayer la V2 / Try V2** to open `/v2`.
+
+## Run locally
+
+Node.js 22.12+ and Python 3.12+ are recommended. Install the backend requirements
+in a virtual environment first. From the repository root:
+
+```sh
+pnpm --dir ui-v2 install --frozen-lockfile
+pnpm --dir ui-v2 build
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8434
+```
+
+Open `http://127.0.0.1:8434/v2`. The production bundle is generated in
+`static/v2/`, which is ignored by Git. Build it before running the app or
+packaging the Python sidecar. No Node process or network connection is needed
+to use the built interface. Fonts, styles and libraries are all local assets.
+
+The Docker image builds V2 automatically in a Node build stage. Docker Compose
+mounts the host `static/` directory, so build V2 on the host before using Compose.
+The Tauri build and standard `build_sidecar_onedir.ps1` script compile V2 before
+collecting assets; install the frontend dependencies before packaging.
+
+For hot reload, keep the backend running and use:
+
+```sh
+pnpm --dir ui-v2 dev
+```
+
+Open `http://127.0.0.1:5173/v2`. The Vite server proxies local API requests to
+port 8434; links to classic workflows open the backend's original interface.
+
+## Styling
+
+The four Astryx setup packages are installed, and `pnpm --dir ui-v2 run astryx init`
+generates `ui-v2/AGENTS.md`. Read it before editing V2. The CLI is invoked through
+the `astryx` script because this workspace uses pnpm.
+
+`@stylexjs/unplugin` compiles `stylex.create()` at build time, with CSS extraction
+and no runtime injection. Its specificity configuration matches Astryx's
+published component styles. Use typed Astryx tokens from
+`@astryxdesign/core/theme/tokens.stylex`, `stylex.props()` on DOM nodes and `xstyle`
+on Astryx components. All page, shell, responsive and compact styles use StyleX;
+the small global CSS file handles document reset and print framing.
+
+## Themes
+
+The header selector offers official Astryx Neutral, Stone, Gothic, Matcha,
+Y2K and Butter themes. Matcha is the default. Gothic uses its dark palette.
+Theme stylesheets are bundled locally, with no external runtime requests.
+
+The **Compact** toggle reduces card spacing, sidebar rows and transaction row
+height. Its preference is saved independently for each theme in
+`omni_v2_compact_themes`; the selected theme is saved in `omni_v2_theme`.
+
+Run `node tests/capture-themes.mjs` from `ui-v2` against the isolated synthetic
+preview to capture compact screenshots for all six themes.
+
+## Structure
+
+| Directory | Responsibility |
+| --- | --- |
+| `src/router.jsx` | TanStack route tree rooted at `/v2`; unknown-route fallback |
+| `src/pages/` | Page composition and dashboard state |
+| `src/components/` | Reusable UI pieces and compiled StyleX styles |
+| `src/styles/tokens.css` | Document reset and print framing |
+| `src/lib/server/` | Typed TanStack Query keys, query functions, mutations and read models |
+| `src/lib/http.ts` | Thin same-origin fetch transport with audit attribution |
+| `src/lib/` | Navigation, formatting, idle lock and language context |
+| `src/locales/` | Small generated V2 dictionaries, extracted from shared i18n |
+| `tests/` | Synthetic fixtures, browser checks and screenshot capture |
+
+Financial totals come from the existing backend. The chart includes all
+transactions, including pending ones; summary/account cards use reconciled
+balances, matching the original UI. The account selector filters the chart and
+recent activity; summary cards and budgets cover the active profile. Each account
+uses its own currency. A savings envelope total is distinct from savings account
+balances. Recent activity excludes future transactions through `date_end`.
+
+## Tables
+
+`VirtualTable` composes Astryx Table/Header/Body/Row/Cell with TanStack Virtual.
+A single keyboard-focusable viewport owns both scroll axes and pins the header.
+Tables with more than twelve rows render a measured window plus four overscan
+rows; small tables keep all their rows. Semantic spacer rows preserve the full
+table height, so the header remains sticky through the final virtual row.
+
+Row keys stay tied to records, focused row actions remain mounted, and Home/End
+move to the first/last row. Density, wrapping and viewport changes are measured.
+Printing renders every loaded row; CSV exports operate on the complete data.
+History keeps its existing server pagination, with virtualization inside each
+40-row page. Wide tables scroll horizontally on mobile without overflowing the
+page. All layout and virtualization geometry use StyleX.
+
+History measures the space below its filters and reserves room for pagination
+and the footer, retaining blank space inside the scroll viewport for short/empty
+results. The shared shell grows short pages to the viewport bottom; long pages
+keep the footer after their content. Sidebar links to the classic UI show V1.
+
+Summary category tables shade monthly cells relative to the largest absolute
+amount in each transaction type. Income uses success colors, expenses error
+colors, and transfers accent colors from the selected theme. Zero values remain
+neutral; the color-intensity slider can reduce or disable shading. Values and
+CSV exports are unaffected.
+
+## Migrated pages
+
+- `/v2/budgets`: envelope progress by month, spending/project/savings/archive
+  filters, create/edit/archive/reopen/delete, associated transactions and funding
+  adjustments. Custom periods, category/account scope and reservation are editable.
+- `/v2/summary`: annual or custom date ranges, account/reconciliation filters,
+  monthly income/expense chart and tables, category breakdowns, CSV export and print.
+  Transfers are excluded from the net result. Forecast transactions follow the
+  selected reconciliation filter, matching V1. Derived totals use integer cents.
+- `/v2/history`: server-side search/date/account/type/reconciliation filters,
+  40-row pagination, create/edit/delete, reconciliation and project/savings
+  assignment. Horizontal scrolling keeps columns and row actions accessible on mobile.
+
+- `/v2/accounts`: account creation, editing, closure and deletion, main-account
+  selection, loan details, savings interest and balance adjustments.
+- `/v2/categories` and `/v2/recurrences`: category management, recurring templates,
+  duplication, closure and explicit transaction generation.
+- `/v2/trends`, `/v2/overview` and `/v2/simulator`: balance charts, account/budget
+  overview, scenarios, events and projections from the local simulation engine.
+- `/v2/assistant`: conversations, streamed local responses, message editing,
+  memory and explicit review/confirmation of suggested financial actions.
+- `/v2/settings`: preferences, profiles and PINs, backups and restore, diagnostics,
+  license, organization users, label rules, exchange rates, shared storage and
+  maintenance previews with confirmed corrections.
+- `/v2/bank-sync`: encrypted connection setup, vault access, streamed discovery
+  and synchronization, account mapping, two-factor prompts and statement review.
+- `/v2/imports`, `/v2/notifications`, `/v2/journal`, `/v2/setup` and `/v2/unlock`:
+  staged statement imports/exports, notification management, audit undo/redo,
+  first-run steps and native profile access.
+
+Navigation stays in V2. The explicit classic-interface link remains available.
+History supports attachment upload/removal and recurrence associations. PIN lock,
+idle timeout and organization selection are respected before financial queries;
+profile changes clear the query cache. Writes carry the selected user's audit name.
+
+Bank-provider authentication and Ollama inference require the user's configured
+services. Browser tests exercise stream/review protocols with local mocks and
+financial workflows against the real isolated backend; they do not contact banks.
+V1's specialized recurrence timeline/renewal wizard and bank bulk-review helpers
+are not reproduced; V2 exposes the corresponding individual template, generation,
+mapping and review workflows.
+
+TanStack Query owns all V2 server state. Domain keys include the active profile
+and server filters; shared account and budget queries deduplicate requests across
+routes. Queries consume cancellation signals, remain fresh for thirty seconds,
+and refresh in the background on focus. Cached data stays visible during refresh
+and after a refresh error, with explicit status and retry controls. Initial loading,
+errors and empty results have separate states. Queries work against the local
+backend even when the machine has no internet connection. The cache is in memory
+only and clears before PIN-lock redirects; server data is absent from client
+contexts and browser storage.
+
+Mutations invalidate affected profile/domain keys. Reconciliation updates
+unfiltered cached lists optimistically and restores snapshots on failure; amounts
+and balances always wait for the backend. Mutations never retry automatically.
+PIN and organisation access checks finish before financial queries are enabled.
+
+Astryx form dialogs keep editing out of the page layout and retain failed input.
+Row actions use IconButton with translated tooltips. Duplication opens a separate
+creation draft; transaction copies are not reconciled. Deletion and archiving use
+AlertDialog, initially focus Cancel, and remain open while saving or after failure.
+Allocation deletion replaces the details dialog with a confirmation step to avoid
+nested modals. Closing a dialog restores focus to its trigger, or the table viewport
+if the original record was removed.
+
+Run `node tests/capture-pages.mjs` from `ui-v2` against the isolated preview to
+capture desktop/mobile screenshots of the original three pages. Use
+`node tests/capture-completion.mjs` for the remaining pages.
+
+When adding a translation, update `scripts/setup_ui_v2_i18n.py` and run it with
+Python from the root. It preserves existing keys and writes French/English JSON
+with the required UTF-8 BOM. Commit the generated dictionaries with the change.
+
+## Verify
+
+After building:
+
+```sh
+pnpm --dir ui-v2 run typecheck
+pnpm --dir ui-v2 exec playwright install chromium
+pnpm --dir ui-v2 test
+```
+
+The tests start a separate backend on port 8436 with a temporary SQLite data
+directory and synthetic fixtures. They do not touch the normal data directory.
+Set `PLAYWRIGHT_CHANNEL=chrome` to use installed Chrome instead of Playwright's
+downloaded Chromium. The development preview captured for this change uses
+`OMNIBANK_DATA_DIR=./data/ui-v2-preview`, which is also ignored by Git.
+
+`tests/capture.mjs` seeds the local port 8434 server with synthetic data and writes
+desktop/mobile PNGs into `screenshots/ui-v2/`. Run it only against a preview server
+started with that isolated data directory.
+
+## Project skills
+
+All 38 skills from `mattpocock/skills` and `theclaymethod/unslop` are installed in
+the repository's `.agents/skills/`. They are available on the next chat turn.
+Personal skills remain untouched. GSD configuration and planning files have been
+removed; the implementation plan now lives in `docs/UI-V2-PLAN.md`.

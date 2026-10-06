@@ -399,11 +399,21 @@ class App {
 
         // Restore view from ProfileStorage
         let savedView = ProfileStorage.get('omni_current_view') || this.currentView;
+        // V2 links can open a supported workflow in the original interface.
+        const navigationParams = new URLSearchParams(window.location.search);
+        const requestedView = navigationParams.get('view');
         // If overview is enabled and no saved view, default to overview
         if (!ProfileStorage.get('omni_current_view') && this.config.enable_overview === 'true') {
             savedView = 'overview';
         }
+        const legacyViews = new Set(['dashboard', 'overview', 'all_operations', 'analytics', 'budgets', 'accounts', 'chat', 'recurrences', 'config', 'categories', 'trends', 'simulator', 'history', 'bank_sync']);
+        if (legacyViews.has(requestedView)) {
+            savedView = requestedView;
+        }
         await this.loadView(savedView);
+        if (requestedView === 'dashboard' && navigationParams.get('action') === 'new' && window.FormView) {
+            window.FormView.open();
+        }
 
         } catch (uiError) {
             console.error('[App] _initUI error:', uiError);
@@ -511,6 +521,8 @@ class App {
             viewName = 'dashboard';
         }
         this.currentView = viewName;
+        const v2Routes = { budgets: '/v2/budgets', analytics: '/v2/summary', all_operations: '/v2/history', accounts:'/v2/accounts', categories:'/v2/categories', recurrences:'/v2/recurrences', trends:'/v2/trends', simulator:'/v2/simulator', chat:'/v2/assistant', config:'/v2/settings', history:'/v2/journal', bank_sync:'/v2/bank-sync', overview:'/v2/overview' };
+        document.querySelectorAll('.ui-v2-switch').forEach(link => { link.href = v2Routes[viewName] || '/v2'; });
 
         if (window.ErrorReporter && typeof window.ErrorReporter.recordBreadcrumb === 'function') {
             window.ErrorReporter.recordBreadcrumb('NAV', `Navigated to view: ${viewName}`);

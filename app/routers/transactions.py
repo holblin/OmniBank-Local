@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
-from typing import List, Optional
+from typing import List, Optional, Literal
 from datetime import date, datetime
 
 from app.database import get_db
@@ -18,6 +18,10 @@ def get_transactions(
     limit: int = 1000,
     search: Optional[str] = Query(None),
     account_id: Optional[int] = Query(None),
+    date_end: Optional[date] = Query(None),
+    date_start: Optional[date] = Query(None),
+    transaction_type: Optional[Literal["income", "expense_var", "expense_fixed", "transfer", "neutral"]] = Query(None),
+    reconciled: Literal["all", "reconciled", "unreconciled"] = Query("all"),
     unreconciled_only: bool = Query(False),
     order: str = Query("desc"),
     db: Session = Depends(get_db)
@@ -32,8 +36,18 @@ def get_transactions(
                 Transaction.to_account_id == account_id
             )
         )
+    if date_start is not None:
+        query = query.filter(Transaction.date_operation >= date_start)
+    if transaction_type:
+        query = query.filter(Transaction.type == transaction_type)
+    if reconciled == "reconciled":
+        query = query.filter(Transaction.reconciliation_date != None)
+    if reconciled == "unreconciled":
+        query = query.filter(Transaction.reconciliation_date == None)
     if unreconciled_only:
         query = query.filter(Transaction.reconciliation_date == None)
+    if date_end is not None:
+        query = query.filter(Transaction.date_operation <= date_end)
     if search:
         import unicodedata
         from sqlalchemy import func

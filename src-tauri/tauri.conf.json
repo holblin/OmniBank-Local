@@ -6,7 +6,7 @@
   "build": {
     "frontendDist": "../static",
     "devUrl": "http://127.0.0.1:8434",
-    "beforeBuildCommand": "",
+    "beforeBuildCommand": "pnpm --dir ui-v2 build",
     "beforeDevCommand": ""
   },
   "app": {

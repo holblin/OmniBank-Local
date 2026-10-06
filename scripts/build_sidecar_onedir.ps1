@@ -18,6 +18,15 @@ if (-not (Test-Path $SpecFile)) {
 }
 
 if (-not $SkipBuild) {
+    # Compile the opt-in UI before PyInstaller collects the static directory.
+    Write-Host "Compilation de l'interface V2..." -ForegroundColor Yellow
+    Push-Location $ProjectRoot
+    try {
+        & pnpm --dir ui-v2 build
+        if ($LASTEXITCODE -ne 0) { throw "Échec de compilation de l'interface V2." }
+    } finally {
+        Pop-Location
+    }
     Write-Host "`n[1/3] Building sidecar with PyInstaller spec..." -ForegroundColor Yellow
 
     if (-not (Test-Path $SpecFile)) {

@@ -28,7 +28,7 @@ Target: Privacy-conscious individuals; French associations/CSE needing lightweig
 | ORM | SQLAlchemy + SQLite | 30s busy timeout, PRAGMAs tuned |
 | Data | Pandas | CSV parsing only |
 | Frontend V1 | Vanilla HTML5/CSS3/JS | Chart.js, VirtualTable for large data |
-| Frontend V2 | React 19 + Vite + Astryx | TanStack Charts + Router; CSS modules; opt-in dashboard |
+| Frontend V2 | React 19 + Vite + Astryx | TanStack Charts + Router; StyleX; opt-in dashboard, budgets, summaries and history |
 | Desktop | Tauri 2.x (Rust) | PyInstaller --onedir bundle |
 | AI | Ollama local API | Auto-detect via /api/tags |
 | Container | Docker + Nginx | SSE streaming via X-Accel-Buffering: no |
@@ -59,4 +59,4 @@ Use a skill when relevant to the task; no GSD workflow is required.
 ## UI V2
 
 See `ui-v2/README.md` for setup and `docs/UI-V2-PLAN.md` for scope and verification.
-Use scoped CSS modules, shared tokens, Astryx controls and local API calls.
+Use compiled StyleX, typed Astryx tokens, Astryx controls and local API calls.
