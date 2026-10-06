@@ -131,6 +131,18 @@ test("summary totals match backend, filters update and CSV exports locally", asy
   await expect(page.getByLabel("Du", { exact: true })).toBeVisible();
 });
 
+test("summary print layout hides controls and uses the full page", async ({ page }) => {
+  await page.goto("/v2/summary");
+  await expect(page.getByRole("table").first()).toBeVisible();
+  await page.emulateMedia({ media: "print" });
+  await expect(page.getByRole("complementary")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Exporter CSV", exact: true })).toBeHidden();
+  await expect(page.getByRole("combobox", { name: "Année", exact: true })).toBeHidden();
+  const box = await page.locator("main").boundingBox();
+  expect(box.x).toBe(0);
+  expect(box.width).toBe(await page.evaluate(() => innerWidth));
+});
+
 test("history filters and pagination then transaction create edit reconcile delete", async ({
   page,
   request,

@@ -1,3 +1,5 @@
+import { useAppTheme } from "../lib/theme";
+import * as stylex from "@stylexjs/stylex";
 import React, { lazy, Suspense, useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Page, Field } from "../components/Page";
@@ -6,10 +8,11 @@ import { get } from "../lib/api";
 import { useResource } from "../lib/useResource";
 import { useLanguage } from "../lib/i18n";
 import { transactionTypes } from "./History";
-import s from "../components/Pages.module.css";
+import { styles as s } from "../components/Pages.stylex.js";
 const SummaryChart = lazy(() => import("../components/SummaryChart"));
 const cents = (amount) => Math.round((amount || 0) * 100);
 export function Summary() {
+  const { compact } = useAppTheme();
   const { t, money, locale } = useLanguage();
   const [year, setYear] = useState(String(new Date().getFullYear()));
   const [account, setAccount] = useState("");
@@ -19,7 +22,14 @@ export function Summary() {
   const [end, setEnd] = useState(`${year}-12-31`);
   const params = new URLSearchParams({
     reconciled,
-    ...(range ? { date_start: start, date_end: end } : { year }),
+    ...(range
+      ? {
+          date_start: start,
+          date_end: end,
+        }
+      : {
+          year,
+        }),
   });
   if (account) params.set("account_ids", account);
   const resource = useResource(async (signal) => {
@@ -27,7 +37,10 @@ export function Summary() {
       get(`/api/stats/categories_by_month?${params}`, signal),
       get("/api/accounts/", signal),
     ]);
-    return { summary, accounts };
+    return {
+      summary,
+      accounts,
+    };
   }, params.toString());
   const data = resource.data?.summary;
   const currency =
@@ -41,9 +54,10 @@ export function Summary() {
     100;
   const net = (cents(income) - cents(expense)) / 100;
   const monthLabel = (month) =>
-    new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(
-      new Date(`${month}-01T12:00:00`),
-    );
+    new Intl.DateTimeFormat(locale, {
+      month: "short",
+      year: "numeric",
+    }).format(new Date(`${month}-01T12:00:00`));
   const points =
     data?.months.map((month) => ({
       month,
@@ -77,7 +91,9 @@ export function Summary() {
         )
         .join("\r\n");
     const url = URL.createObjectURL(
-      new Blob([csv], { type: "text/csv;charset=utf-8" }),
+      new Blob([csv], {
+        type: "text/csv;charset=utf-8",
+      }),
     );
     const link = document.createElement("a");
     link.href = url;
@@ -106,8 +122,8 @@ export function Summary() {
         </>
       }
     >
-      <div className={s.filters}>
-        <Field label={t("year")}>
+      <div {...stylex.props(s.filters, compact && s.compactFilters)}>
+        <Field label={t("year")} xstyle={[s.field, s.filtersChild]}>
           <input
             type="number"
             min="1900"
@@ -121,10 +137,15 @@ export function Summary() {
               )
                 setYear(e.target.value);
             }}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("select_account")}>
-          <select value={account} onChange={(e) => setAccount(e.target.value)}>
+        <Field label={t("select_account")} xstyle={[s.field, s.filtersChild]}>
+          <select
+            value={account}
+            onChange={(e) => setAccount(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
+          >
             <option value="">{t("all_accounts")}</option>
             {resource.data?.accounts.map((a) => (
               <option key={a.id} value={a.id}>
@@ -133,10 +154,11 @@ export function Summary() {
             ))}
           </select>
         </Field>
-        <Field label={t("status")}>
+        <Field label={t("status")} xstyle={[s.field, s.filtersChild]}>
           <select
             value={reconciled}
             onChange={(e) => setReconciled(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             {["all", "reconciled", "unreconciled"].map((v) => (
               <option key={v} value={v}>
@@ -145,7 +167,7 @@ export function Summary() {
             ))}
           </select>
         </Field>
-        <label className={s.check}>
+        <label {...stylex.props(s.check, s.filtersChild)}>
           <input
             type="checkbox"
             checked={range}
@@ -155,7 +177,7 @@ export function Summary() {
         </label>
         {range && (
           <>
-            <Field label={t("date_start")}>
+            <Field label={t("date_start")} xstyle={[s.field, s.filtersChild]}>
               <input
                 type="date"
                 required
@@ -164,9 +186,10 @@ export function Summary() {
                 onChange={(e) => {
                   if (e.target.value) setStart(e.target.value);
                 }}
+                {...stylex.props(s.fieldInput)}
               />
             </Field>
-            <Field label={t("date_end")}>
+            <Field label={t("date_end")} xstyle={[s.field, s.filtersChild]}>
               <input
                 type="date"
                 required
@@ -175,12 +198,13 @@ export function Summary() {
                 onChange={(e) => {
                   if (e.target.value) setEnd(e.target.value);
                 }}
+                {...stylex.props(s.fieldInput)}
               />
             </Field>
           </>
         )}
       </div>
-      <div className={s.grid}>
+      <div {...stylex.props(s.grid, compact && s.compactGrid)}>
         <MetricCard
           label={t("income")}
           value={money(income, currency)}
@@ -201,31 +225,83 @@ export function Summary() {
           featured
         />
       </div>
-      <section className={s.panel}>
+      <section {...stylex.props(s.panel, compact && s.compactPanel)}>
         <h2>{t("monthly_cashflow")}</h2>
-        <p className={s.note}>{t("summary_forecast_note")}</p>
+        <p {...stylex.props(s.note)}>{t("summary_forecast_note")}</p>
         <Suspense fallback={<p role="status">{t("loading")}</p>}>
           <SummaryChart points={points} currency={currency} />
         </Suspense>
       </section>
-      <div className={s.tableWrap} style={{ marginTop: 22 }}>
-        <table className={s.table}>
-          <caption>{t("monthly_cashflow")}</caption>
+      <div {...stylex.props(s.tableWrap, s.sectionSpacing)}>
+        <table {...stylex.props(s.table)}>
+          <caption {...stylex.props(s.tableCaption)}>
+            {t("monthly_cashflow")}
+          </caption>
           <thead>
             <tr>
-              <th>{t("month")}</th>
-              <th className={s.number}>{t("income")}</th>
-              <th className={s.number}>{t("expenses")}</th>
-              <th className={s.number}>{t("net_result")}</th>
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("month")}
+              </th>
+              <th
+                {...stylex.props(
+                  s.tableTh,
+                  s.tableNumber,
+                  compact && s.compactTableTh,
+                )}
+              >
+                {t("income")}
+              </th>
+              <th
+                {...stylex.props(
+                  s.tableTh,
+                  s.tableNumber,
+                  compact && s.compactTableTh,
+                )}
+              >
+                {t("expenses")}
+              </th>
+              <th
+                {...stylex.props(
+                  s.tableTh,
+                  s.tableNumber,
+                  compact && s.compactTableTh,
+                )}
+              >
+                {t("net_result")}
+              </th>
             </tr>
           </thead>
           <tbody>
             {points.map((point) => (
               <tr key={point.month}>
-                <td>{monthLabel(point.month)}</td>
-                <td className={s.number}>{money(point.income, currency)}</td>
-                <td className={s.number}>{money(point.expense, currency)}</td>
-                <td className={s.number}>
+                <td {...stylex.props(s.tableTd, compact && s.compactTableTd)}>
+                  {monthLabel(point.month)}
+                </td>
+                <td
+                  {...stylex.props(
+                    s.tableTd,
+                    s.tableNumber,
+                    compact && s.compactTableTd,
+                  )}
+                >
+                  {money(point.income, currency)}
+                </td>
+                <td
+                  {...stylex.props(
+                    s.tableTd,
+                    s.tableNumber,
+                    compact && s.compactTableTd,
+                  )}
+                >
+                  {money(point.expense, currency)}
+                </td>
+                <td
+                  {...stylex.props(
+                    s.tableTd,
+                    s.tableNumber,
+                    compact && s.compactTableTd,
+                  )}
+                >
                   {money(
                     (cents(point.income) - cents(point.expense)) / 100,
                     currency,
@@ -239,35 +315,78 @@ export function Summary() {
       {transactionTypes.map(
         (type) =>
           data?.by_type[type] && (
-            <section key={type} style={{ marginTop: 22 }}>
-              <div className={s.tableWrap}>
-                <table className={s.table}>
-                  <caption>
+            <section key={type} {...stylex.props(s.sectionSpacing)}>
+              <div {...stylex.props(s.tableWrap)}>
+                <table {...stylex.props(s.table)}>
+                  <caption {...stylex.props(s.tableCaption)}>
                     {t(type)} ·{" "}
                     {money(data.by_type[type].grand_total, currency)}
                   </caption>
                   <thead>
                     <tr>
-                      <th>{t("category")}</th>
+                      <th
+                        {...stylex.props(
+                          s.tableTh,
+                          compact && s.compactTableTh,
+                        )}
+                      >
+                        {t("category")}
+                      </th>
                       {data.months.map((month) => (
-                        <th key={month} className={s.number}>
+                        <th
+                          key={month}
+                          {...stylex.props(
+                            s.tableTh,
+                            s.tableNumber,
+                            compact && s.compactTableTh,
+                          )}
+                        >
                           {monthLabel(month)}
                         </th>
                       ))}
-                      <th className={s.number}>{t("total")}</th>
+                      <th
+                        {...stylex.props(
+                          s.tableTh,
+                          s.tableNumber,
+                          compact && s.compactTableTh,
+                        )}
+                      >
+                        {t("total")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {Object.entries(data.by_type[type].categories).map(
                       ([category, months]) => (
                         <tr key={category}>
-                          <th scope="row">{category}</th>
+                          <th
+                            scope="row"
+                            {...stylex.props(
+                              s.tableTh,
+                              compact && s.compactTableTh,
+                            )}
+                          >
+                            {category}
+                          </th>
                           {data.months.map((month) => (
-                            <td key={month} className={s.number}>
+                            <td
+                              key={month}
+                              {...stylex.props(
+                                s.tableTd,
+                                s.tableNumber,
+                                compact && s.compactTableTd,
+                              )}
+                            >
                               {money(months[month] || 0, currency)}
                             </td>
                           ))}
-                          <td className={s.number}>
+                          <td
+                            {...stylex.props(
+                              s.tableTd,
+                              s.tableNumber,
+                              compact && s.compactTableTd,
+                            )}
+                          >
                             {money(
                               data.by_type[type].totals_per_cat[category],
                               currency,
@@ -283,7 +402,7 @@ export function Summary() {
           ),
       )}
       {data && !Object.keys(data.by_type).length && (
-        <p className={s.empty}>{t("no_summary_data")}</p>
+        <p {...stylex.props(s.empty)}>{t("no_summary_data")}</p>
       )}
     </Page>
   );

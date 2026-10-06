@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 - Opt-in V2 dashboard with clearer financial summaries, account balance charts, budgets, recent activity, and a responsive layout. Switch between V2 and the classic interface at any time.
 - French and English support throughout the new dashboard.
 
+### Improved
+- V2 spacing, typography and rounded surfaces now follow the selected Astryx theme throughout the dashboard, budgets, summaries and history.
+
 ## [1.1.8] - 2026-09-10
 
 ### Improved

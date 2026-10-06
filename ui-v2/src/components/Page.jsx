@@ -1,30 +1,31 @@
+import * as stylex from "@stylexjs/stylex";
 import React from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { Shell } from "./Shell";
 import { useLanguage } from "../lib/i18n";
-import s from "./Pages.module.css";
-
+import { styles as s } from "./Pages.stylex.js";
 export function Page({ title, subtitle, resource, actions, children }) {
   const { t } = useLanguage();
   return (
     <Shell profile={resource.profile}>
-      <div className={s.heading}>
+      <div {...stylex.props(s.heading)}>
         <div>
-          <h1>{t(title)}</h1>
-          <p>{t(subtitle)}</p>
+          <h1 {...stylex.props(s.headingH1)}>{t(title)}</h1>
+          <p {...stylex.props(s.headingP)}>{t(subtitle)}</p>
         </div>
-        <div className={s.actions}>
+        <div {...stylex.props(s.actions)}>
           <Button
             label={t("refresh")}
             onClick={resource.refresh}
             isLoading={resource.loading}
             variant="secondary"
+            xstyle={[s.actionsButton]}
           />
           {actions}
         </div>
       </div>
       {resource.error ? (
-        <div className={s.empty} role="alert">
+        <div role="alert" {...stylex.props(s.empty)}>
           <h2>{t("connection_error")}</h2>
           <p>{t("connection_error_body")}</p>
           <Button label={t("retry")} onClick={resource.refresh} />
@@ -37,9 +38,9 @@ export function Page({ title, subtitle, resource, actions, children }) {
     </Shell>
   );
 }
-export function Field({ label, children }) {
+export function Field({ label, children, xstyle }) {
   return (
-    <label className={s.field}>
+    <label {...stylex.props(s.field, xstyle)}>
       <span>{label}</span>
       {children}
     </label>
@@ -48,9 +49,9 @@ export function Field({ label, children }) {
 export function Editor({ title, onClose, children }) {
   const { t } = useLanguage();
   return (
-    <section className={s.editor} aria-label={title}>
-      <div className={s.heading}>
-        <h2>{title}</h2>
+    <section aria-label={title} {...stylex.props(s.editor)}>
+      <div {...stylex.props(s.heading)}>
+        <h2 {...stylex.props(s.headingH2)}>{title}</h2>
         <Button label={t("cancel")} variant="secondary" onClick={onClose} />
       </div>
       {children}

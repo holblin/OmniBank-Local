@@ -61,6 +61,9 @@ test('mobile sidebar, controls and content fit 390px and 320px', async ({ page }
     await page.goto('/v2');
     await expect(page.getByRole('heading', { name: 'Dernières opérations' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const tableBox = await page.getByRole('table').last().boundingBox();
+    const mainBox = await page.locator('main').boundingBox();
+    expect(tableBox.x + tableBox.width).toBeLessThanOrEqual(mainBox.x + mainBox.width);
     await page.getByRole('button', { name: 'Ouvrir le menu', exact: true }).click();
     await expect(page.getByRole('link', { name: 'Historique', exact: true })).toBeInViewport();
     await page.getByRole('button', { name: 'Fermer le menu', exact: true }).first().click();
@@ -143,6 +146,10 @@ test('all six themes support compact layouts with independent saved preferences'
     await selector.selectOption(theme);
     await expect(page.locator('html')).toHaveAttribute('data-astryx-theme', theme);
     await expect(compact).toHaveAttribute('aria-pressed', 'false');
+    const sidebarBox = await page.getByRole('complementary').boundingBox();
+    const mainBox = await page.locator('main').boundingBox();
+    expect(mainBox.x).toBeGreaterThanOrEqual(sidebarBox.x + sidebarBox.width);
+    expect(mainBox.width).toBeGreaterThan(900);
     const roomyHeight = (await metric.boundingBox()).height;
     await compact.click();
     await expect(compact).toHaveAttribute('aria-pressed', 'true');
@@ -150,6 +157,7 @@ test('all six themes support compact layouts with independent saved preferences'
     await expect(page.getByRole('img', { name: 'Évolution quotidienne du solde du compte' })).toBeVisible();
     await page.setViewportSize({ width: 320, height: 844 });
     await expect(compact).toBeVisible();
+    expect((await page.locator('main').boundingBox()).width).toBe(320);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   }
   await page.reload();

@@ -72,3 +72,21 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
   passed. Captured desktop/mobile screenshots with synthetic data and corrected
   crowded history rows on mobile.
 - Attachments, recurrence setup and AI budget tools remain available in V1.
+
+
+## StyleX foundation
+
+- Confirmed `@astryxdesign/core`, `@stylexjs/stylex`,
+  `@astryxdesign/theme-neutral` and `@astryxdesign/cli` are installed in V2.
+- Ran the installed Astryx CLI's `init` command through pnpm and read the generated
+  `ui-v2/AGENTS.md`, layout, token and StyleX authoring guidance. Documented the
+  configured compiler outside the CLI-managed section.
+- Added the official Vite StyleX plugin and migrated all three CSS modules and
+  inline page styles to compiled StyleX. Astryx overrides use `xstyle`; DOM nodes
+  use `stylex.props`. Published color, spacing, radius and type tokens follow
+  each theme, with explicit compact variants. Global CSS covers reset/print only.
+- Corrected sidebar offsets, responsive table columns, compact history cells and
+  print framing during screenshot review. Added layout/print regression checks.
+- Production build and all seventeen Chrome browser checks passed. Production
+  and Vite hot reload both rendered without browser errors or horizontal overflow.
+- Refreshed dashboard, migrated-page and six-theme screenshots with synthetic data.

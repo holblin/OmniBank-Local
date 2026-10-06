@@ -1,29 +1,144 @@
-import { Link } from '@tanstack/react-router';
-import React from 'react';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Icon } from './Icon';
-import { useLanguage } from '../lib/i18n';
-import s from './Dashboard.module.css';
-
+import { useAppTheme } from "../lib/theme";
+import * as stylex from "@stylexjs/stylex";
+import { Link } from "@tanstack/react-router";
+import React from "react";
+import { Badge } from "@astryxdesign/core/Badge";
+import { Icon } from "./Icon";
+import { useLanguage } from "../lib/i18n";
+import { styles as s } from "./Dashboard.stylex.js";
 export function TransactionList({ transactions, accounts, loading, error }) {
+  const { compact } = useAppTheme();
   const { t, money, date } = useLanguage();
-  return <section className={s.panel}>
-    <div className={s.panelHeading}><div><h2>{t('recent_transactions')}</h2><p>{t('recent_subtitle')}</p></div><Link to="/history" className={s.textLink}>{t('see_all')}<Icon name="arrow" size={15}/></Link></div>
-    {loading ? <p className={s.message} role="status">{t('loading')}</p> : error ? <p className={s.message} role="alert">{t('transactions_error')}</p> : !transactions.length ? <div className={s.empty}><Icon name="arrows" size={28}/><strong>{t('no_transactions')}</strong><p>{t('no_transactions_body')}</p><Link to="/history" search={{ new: 1 }}>{t('new_transaction')}<Icon name="plus" size={14}/></Link></div> : <div className={s.tableScroll}>
-      <table className={s.transactions}>
-        <thead><tr><th>{t('transaction')}</th><th>{t('date')}</th><th>{t('status')}</th><th>{t('amount')}</th></tr></thead>
-        <tbody>{transactions.map(tx => {
-          const income = tx.type === 'income';
-          const transfer = tx.type === 'transfer';
-          const account = accounts.find(a => a.id === (income ? tx.to_account_id : tx.from_account_id));
-          return <tr key={tx.id}>
-            <td><div className={s.transactionCell}><span className={`${s.transactionIcon} ${income ? s.incomeIcon : transfer ? s.transferIcon : ''}`}><Icon name={transfer ? 'arrows' : income ? 'down' : 'up'} size={17}/></span><div><strong>{tx.description}</strong><small>{tx.category || t('uncategorised')}{account ? ` · ${account.name}` : ''}</small></div></div></td>
-            <td>{date(tx.date_operation)}</td>
-            <td><Badge label={t(tx.reconciliation_date ? 'reconciled' : 'pending')} variant={tx.reconciliation_date ? 'success' : 'neutral'}/></td>
-            <td className={`${s.amount} ${income ? s.income : ''}`}>{transfer ? '' : income ? '+ ' : '− '}{money(Math.abs(tx.amount), account?.currency || 'EUR')}</td>
-          </tr>;
-        })}</tbody>
-      </table>
-    </div>}
-  </section>;
+  return (
+    <section {...stylex.props(s.panel)}>
+      <div {...stylex.props(s.panelHeading, compact && s.compactPanelHeading)}>
+        <div>
+          <h2 {...stylex.props(s.panelHeadingH2)}>
+            {t("recent_transactions")}
+          </h2>
+          <p {...stylex.props(s.panelHeadingP)}>{t("recent_subtitle")}</p>
+        </div>
+        <Link to="/history" {...stylex.props(s.textLink)}>
+          {t("see_all")}
+          <Icon name="arrow" size={15} />
+        </Link>
+      </div>
+      {loading ? (
+        <p role="status" {...stylex.props(s.message)}>
+          {t("loading")}
+        </p>
+      ) : error ? (
+        <p role="alert" {...stylex.props(s.message)}>
+          {t("transactions_error")}
+        </p>
+      ) : !transactions.length ? (
+        <div {...stylex.props(s.empty)}>
+          <Icon name="arrows" size={28} />
+          <strong {...stylex.props(s.emptyStrong)}>
+            {t("no_transactions")}
+          </strong>
+          <p {...stylex.props(s.emptyP)}>{t("no_transactions_body")}</p>
+          <Link
+            to="/history"
+            search={{
+              new: 1,
+            }}
+            {...stylex.props(s.emptyA)}
+          >
+            {t("new_transaction")}
+            <Icon name="plus" size={14} />
+          </Link>
+        </div>
+      ) : (
+        <div {...stylex.props(s.tableScroll)}>
+          <table {...stylex.props(s.transactions)}>
+            <thead>
+              <tr>
+                <th {...stylex.props(s.transactionsTh)}>{t("transaction")}</th>
+                <th {...stylex.props(s.transactionsTh)}>{t("date")}</th>
+                <th {...stylex.props(s.transactionsTh)}>{t("status")}</th>
+                <th {...stylex.props(s.transactionsTh)}>{t("amount")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((tx) => {
+                const income = tx.type === "income";
+                const transfer = tx.type === "transfer";
+                const account = accounts.find(
+                  (a) =>
+                    a.id === (income ? tx.to_account_id : tx.from_account_id),
+                );
+                return (
+                  <tr key={tx.id}>
+                    <td
+                      {...stylex.props(
+                        s.transactionsTd,
+                        compact && s.compactTransactionsTd,
+                      )}
+                    >
+                      <div {...stylex.props(s.transactionCell)}>
+                        <span
+                          {...stylex.props(
+                            s.transactionIcon,
+                            income && s.incomeIcon,
+                            !income && transfer && s.transferIcon,
+                          )}
+                        >
+                          <Icon
+                            name={transfer ? "arrows" : income ? "down" : "up"}
+                            size={17}
+                          />
+                        </span>
+                        <div>
+                          <strong {...stylex.props(s.transactionCellStrong)}>
+                            {tx.description}
+                          </strong>
+                          <small {...stylex.props(s.transactionCellSmall)}>
+                            {tx.category || t("uncategorised")}
+                            {account ? ` · ${account.name}` : ""}
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      {...stylex.props(
+                        s.transactionsTd,
+                        compact && s.compactTransactionsTd,
+                      )}
+                    >
+                      {date(tx.date_operation)}
+                    </td>
+                    <td
+                      {...stylex.props(
+                        s.transactionsTd,
+                        compact && s.compactTransactionsTd,
+                      )}
+                    >
+                      <Badge
+                        label={t(
+                          tx.reconciliation_date ? "reconciled" : "pending",
+                        )}
+                        variant={tx.reconciliation_date ? "success" : "neutral"}
+                      />
+                    </td>
+                    <td
+                      {...stylex.props(
+                        s.transactionsTd,
+                        s.amount,
+                        income && s.income,
+                        compact && s.compactTransactionsTd,
+                      )}
+                    >
+                      {transfer ? "" : income ? "+ " : "− "}
+                      {money(Math.abs(tx.amount), account?.currency || "EUR")}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
 }

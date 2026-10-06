@@ -1,6 +1,6 @@
 # OmniBank UI V2
 
-An opt-in interface built with React 19, Vite, Astryx, TanStack Charts and
+An opt-in interface built with React 19, Vite, Astryx, StyleX, TanStack Charts and
 TanStack Router. The existing interface remains the entry point; click
 **Essayer la V2 / Try V2** to open `/v2`.
 
@@ -34,6 +34,19 @@ pnpm --dir ui-v2 dev
 Open `http://127.0.0.1:5173/v2`. The Vite server proxies local API requests to
 port 8434; links to classic workflows open the backend's original interface.
 
+## Styling
+
+The four Astryx setup packages are installed, and `pnpm --dir ui-v2 run astryx init`
+generates `ui-v2/AGENTS.md`. Read it before editing V2. The CLI is invoked through
+the `astryx` script because this workspace uses pnpm.
+
+`@stylexjs/unplugin` compiles `stylex.create()` at build time, with CSS extraction
+and no runtime injection. Its specificity configuration matches Astryx's
+published component styles. Use typed Astryx tokens from
+`@astryxdesign/core/theme/tokens.stylex`, `stylex.props()` on DOM nodes and `xstyle`
+on Astryx components. All page, shell, responsive and compact styles use StyleX;
+the small global CSS file handles document reset and print framing.
+
 ## Themes
 
 The header selector offers official Astryx Neutral, Stone, Gothic, Matcha,
@@ -53,8 +66,8 @@ preview to capture compact screenshots for all six themes.
 | --- | --- |
 | `src/router.jsx` | TanStack route tree rooted at `/v2`; unknown-route fallback |
 | `src/pages/` | Page composition and dashboard state |
-| `src/components/` | Reusable UI pieces and scoped CSS modules |
-| `src/styles/tokens.css` | Shared design tokens and Astryx theme overrides |
+| `src/components/` | Reusable UI pieces and compiled StyleX styles |
+| `src/styles/tokens.css` | Document reset and print framing |
 | `src/lib/` | Same-origin API client, formatting and language context |
 | `src/locales/` | Small generated V2 dictionaries, extracted from shared i18n |
 | `tests/` | Synthetic fixtures, browser checks and screenshot capture |

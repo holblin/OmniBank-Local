@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex";
+import { styles as s } from "./Pages.stylex.js";
 import React, { useMemo } from "react";
 import { defineChart, lineY } from "@tanstack/charts";
 import { Chart } from "@tanstack/charts/react";
@@ -81,7 +83,7 @@ export default function SummaryChart({ points, currency }) {
         height={230}
         ariaLabel={t("monthly_cashflow")}
       />
-      <p style={{ fontSize: 12, color: muted }}>
+      <p {...stylex.props(s.chartLegend)}>
         {t("income")} — · {t("expenses")} - -
       </p>
     </>

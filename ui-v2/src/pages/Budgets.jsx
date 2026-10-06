@@ -1,3 +1,5 @@
+import { useAppTheme } from "../lib/theme";
+import * as stylex from "@stylexjs/stylex";
 import React, { useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { ProgressBar } from "@astryxdesign/core/ProgressBar";
@@ -5,9 +7,9 @@ import { Page, Field, Editor } from "../components/Page";
 import { get, mutate, localDate, legacyUrl } from "../lib/api";
 import { useResource } from "../lib/useResource";
 import { useLanguage } from "../lib/i18n";
-import s from "../components/Pages.module.css";
-
+import { styles as s } from "../components/Pages.stylex.js";
 export function Budgets() {
+  const { compact } = useAppTheme();
   const { t, money } = useLanguage();
   const [month, setMonth] = useState(localDate().slice(0, 7));
   const [filter, setFilter] = useState("active");
@@ -24,7 +26,11 @@ export function Budgets() {
       ),
       get("/api/accounts/", signal),
     ]);
-    return { budgets, status: status.budgets, accounts };
+    return {
+      budgets,
+      status: status.budgets,
+      accounts,
+    };
   }, month);
   const currency = resource.profile?.currency || "EUR";
   async function action(path, method, body) {
@@ -71,8 +77,8 @@ export function Budgets() {
         />
       }
     >
-      <div className={s.filters}>
-        <Field label={t("month")}>
+      <div {...stylex.props(s.filters, compact && s.compactFilters)}>
+        <Field label={t("month")} xstyle={[s.field, s.filtersChild]}>
           <input
             type="month"
             required
@@ -83,10 +89,15 @@ export function Budgets() {
                 setDetail(null);
               }
             }}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("show")}>
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+        <Field label={t("show")} xstyle={[s.field, s.filtersChild]}>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
+          >
             {["active", "spending", "savings", "project", "closed"].map((v) => (
               <option key={v} value={v}>
                 {t(v)}
@@ -94,12 +105,15 @@ export function Budgets() {
             ))}
           </select>
         </Field>
-        <a className={s.note} href={legacyUrl("budgets")}>
+        <a
+          href={legacyUrl("budgets")}
+          {...stylex.props(s.note, s.filtersChild)}
+        >
           {t("advanced_budget_tools")}
         </a>
       </div>
       {error && (
-        <p className={s.error} role="alert">
+        <p role="alert" {...stylex.props(s.error)}>
           {t("save_error")}
         </p>
       )}
@@ -129,19 +143,23 @@ export function Budgets() {
         />
       )}
       {!visible.length ? (
-        <div className={s.empty}>{t("no_budgets")}</div>
+        <div {...stylex.props(s.empty)}>{t("no_budgets")}</div>
       ) : (
-        <div className={s.grid}>
+        <div {...stylex.props(s.grid, compact && s.compactGrid)}>
           {visible.map((b) => {
             const status = data.status.find((value) => value.id === b.id);
             const savings = b.envelope_type === "savings";
             return (
               <article
                 key={b.id}
-                className={`${s.card} ${b.is_closed ? s.closed : ""}`}
+                {...stylex.props(
+                  s.card,
+                  b.is_closed && s.closed,
+                  compact && s.compactCard,
+                )}
               >
-                <h2>{b.name}</h2>
-                <p>
+                <h2 {...stylex.props(s.cardH2)}>{b.name}</h2>
+                <p {...stylex.props(s.cardP)}>
                   {t(
                     savings
                       ? "savings"
@@ -151,7 +169,7 @@ export function Budgets() {
                   )}
                   {b.is_locked ? ` · ${t("locked")}` : ""}
                 </p>
-                <strong>
+                <strong {...stylex.props(s.cardStrong)}>
                   {money(
                     savings ? status?.balance || 0 : b.monthly_amount,
                     currency,
@@ -165,23 +183,29 @@ export function Budgets() {
                       value={Math.max(0, Math.min(status.percent, 100))}
                       aria-label={b.name}
                     />
-                    <dl>
-                      <dt>{t(savings ? "target_amount" : "spent")}</dt>
-                      <dd>
+                    <dl {...stylex.props(s.cardDl)}>
+                      <dt {...stylex.props(s.cardDt)}>
+                        {t(savings ? "target_amount" : "spent")}
+                      </dt>
+                      <dd {...stylex.props(s.cardDd)}>
                         {money(
                           savings ? b.monthly_amount : status.spent,
                           currency,
                         )}
                       </dd>
-                      <dt>{t("remaining")}</dt>
-                      <dd>{money(status.remaining, currency)}</dd>
+                      <dt {...stylex.props(s.cardDt)}>{t("remaining")}</dt>
+                      <dd {...stylex.props(s.cardDd)}>
+                        {money(status.remaining, currency)}
+                      </dd>
                     </dl>
                   </>
                 ) : (
-                  <p>{t("closed")}</p>
+                  <p {...stylex.props(s.cardP)}>{t("closed")}</p>
                 )}
-                <p>{b.categories.join(" · ") || t("assigned_operations")}</p>
-                <div className={s.actions}>
+                <p {...stylex.props(s.cardP)}>
+                  {b.categories.join(" · ") || t("assigned_operations")}
+                </p>
+                <div {...stylex.props(s.actions, s.cardActions)}>
                   <Button
                     label={t("details")}
                     variant="secondary"
@@ -189,6 +213,7 @@ export function Budgets() {
                       setDetail(b);
                       setEditor(null);
                     }}
+                    xstyle={[s.actionsButton]}
                   />
                   <Button
                     label={t("edit")}
@@ -199,6 +224,7 @@ export function Budgets() {
                       setDetail(null);
                       setError(false);
                     }}
+                    xstyle={[s.actionsButton]}
                   />
                   <Button
                     label={t(b.is_closed ? "reopen" : "archive")}
@@ -209,6 +235,7 @@ export function Budgets() {
                         is_closed: !b.is_closed,
                       })
                     }
+                    xstyle={[s.actionsButton]}
                   />
                   <Button
                     label={t("delete")}
@@ -222,6 +249,7 @@ export function Budgets() {
                       )
                         action(`/api/budgets/${b.id}`, "DELETE");
                     }}
+                    xstyle={[s.actionsButton]}
                   />
                 </div>
               </article>
@@ -232,7 +260,6 @@ export function Budgets() {
     </Page>
   );
 }
-
 function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
   const { t } = useLanguage();
   const [kind, setKind] = useState(
@@ -271,16 +298,17 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
       title={t(budget.id ? "edit_budget" : "new_budget")}
       onClose={onClose}
     >
-      <form className={s.form} onSubmit={submit}>
-        <Field label={t("name")}>
+      <form onSubmit={submit} {...stylex.props(s.form)}>
+        <Field label={t("name")} xstyle={[s.field]}>
           <input
             name="name"
             required
             pattern=".*\S.*"
             defaultValue={budget.name || ""}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("target_amount")}>
+        <Field label={t("target_amount")} xstyle={[s.field]}>
           <input
             name="amount"
             type="number"
@@ -288,10 +316,15 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
             step="0.01"
             required
             defaultValue={budget.monthly_amount ?? ""}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("envelope_type")}>
-          <select value={kind} onChange={(e) => setKind(e.target.value)}>
+        <Field label={t("envelope_type")} xstyle={[s.field]}>
+          <select
+            value={kind}
+            onChange={(e) => setKind(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
+          >
             {["spending", "project", "savings"].map((v) => (
               <option key={v} value={v}>
                 {t(v)}
@@ -299,8 +332,12 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
             ))}
           </select>
         </Field>
-        <Field label={t("period")}>
-          <select value={period} onChange={(e) => setPeriod(e.target.value)}>
+        <Field label={t("period")} xstyle={[s.field]}>
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
+          >
             {["monthly", "yearly", "indefinite", "custom"].map((v) => (
               <option key={v} value={v}>
                 {t(v)}
@@ -310,37 +347,41 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
         </Field>
         {period === "custom" && (
           <>
-            <Field label={t("date_start")}>
+            <Field label={t("date_start")} xstyle={[s.field]}>
               <input
                 name="start"
                 type="date"
                 required
                 defaultValue={budget.start_date || ""}
+                {...stylex.props(s.fieldInput)}
               />
             </Field>
-            <Field label={t("date_end")}>
+            <Field label={t("date_end")} xstyle={[s.field]}>
               <input
                 name="end"
                 type="date"
                 required
                 defaultValue={budget.end_date || ""}
+                {...stylex.props(s.fieldInput)}
               />
             </Field>
           </>
         )}
         {kind === "spending" && (
-          <Field label={t("categories_comma")}>
+          <Field label={t("categories_comma")} xstyle={[s.field]}>
             <input
               name="categories"
               defaultValue={budget.categories?.join(", ") || ""}
+              {...stylex.props(s.fieldInput)}
             />
           </Field>
         )}
-        <Field label={t("account_scope")}>
+        <Field label={t("account_scope")} xstyle={[s.field]}>
           <select
             name="accounts"
             multiple
             defaultValue={budget.account_ids?.map(String) || []}
+            {...stylex.props(s.fieldSelect)}
           >
             {accounts.map((a) => (
               <option key={a.id} value={a.id}>
@@ -350,7 +391,7 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
           </select>
           <small>{t("all_accounts_if_empty")}</small>
         </Field>
-        <label className={s.check}>
+        <label {...stylex.props(s.check)}>
           <input
             name="locked"
             type="checkbox"
@@ -358,20 +399,21 @@ function BudgetEditor({ budget, accounts, busy, onClose, onSave }) {
           />
           {t("locked")}
         </label>
-        <div className={s.actions}>
+        <div {...stylex.props(s.actions, s.formActions)}>
           <Button
             label={t("save")}
             variant="primary"
             type="submit"
             isLoading={busy}
+            xstyle={[s.actionsButton]}
           />
         </div>
       </form>
     </Editor>
   );
 }
-
 function BudgetDetail({ budget, month, currency, onClose, onRefresh }) {
+  const { compact } = useAppTheme();
   const { t, money, date } = useLanguage();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
@@ -383,7 +425,10 @@ function BudgetDetail({ budget, month, currency, onClose, onRefresh }) {
       ),
       get(`/api/budgets/${budget.id}/allocations`, signal),
     ]);
-    return { transactions, allocations };
+    return {
+      transactions,
+      allocations,
+    };
   }, `${budget.id}:${month}`);
   async function removeAllocation(id) {
     if (!window.confirm(t("confirm_delete_allocation"))) return;
@@ -429,67 +474,96 @@ function BudgetDetail({ budget, month, currency, onClose, onRefresh }) {
         </p>
       ) : (
         <>
-          <div className={s.tableWrap}>
-            <table className={s.table}>
-              <caption>{t("assigned_operations")}</caption>
+          <div {...stylex.props(s.tableWrap)}>
+            <table {...stylex.props(s.table)}>
+              <caption {...stylex.props(s.tableCaption)}>
+                {t("assigned_operations")}
+              </caption>
               <thead>
                 <tr>
-                  <th>{t("transaction")}</th>
-                  <th>{t("date")}</th>
-                  <th>{t("amount")}</th>
+                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                    {t("transaction")}
+                  </th>
+                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                    {t("date")}
+                  </th>
+                  <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                    {t("amount")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {resource.data.transactions.map((tx) => (
                   <tr key={tx.id}>
-                    <td>{tx.description}</td>
-                    <td>{date(tx.date)}</td>
-                    <td>{money(tx.amount, currency)}</td>
+                    <td
+                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+                    >
+                      {tx.description}
+                    </td>
+                    <td
+                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+                    >
+                      {date(tx.date)}
+                    </td>
+                    <td
+                      {...stylex.props(s.tableTd, compact && s.compactTableTd)}
+                    >
+                      {money(tx.amount, currency)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             {!resource.data.transactions.length && (
-              <p className={s.empty}>{t("no_transactions")}</p>
+              <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
             )}
           </div>
           {(budget.envelope_type === "savings" ||
             budget.period === "indefinite") && (
             <>
               <h3>{t("allocations")}</h3>
-              <p className={s.note}>{t("allocation_note")}</p>
-              <form className={s.filters} onSubmit={allocation}>
-                <Field label={t("amount")}>
+              <p {...stylex.props(s.note)}>{t("allocation_note")}</p>
+              <form
+                onSubmit={allocation}
+                {...stylex.props(s.filters, compact && s.compactFilters)}
+              >
+                <Field label={t("amount")} xstyle={[s.field, s.filtersChild]}>
                   <input
                     name="amount"
                     type="number"
                     min="0.01"
                     step="0.01"
                     required
+                    {...stylex.props(s.fieldInput)}
                   />
                 </Field>
-                <Field label={t("direction")}>
-                  <select name="direction">
+                <Field
+                  label={t("direction")}
+                  xstyle={[s.field, s.filtersChild]}
+                >
+                  <select name="direction" {...stylex.props(s.fieldSelect)}>
                     <option value="1">{t("deposit")}</option>
                     <option value="-1">{t("withdraw")}</option>
                   </select>
                 </Field>
-                <Field label={t("date")}>
+                <Field label={t("date")} xstyle={[s.field, s.filtersChild]}>
                   <input
                     name="date"
                     type="date"
                     required
                     defaultValue={localDate()}
+                    {...stylex.props(s.fieldInput)}
                   />
                 </Field>
-                <Field label={t("note")}>
-                  <input name="note" />
+                <Field label={t("note")} xstyle={[s.field, s.filtersChild]}>
+                  <input name="note" {...stylex.props(s.fieldInput)} />
                 </Field>
                 <Button
                   label={t("save")}
                   variant="primary"
                   type="submit"
                   isLoading={busy}
+                  xstyle={[s.filtersChild]}
                 />
               </form>
               {error && <p role="alert">{t("save_error")}</p>}

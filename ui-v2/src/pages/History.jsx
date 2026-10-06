@@ -1,3 +1,5 @@
+import { useAppTheme } from "../lib/theme";
+import * as stylex from "@stylexjs/stylex";
 import { useSearch } from "@tanstack/react-router";
 import React, { useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
@@ -6,8 +8,7 @@ import { Page, Field, Editor } from "../components/Page";
 import { get, mutate, localDate, legacyUrl } from "../lib/api";
 import { useResource } from "../lib/useResource";
 import { useLanguage } from "../lib/i18n";
-import s from "../components/Pages.module.css";
-
+import { styles as s } from "../components/Pages.stylex.js";
 export const transactionTypes = [
   "income",
   "expense_var",
@@ -17,6 +18,7 @@ export const transactionTypes = [
 ];
 const PAGE_SIZE = 40;
 export function History() {
+  const { compact } = useAppTheme();
   const { t, money, date } = useLanguage();
   const [filters, setFilters] = useState({
     search: "",
@@ -28,12 +30,17 @@ export function History() {
   });
   const [draftSearch, setDraftSearch] = useState("");
   const [offset, setOffset] = useState(0);
-  const search = useSearch({ strict: false });
+  const search = useSearch({
+    strict: false,
+  });
   const [editor, setEditor] = useState(search.new ? {} : null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   function filter(key, value) {
-    setFilters((previous) => ({ ...previous, [key]: value }));
+    setFilters((previous) => ({
+      ...previous,
+      [key]: value,
+    }));
     setOffset(0);
   }
   const query = new URLSearchParams(
@@ -47,7 +54,11 @@ export function History() {
       get("/api/accounts/", signal),
       get("/api/budgets/", signal),
     ]);
-    return { transactions, accounts, budgets };
+    return {
+      transactions,
+      accounts,
+      budgets,
+    };
   }, query.toString());
   async function action(path, method, body) {
     setBusy(true);
@@ -82,25 +93,32 @@ export function History() {
       }
     >
       <form
-        className={s.filters}
         onSubmit={(event) => {
           event.preventDefault();
           filter("search", draftSearch);
         }}
+        {...stylex.props(s.filters, compact && s.compactFilters)}
       >
-        <Field label={t("search")}>
+        <Field label={t("search")} xstyle={[s.field, s.filtersChild]}>
           <input
             type="search"
             value={draftSearch}
             onChange={(e) => setDraftSearch(e.target.value)}
             placeholder={t("search_placeholder")}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Button type="submit" label={t("search")} variant="secondary" />
-        <Field label={t("select_account")}>
+        <Button
+          type="submit"
+          label={t("search")}
+          variant="secondary"
+          xstyle={[s.filtersChild]}
+        />
+        <Field label={t("select_account")} xstyle={[s.field, s.filtersChild]}>
           <select
             value={filters.account_id}
             onChange={(e) => filter("account_id", e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             <option value="">{t("all_accounts")}</option>
             {data?.accounts.map((a) => (
@@ -110,26 +128,29 @@ export function History() {
             ))}
           </select>
         </Field>
-        <Field label={t("date_start")}>
+        <Field label={t("date_start")} xstyle={[s.field, s.filtersChild]}>
           <input
             type="date"
             value={filters.date_start}
             max={filters.date_end || undefined}
             onChange={(e) => filter("date_start", e.target.value)}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("date_end")}>
+        <Field label={t("date_end")} xstyle={[s.field, s.filtersChild]}>
           <input
             type="date"
             value={filters.date_end}
             min={filters.date_start || undefined}
             onChange={(e) => filter("date_end", e.target.value)}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("transaction_type")}>
+        <Field label={t("transaction_type")} xstyle={[s.field, s.filtersChild]}>
           <select
             value={filters.transaction_type}
             onChange={(e) => filter("transaction_type", e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             <option value="">{t("all_types")}</option>
             {transactionTypes.map((v) => (
@@ -139,10 +160,11 @@ export function History() {
             ))}
           </select>
         </Field>
-        <Field label={t("status")}>
+        <Field label={t("status")} xstyle={[s.field, s.filtersChild]}>
           <select
             value={filters.reconciled}
             onChange={(e) => filter("reconciled", e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             {["all", "reconciled", "unreconciled"].map((v) => (
               <option key={v} value={v}>
@@ -153,7 +175,7 @@ export function History() {
         </Field>
       </form>
       {error && (
-        <p className={s.error} role="alert">
+        <p role="alert" {...stylex.props(s.error)}>
           {t("save_error")}
         </p>
       )}
@@ -174,20 +196,43 @@ export function History() {
           }
         />
       )}
-      <div className={s.tableWrap}>
-        <table className={`${s.table} ${s.historyTable}`}>
-          <caption>{t("history")}</caption>
-          <thead>
-            <tr>
-              <th>{t("transaction")}</th>
-              <th>{t("date")}</th>
-              <th>{t("accounts")}</th>
-              <th>{t("status")}</th>
-              <th className={s.number}>{t("amount")}</th>
-              <th>{t("actions")}</th>
+      <div {...stylex.props(s.tableWrap)}>
+        <table {...stylex.props(s.table, s.historyTable)}>
+          <caption {...stylex.props(s.tableCaption)}>{t("history")}</caption>
+          <thead {...stylex.props(s.historyTableThead)}>
+            <tr
+              {...stylex.props(
+                s.historyTableTr,
+                compact && s.compactHistoryTableTr,
+              )}
+            >
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("transaction")}
+              </th>
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("date")}
+              </th>
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("accounts")}
+              </th>
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("status")}
+              </th>
+              <th
+                {...stylex.props(
+                  s.tableTh,
+                  compact && s.compactTableTh,
+                  s.tableNumber,
+                )}
+              >
+                {t("amount")}
+              </th>
+              <th {...stylex.props(s.tableTh, compact && s.compactTableTh)}>
+                {t("actions")}
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody {...stylex.props(s.historyTableTbody)}>
             {data?.transactions.slice(0, PAGE_SIZE).map((tx) => {
               const account = data.accounts.find(
                 (a) =>
@@ -197,22 +242,60 @@ export function History() {
                     : tx.from_account_id),
               );
               return (
-                <tr key={tx.id}>
-                  <td>
+                <tr
+                  key={tx.id}
+                  {...stylex.props(
+                    s.historyTableTr,
+                    compact && s.compactHistoryTableTr,
+                  )}
+                >
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                    )}
+                  >
                     {tx.description}
-                    <small>
+                    <small
+                      {...stylex.props(s.tableTdSmall, s.historyTableTdSmall)}
+                    >
                       {tx.category || t("uncategorised")} · {t(tx.type)}
                       {tx.is_skipped ? ` · ${t("skipped")}` : ""}
                     </small>
                   </td>
-                  <td>{date(tx.date_operation)}</td>
-                  <td>
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                    )}
+                  >
+                    {date(tx.date_operation)}
+                  </td>
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                    )}
+                  >
                     {accountName(tx.from_account_id)}
                     {tx.to_account_id
                       ? ` → ${accountName(tx.to_account_id)}`
                       : ""}
                   </td>
-                  <td>
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                    )}
+                  >
                     <Badge
                       label={t(
                         tx.reconciliation_date ? "reconciled" : "pending",
@@ -220,7 +303,15 @@ export function History() {
                       variant={tx.reconciliation_date ? "success" : "neutral"}
                     />
                   </td>
-                  <td className={s.number}>
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                      s.tableNumber,
+                    )}
+                  >
                     {tx.type === "income"
                       ? "+ "
                       : tx.type.startsWith("expense")
@@ -231,8 +322,15 @@ export function History() {
                       account?.currency || resource.profile?.currency || "EUR",
                     )}
                   </td>
-                  <td>
-                    <div className={s.rowActions}>
+                  <td
+                    {...stylex.props(
+                      s.tableTd,
+                      compact && s.compactTableTd,
+                      s.historyTableTd,
+                      compact && s.compactHistoryTableTd,
+                    )}
+                  >
+                    <div {...stylex.props(s.rowActions)}>
                       <Button
                         label={t("edit")}
                         variant="secondary"
@@ -241,6 +339,7 @@ export function History() {
                           setEditor(tx);
                           setError(false);
                         }}
+                        xstyle={[s.rowActionsButton]}
                       />
                       <Button
                         label={t(
@@ -255,6 +354,7 @@ export function History() {
                               : localDate(),
                           })
                         }
+                        xstyle={[s.rowActionsButton]}
                       />
                       <Button
                         label={t("delete")}
@@ -268,6 +368,7 @@ export function History() {
                           )
                             action(`/api/transactions/${tx.id}`, "DELETE");
                         }}
+                        xstyle={[s.rowActionsButton]}
                       />
                     </div>
                   </td>
@@ -277,10 +378,10 @@ export function History() {
           </tbody>
         </table>
         {!data?.transactions.length && (
-          <p className={s.empty}>{t("no_transactions")}</p>
+          <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
         )}
       </div>
-      <div className={s.pagination}>
+      <div {...stylex.props(s.pagination)}>
         <Button
           label={t("previous")}
           variant="secondary"
@@ -300,7 +401,6 @@ export function History() {
     </Page>
   );
 }
-
 function TransactionEditor({
   transaction,
   accounts,
@@ -347,26 +447,32 @@ function TransactionEditor({
       title={t(transaction.id ? "edit_transaction" : "new_transaction")}
       onClose={onClose}
     >
-      <form className={s.form} onSubmit={submit}>
-        <Field label={t("description")}>
+      <form onSubmit={submit} {...stylex.props(s.form)}>
+        <Field label={t("description")} xstyle={[s.field]}>
           <input
             name="description"
             required
             pattern=".*\S.*"
             defaultValue={transaction.description || ""}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("amount")}>
+        <Field label={t("amount")} xstyle={[s.field]}>
           <input
             name="amount"
             type="number"
             step="0.01"
             required
             defaultValue={transaction.id ? transaction.amount : ""}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("transaction_type")}>
-          <select value={type} onChange={(e) => setType(e.target.value)}>
+        <Field label={t("transaction_type")} xstyle={[s.field]}>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
+          >
             {transactionTypes.map((v) => (
               <option key={v} value={v}>
                 {t(v)}
@@ -374,7 +480,7 @@ function TransactionEditor({
             ))}
           </select>
         </Field>
-        <Field label={t("date")}>
+        <Field label={t("date")} xstyle={[s.field]}>
           <input
             name="date"
             type="date"
@@ -382,31 +488,42 @@ function TransactionEditor({
             max="2200-12-31"
             required
             defaultValue={transaction.date_operation || localDate()}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <Field label={t("from_account")}>
+        <Field label={t("from_account")} xstyle={[s.field]}>
           <select
             value={from}
             required={type.startsWith("expense") || type === "transfer"}
             onChange={(e) => setFrom(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             {options}
           </select>
         </Field>
-        <Field label={t("to_account")}>
+        <Field label={t("to_account")} xstyle={[s.field]}>
           <select
             value={to}
             required={type === "income" || type === "transfer"}
             onChange={(e) => setTo(e.target.value)}
+            {...stylex.props(s.fieldSelect)}
           >
             {options}
           </select>
         </Field>
-        <Field label={t("category")}>
-          <input name="category" defaultValue={transaction.category || ""} />
+        <Field label={t("category")} xstyle={[s.field]}>
+          <input
+            name="category"
+            defaultValue={transaction.category || ""}
+            {...stylex.props(s.fieldInput)}
+          />
         </Field>
-        <Field label={t("assigned_budget")}>
-          <select name="budget" defaultValue={transaction.budget_id || ""}>
+        <Field label={t("assigned_budget")} xstyle={[s.field]}>
+          <select
+            name="budget"
+            defaultValue={transaction.budget_id || ""}
+            {...stylex.props(s.fieldSelect)}
+          >
             <option value="">{t("none")}</option>
             {budgets
               .filter(
@@ -422,14 +539,15 @@ function TransactionEditor({
               ))}
           </select>
         </Field>
-        <Field label={t("reconciliation_date")}>
+        <Field label={t("reconciliation_date")} xstyle={[s.field]}>
           <input
             name="reconciliation"
             type="date"
             defaultValue={transaction.reconciliation_date || ""}
+            {...stylex.props(s.fieldInput)}
           />
         </Field>
-        <label className={s.check}>
+        <label {...stylex.props(s.check)}>
           <input
             type="checkbox"
             name="skipped"
@@ -438,18 +556,19 @@ function TransactionEditor({
           {t("skipped")}
         </label>
         {from && from === to && (
-          <p className={s.error} role="alert">
+          <p role="alert" {...stylex.props(s.formError, s.error)}>
             {t("different_accounts")}
           </p>
         )}
-        <div className={s.actions}>
+        <div {...stylex.props(s.actions, s.formActions)}>
           <Button
             label={t("save")}
             variant="primary"
             type="submit"
             isLoading={busy}
+            xstyle={[s.actionsButton]}
           />
-          <a href={legacyUrl("all_operations")} className={s.note}>
+          <a href={legacyUrl("all_operations")} {...stylex.props(s.note)}>
             {t("advanced_transaction_tools")}
           </a>
         </div>
