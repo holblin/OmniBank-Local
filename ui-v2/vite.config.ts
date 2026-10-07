@@ -7,6 +7,10 @@ export default defineConfig(({ command }) => ({
       // Match Astryx's published StyleX specificity strategy.
       useCSSLayers: false,
       dev: command !== "build",
+      // Published Astryx styles use minified property keys in both environments.
+      // Debug property names prevent xstyle overrides from merging with them.
+      debug: false,
+      enableMinifiedKeys: true,
       runtimeInjection: false,
     }),
   ],

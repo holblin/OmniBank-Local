@@ -103,10 +103,11 @@ test("French/English preference survives navigation and reload", async ({
 test("new transaction opens the V2 form", async ({ page }) => {
   await page.goto("/v2");
   await page
-    .getByRole("link", { name: "Nouvelle opération", exact: true })
+    .getByRole("button", { name: "Nouvelle opération", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/v2\/history\?new=1/);
+  await expect(page).toHaveURL(/\/v2\/?$/);
+  await expect(page.getByRole("dialog")).toBeVisible();
   await expect(
     page.getByRole("textbox", { name: "Libellé", exact: true }),
   ).toBeVisible();
@@ -280,6 +281,7 @@ test("theme selection changes Astryx and dashboard colors and survives reload", 
     .getByRole("combobox", { name: "Theme", exact: true })
     .selectOption("matcha");
   await page.setViewportSize({ width: 320, height: 844 });
+  await page.getByRole("button", { name: "Open menu", exact: true }).click();
   await expect(
     page.getByRole("combobox", { name: "Theme", exact: true }),
   ).toBeVisible();
@@ -334,6 +336,7 @@ test("all six themes support compact layouts with independent saved preferences"
       }),
     ).toBeVisible();
     await page.setViewportSize({ width: 320, height: 844 });
+    await page.getByRole("button", { name: "Ouvrir le menu", exact: true }).click();
     await expect(compact).toBeVisible();
     expect((await page.locator("main").boundingBox())!.width).toBe(320);
     expect(
@@ -341,6 +344,7 @@ test("all six themes support compact layouts with independent saved preferences"
     ).toBeLessThanOrEqual(320);
   }
   await page.reload();
+  await page.getByRole("button", { name: "Ouvrir le menu", exact: true }).click();
   await expect(selector).toHaveValue("butter");
   await expect(compact).toHaveAttribute("aria-pressed", "true");
   await compact.click();

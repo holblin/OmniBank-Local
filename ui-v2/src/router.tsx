@@ -131,6 +131,13 @@ function pageRoute<const TPath extends string>(
 ) {
   return createRoute({ getParentRoute: () => rootRoute, path, component });
 }
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/settings",
+  validateSearch: (search: Record<string, unknown>): { section?: string } =>
+    typeof search.section === "string" ? { section: search.section } : {},
+  component: Settings,
+});
 export const router = createRouter({
   routeTree: rootRoute.addChildren([
     dashboardRoute,
@@ -144,7 +151,7 @@ export const router = createRouter({
     pageRoute("/trends", Trends),
     pageRoute("/simulator", Simulator),
     pageRoute("/assistant", Assistant),
-    pageRoute("/settings", Settings),
+    settingsRoute,
     pageRoute("/bank-sync", BankSync),
     pageRoute("/journal", Journal),
     pageRoute("/imports", Imports),

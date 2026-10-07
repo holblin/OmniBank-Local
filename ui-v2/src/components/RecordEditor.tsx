@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import * as stylex from "@stylexjs/stylex";
 import { Button } from "@astryxdesign/core/Button";
 import { Field, Editor } from "./Page";
@@ -24,11 +24,13 @@ export function RecordEditor({
   onClose: () => void;
   onSave: (body: import("../lib/ui-types").FormValues) => unknown;
 }) {
+  const formId = useId();
   const values = initial as import("../lib/ui-types").FormValues;
   const { t } = useLanguage();
   return (
-    <Editor title={title} busy={busy} error={error} onClose={onClose}>
-      <form
+    <Editor title={title} busy={busy} error={error} onClose={onClose}
+      actions={<Button form={formId} type="submit" variant="primary" label={t("save")} isLoading={busy} />} >
+      <form id={formId}
         {...stylex.props(s.form)}
         onSubmit={(event) => {
           event.preventDefault();
@@ -105,13 +107,6 @@ export function RecordEditor({
             )}
           </Field>
         ))}
-        <Button
-          type="submit"
-          variant="primary"
-          label={t("save")}
-          isLoading={busy}
-          xstyle={[s.formActions]}
-        />
       </form>
     </Editor>
   );

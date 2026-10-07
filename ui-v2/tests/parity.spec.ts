@@ -178,6 +178,7 @@ test("annual recurrence renewal generates instances and propagates amount change
   expect(created.ok()).toBeTruthy();
   const recurrence = await created.json();
   await page.goto("/v2/recurrences");
+  await page.getByRole("button", { name: "Renouvellement et propagation", exact: true }).click();
   await page
     .getByRole("button", { name: "Préparer l’année", exact: true })
     .click();

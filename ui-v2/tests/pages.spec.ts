@@ -173,8 +173,7 @@ test("history filters and pagination then transaction create edit reconcile dele
   await expect(
     page.getByRole("heading", { name: "Historique", exact: true }),
   ).toBeVisible();
-  const count = await page.locator("tbody tr").count();
-  expect(count).toBeGreaterThan(6);
+  await expect.poll(() => page.locator("tbody tr").count()).toBeGreaterThan(6);
   await page
     .getByRole("combobox", { name: "Sélectionner un compte" })
     .selectOption(String(accounts.savings.id));

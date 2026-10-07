@@ -1,3 +1,4 @@
+import { AdvancedTools } from "../components/AdvancedTools";
 import React, { useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { VStack } from "@astryxdesign/core/VStack";
@@ -51,8 +52,7 @@ export function CrossProfileTransfers({
     enabled: Boolean(profileId),
   });
   return (
-    <details>
-      <summary>{t("cross_profile_transfers")}</summary>
+    <AdvancedTools title={t("cross_profile_transfers")}>
       <VStack gap={3}>
         <Field label={t("target_profile")}>
           <select value={target} onChange={(e) => setTarget(e.target.value)}>
@@ -160,6 +160,6 @@ export function CrossProfileTransfers({
         )}
         <Confirmation {...a.confirmation} />
       </VStack>
-    </details>
+    </AdvancedTools>
   );
 }

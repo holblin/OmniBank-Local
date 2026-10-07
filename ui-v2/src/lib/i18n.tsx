@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import fr from "../locales/fr.json";
 import en from "../locales/en.json";
 import { InternationalizationProvider } from "@astryxdesign/core/i18n";
+import astryxFrench from "@astryxdesign/core/locales/fr-FR.generated.js";
 
 type Language = "fr" | "en";
 interface LanguageValue {
@@ -19,6 +20,8 @@ interface LanguageValue {
 }
 const LanguageContext = createContext<LanguageValue | null>(null);
 const dictionaries: Record<Language, Record<string, string>> = { fr, en };
+// Bundle component copy locally; Astryx ships English as its fallback.
+const componentMessages = { fr: astryxFrench };
 
 export function LanguageProvider({ children }: React.PropsWithChildren) {
   const [language, setLanguage] = useState<Language>(() =>
@@ -70,7 +73,7 @@ export function LanguageProvider({ children }: React.PropsWithChildren) {
         togglePrivacy,
       }}
     >
-      <InternationalizationProvider locale={language}>
+      <InternationalizationProvider locale={language} messages={componentMessages}>
         {children}
       </InternationalizationProvider>
     </LanguageContext.Provider>

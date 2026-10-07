@@ -57,6 +57,10 @@ See [the parity comparison](../docs/UI-V1-V2-COMPARISON.md) for the complete
 feature matrix, side-by-side screenshots, backup benchmark, and verification
 limits. Real bank authentication and Ollama output require those services.
 
+See [the workflow audit](../docs/UI-V2-UX-AUDIT.md) and
+[Astryx template research](../docs/UI-V2-ASTRYX-RESEARCH.md) for the navigation,
+focused settings, history filters, import progress and persistent dialog actions.
+
 ## Styling
 
 The four Astryx setup packages are installed, and `pnpm --dir ui-v2 run astryx init`

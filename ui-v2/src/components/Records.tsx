@@ -1,3 +1,4 @@
+import { EmptyState } from "@astryxdesign/core/EmptyState";
 import React from "react";
 import { TableCell, TableHeaderCell, TableRow } from "@astryxdesign/core/Table";
 import { VirtualTable } from "./VirtualTable";
@@ -31,7 +32,7 @@ export function Records<T>({
       columnCount={count}
       emptyState={
         !rows.length ? (
-          <p {...stylex.props(s.recordEmpty)}>{t("no_records")}</p>
+          <EmptyState title={t("no_records")} description={t("no_records_help")} isCompact />
         ) : null
       }
       header={

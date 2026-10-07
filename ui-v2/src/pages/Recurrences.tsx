@@ -1,3 +1,4 @@
+import { AdvancedTools } from "../components/AdvancedTools";
 import type { Recurrence } from "../lib/server/workspaces";
 import React, { useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
@@ -103,11 +104,6 @@ export function Recurrences() {
       }
     >
       <VStack gap={4}>
-        <RecurrenceTools
-          fields={fields}
-          items={r.data?.items || []}
-          profileId={r.profile?.id}
-        />
         <label>
           <input
             type="checkbox"
@@ -185,6 +181,9 @@ export function Recurrences() {
             </>
           )}
         />
+        <AdvancedTools title={t("recurrence_tools")}>
+          <RecurrenceTools fields={fields} items={r.data?.items || []} profileId={r.profile?.id} />
+        </AdvancedTools>
       </VStack>
       {closing && (
         <RecordEditor

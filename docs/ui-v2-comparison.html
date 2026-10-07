@@ -1,6 +1,6 @@
 <!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OmniBank — V1 / V2</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f3f4f2;color:#172820;font:16px/1.5 system-ui,sans-serif}header,main{max-width:1800px;margin:auto;padding:24px}h1{margin:0;font-size:32px}h2{margin:36px 0 4px}p{max-width:1000px}a{color:#245942}nav{display:flex;flex-wrap:wrap;gap:16px;margin-top:18px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}figure{margin:0;background:white;border:1px solid #d9dfd6;border-radius:12px;overflow:hidden}figcaption{padding:10px 16px;font-weight:700}img{display:block;width:100%;height:auto}small{font-weight:400;color:#48544a}@media(max-width:800px){.pair{grid-template-columns:1fr}header,main{padding:16px}}
-</style><header><h1>OmniBank : comparaison V1 / V2</h1><p>6 octobre 2026 · Même backend temporaire, mêmes données synthétiques · 1440 × 1000</p><p>La V2 possède les pages principales, mais plusieurs contrôles avancés manquent. Les captures montrent le premier écran ; les dialogues et panneaux hors écran sont détaillés dans <a href="UI-V1-V2-COMPARISON.md">le rapport fonctionnel</a>. Cliquez sur une capture pour l'ouvrir en taille réelle.</p><nav>
+</style><header><h1>OmniBank : comparaison V1 / V2</h1><p>6 octobre 2026 · Même backend temporaire, mêmes données synthétiques · 1440 × 1000</p><p>La V2 conserve ses fonctionnalités natives et améliore les parcours : navigation groupée, filtres réversibles, paramètres ciblés et actions persistantes dans les dialogues. Consultez <a href="UI-V1-V2-COMPARISON.md">le rapport fonctionnel</a>, <a href="UI-V2-UX-AUDIT.md">l’audit des parcours</a> et <a href="UI-V2-ASTRYX-RESEARCH.md">l’étude des modèles Astryx</a>. Cliquez sur une capture pour l'ouvrir en taille réelle.</p><nav>
 <a href="#overview">Vue d&#x27;ensemble</a>
 <a href="#accounts">Comptes</a>
 <a href="#budgets">Budgets</a>
@@ -8,8 +8,9 @@
 <a href="#trends">Tendances</a>
 <a href="#simulator">Simulateur</a>
 <a href="#onboarding">Premier démarrage</a>
+<a href="#workflows">Parcours desktop et mobile</a>
 </nav></header><main>
-<section id="overview"><h2>Vue d&#x27;ensemble</h2><p>Indicateurs et rapprochement V1 ; comptes et budgets V2.</p><div class="pair">
+<section id="overview"><h2>Vue d&#x27;ensemble</h2><p>Comparer les indicateurs, les contrôles financiers et le rapprochement.</p><div class="pair">
 <figure><figcaption>V1 <small>— Vue d&#x27;ensemble</small></figcaption><a href="../screenshots/ui-v2/comparison/overview-v1.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/overview-v1.png" alt="Vue d&#x27;ensemble dans V1"></a></figure>
 <figure><figcaption>V2 <small>— Vue d&#x27;ensemble</small></figcaption><a href="../screenshots/ui-v2/comparison/overview-v2.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/overview-v2.png" alt="Vue d&#x27;ensemble dans V2"></a></figure>
 </div></section>
@@ -17,7 +18,7 @@
 <figure><figcaption>V1 <small>— Comptes</small></figcaption><a href="../screenshots/ui-v2/comparison/accounts-v1.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/accounts-v1.png" alt="Comptes dans V1"></a></figure>
 <figure><figcaption>V2 <small>— Comptes</small></figcaption><a href="../screenshots/ui-v2/comparison/accounts-v2.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/accounts-v2.png" alt="Comptes dans V2"></a></figure>
 </div></section>
-<section id="budgets"><h2>Budgets</h2><p>Les enveloppes existent dans les deux interfaces ; les outils avancés restent à migrer.</p><div class="pair">
+<section id="budgets"><h2>Budgets</h2><p>Les enveloppes restent prioritaires ; les suggestions et outils groupés suivent les budgets.</p><div class="pair">
 <figure><figcaption>V1 <small>— Budgets</small></figcaption><a href="../screenshots/ui-v2/comparison/budgets-v1.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/budgets-v1.png" alt="Budgets dans V1"></a></figure>
 <figure><figcaption>V2 <small>— Budgets</small></figcaption><a href="../screenshots/ui-v2/comparison/budgets-v2.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/budgets-v2.png" alt="Budgets dans V2"></a></figure>
 </div></section>
@@ -25,7 +26,7 @@
 <figure><figcaption>V1 <small>— Historique</small></figcaption><a href="../screenshots/ui-v2/comparison/history-v1.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/history-v1.png" alt="Historique dans V1"></a></figure>
 <figure><figcaption>V2 <small>— Historique</small></figcaption><a href="../screenshots/ui-v2/comparison/history-v2.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/history-v2.png" alt="Historique dans V2"></a></figure>
 </div></section>
-<section id="trends"><h2>Tendances</h2><p>Périodes, alignement, modes et statistiques V1 ; courbe de solde V2.</p><div class="pair">
+<section id="trends"><h2>Tendances</h2><p>Comparer les périodes, les modes, les statistiques et les courbes natives.</p><div class="pair">
 <figure><figcaption>V1 <small>— Tendances</small></figcaption><a href="../screenshots/ui-v2/comparison/trends-v1.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/trends-v1.png" alt="Tendances dans V1"></a></figure>
 <figure><figcaption>V2 <small>— Tendances</small></figcaption><a href="../screenshots/ui-v2/comparison/trends-v2.png"><img loading="lazy" src="../screenshots/ui-v2/comparison/trends-v2.png" alt="Tendances dans V2"></a></figure>
 </div></section>
@@ -37,4 +38,26 @@
 <figure><figcaption>V1 <small>— Accueil de l’assistant</small></figcaption><a href="../screenshots/ui-v2/onboarding/welcome-v1.png"><img loading="lazy" src="../screenshots/ui-v2/onboarding/welcome-v1.png" alt="Accueil de l’assistant V1"></a></figure>
 <figure><figcaption>V2 <small>— Dialogue de bienvenue</small></figcaption><a href="../screenshots/ui-v2/onboarding/welcome-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/onboarding/welcome-desktop.png" alt="Dialogue de bienvenue V2"></a></figure>
 </div><p><a href="../screenshots/ui-v2/onboarding/welcome-mobile.png">Voir le dialogue V2 sur mobile (390 × 844)</a>.</p></section>
+<section id="workflows"><h2>Parcours V2 : desktop et mobile</h2><p>Paramètres ciblés, étapes d’import, filtres réversibles et actions persistantes. Données synthétiques uniquement.</p>
+<h3>Historique</h3><div class="pair">
+<figure><figcaption>Historique <small>— Desktop · 1440 × 1000</small></figcaption><a href="../screenshots/ui-v2/workflows/history-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/history-desktop.png" alt="Historique V2 : Desktop · 1440 × 1000"></a></figure>
+<figure><figcaption>Historique <small>— Mobile · 390 × 844</small></figcaption><a href="../screenshots/ui-v2/workflows/history-mobile.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/history-mobile.png" alt="Historique V2 : Mobile · 390 × 844"></a></figure>
+</div>
+<h3>Paramètres</h3><div class="pair">
+<figure><figcaption>Paramètres <small>— Desktop · 1440 × 1000</small></figcaption><a href="../screenshots/ui-v2/workflows/settings-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/settings-desktop.png" alt="Paramètres V2 : Desktop · 1440 × 1000"></a></figure>
+<figure><figcaption>Paramètres <small>— Mobile · 390 × 844</small></figcaption><a href="../screenshots/ui-v2/workflows/settings-mobile.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/settings-mobile.png" alt="Paramètres V2 : Mobile · 390 × 844"></a></figure>
+</div>
+<h3>Import</h3><div class="pair">
+<figure><figcaption>Import <small>— Desktop · 1440 × 1000</small></figcaption><a href="../screenshots/ui-v2/workflows/imports-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/imports-desktop.png" alt="Import V2 : Desktop · 1440 × 1000"></a></figure>
+<figure><figcaption>Import <small>— Mobile · 390 × 844</small></figcaption><a href="../screenshots/ui-v2/workflows/imports-mobile.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/imports-mobile.png" alt="Import V2 : Mobile · 390 × 844"></a></figure>
+</div>
+<h3>Budgets</h3><div class="pair">
+<figure><figcaption>Budgets <small>— Desktop · 1440 × 1000</small></figcaption><a href="../screenshots/ui-v2/workflows/budgets-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/budgets-desktop.png" alt="Budgets V2 : Desktop · 1440 × 1000"></a></figure>
+<figure><figcaption>Budgets <small>— Mobile · 390 × 844</small></figcaption><a href="../screenshots/ui-v2/workflows/budgets-mobile.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/budgets-mobile.png" alt="Budgets V2 : Mobile · 390 × 844"></a></figure>
+</div>
+<h3>Édition d’une opération</h3><div class="pair">
+<figure><figcaption>Édition d’une opération <small>— Desktop · 1440 × 1000</small></figcaption><a href="../screenshots/ui-v2/workflows/transaction-desktop.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/transaction-desktop.png" alt="Édition d’une opération V2 : Desktop · 1440 × 1000"></a></figure>
+<figure><figcaption>Édition d’une opération <small>— Mobile · 390 × 844</small></figcaption><a href="../screenshots/ui-v2/workflows/transaction-mobile.png"><img loading="lazy" src="../screenshots/ui-v2/workflows/transaction-mobile.png" alt="Édition d’une opération V2 : Mobile · 390 × 844"></a></figure>
+</div>
+</section>
 </main></html>

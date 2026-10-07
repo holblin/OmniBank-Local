@@ -1,3 +1,4 @@
+import { AdvancedTools } from "../components/AdvancedTools";
 import React, { useState } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { VStack } from "@astryxdesign/core/VStack";
@@ -101,8 +102,7 @@ export function BudgetSuggestions({ profileId }: { profileId?: string }) {
     setSelected([]);
   }
   return (
-    <details>
-      <summary>{t("budget_suggestions")}</summary>
+    <AdvancedTools title={t("budget_suggestions")}>
       <VStack gap={3}>
         {capacity.data && (
           <Records
@@ -299,6 +299,6 @@ export function BudgetSuggestions({ profileId }: { profileId?: string }) {
           />
         )}
       </VStack>
-    </details>
+    </AdvancedTools>
   );
 }

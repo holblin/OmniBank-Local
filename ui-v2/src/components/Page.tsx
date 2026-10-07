@@ -1,5 +1,11 @@
 import * as stylex from "@stylexjs/stylex";
 import React from "react";
+import { HStack } from "@astryxdesign/core/HStack";
+import { VStack } from "@astryxdesign/core/VStack";
+import { Heading } from "@astryxdesign/core/Heading";
+import { Text } from "@astryxdesign/core/Text";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { Button } from "@astryxdesign/core/Button";
 import { Dialog, DialogHeader } from "@astryxdesign/core/Dialog";
 import { Layout, LayoutContent, LayoutFooter } from "@astryxdesign/core/Layout";
@@ -23,12 +29,12 @@ export function Page({
   const { t } = useLanguage();
   return (
     <Shell profile={resource.profile}>
-      <div {...stylex.props(s.heading)}>
-        <div>
-          <h1 {...stylex.props(s.headingH1)}>{t(title)}</h1>
-          <p {...stylex.props(s.headingP)}>{t(subtitle)}</p>
-        </div>
-        <div {...stylex.props(s.actions)}>
+      <HStack xstyle={s.heading} wrap="wrap" vAlign="center" hAlign="between">
+        <VStack gap={1}>
+          <Heading level={1} xstyle={s.headingH1}>{t(title)}</Heading>
+          <Text type="supporting">{t(subtitle)}</Text>
+        </VStack>
+        <HStack gap={2} wrap="wrap" xstyle={s.actions}>
           <Button
             label={t("refresh")}
             onClick={resource.refresh}
@@ -37,8 +43,8 @@ export function Page({
             xstyle={[s.actionsButton]}
           />
           {actions}
-        </div>
-      </div>
+        </HStack>
+      </HStack>
       {Boolean(resource.data) && resource.error && (
         <p role="alert" {...stylex.props(s.error)}>
           {t("stale_data")}
@@ -48,13 +54,12 @@ export function Page({
         <p role="status">{t("refreshing")}</p>
       )}
       {resource.error && !resource.data ? (
-        <div role="alert" {...stylex.props(s.empty)}>
-          <h2>{t("connection_error")}</h2>
-          <p>{t("connection_error_body")}</p>
-          <Button label={t("retry")} onClick={resource.refresh} />
-        </div>
+        <section role="alert">
+          <EmptyState title={t("connection_error")} description={t("connection_error_body")}
+            actions={<Button label={t("retry")} onClick={resource.refresh} />} />
+        </section>
       ) : resource.loading ? (
-        <p role="status">{t("loading")}</p>
+        <HStack gap={2} vAlign="center" role="status"><Spinner /><Text>{t("loading")}</Text></HStack>
       ) : (
         children
       )}
@@ -91,6 +96,7 @@ export function Editor({
   children,
   busy,
   error,
+  actions,
 }: import("../lib/ui-types").EditorProps) {
   useRestoreFocus();
   const { t } = useLanguage();
@@ -131,13 +137,16 @@ export function Editor({
           </LayoutContent>
         }
         footer={
-          <LayoutFooter>
+          <LayoutFooter hasDivider>
+            <HStack gap={2} hAlign="end" wrap="wrap" width="100%">
             <Button
               label={t("cancel")}
               variant="secondary"
               isDisabled={busy}
               onClick={onClose}
             />
+            {actions}
+            </HStack>
           </LayoutFooter>
         }
       />

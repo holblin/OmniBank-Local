@@ -36,6 +36,7 @@ export type FormValue = string | number | boolean | null;
 export type FormValues = Record<string, FormValue>;
 export type EditorProps = {
   title: string;
+  actions?: ReactNode;
   onClose: () => void;
   children?: ReactNode;
   busy?: boolean;

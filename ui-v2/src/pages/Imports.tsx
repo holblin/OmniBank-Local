@@ -1,3 +1,5 @@
+import { Stepper, Step } from "@astryxdesign/core/Stepper";
+import { Text } from "@astryxdesign/core/Text";
 import React, { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import { Button } from "@astryxdesign/core/Button";
@@ -198,11 +200,19 @@ export function Imports() {
   return (
     <Page title="imports" subtitle="imports_body" resource={r}>
       <VStack gap={4}>
+        <Stepper activeStep={done ? 3 : rows ? 2 : file ? 1 : 0} label={t("import_progress")}>
+          {["import_file_step", "import_analysis_step", "import_review_step", "import_done_step"].map((key, step) => <Step key={key} step={step} label={t(key)} />)}
+        </Stepper>
+        <Text type="supporting">{t(done ? "import_complete_help" : rows ? "import_review_help" : "import_start_help")}</Text>
         <Field label={t("import_mode")}>
           <select
             value={mode}
+            disabled={busy}
             onChange={(e) => {
               setMode(e.target.value);
+              setFile(null);
+              setInspection(null); setSection(""); setAttachments([]); setImportCounts(null);
+              upload.reset(); save.reset(); inspect.reset(); preview.reset(); categorize.reset();
               setRows(null);
               setAlerts({});
               setFileBalance(null);
@@ -218,6 +228,7 @@ export function Imports() {
           <Field label={t("select_account")}>
             <select
               value={account}
+              disabled={busy}
               onChange={(e) => {
                 setAccount(e.target.value);
                 setRows(null);
@@ -238,6 +249,7 @@ export function Imports() {
         )}
         <Field label={t("statement_file")}>
           <input
+            key={mode}
             type="file"
             accept={mode === "native" ? ".csv" : ".csv,.xlsx,.xls"}
             disabled={busy}
@@ -247,6 +259,8 @@ export function Imports() {
               setAlerts({});
               setFileBalance(null);
               setInspection(null);
+              setSection("");
+              setImportCounts(null);
               setDone(false);
               upload.reset();
               save.reset();
@@ -259,6 +273,7 @@ export function Imports() {
           <>
             <Button
               label={t("inspect_file")}
+              variant="secondary"
               isDisabled={!file || busy}
               onClick={() => inspect.mutate()}
             />
@@ -308,12 +323,14 @@ export function Imports() {
             />
             <Button
               label={t("prepare_import")}
+              variant="secondary"
               isLoading={upload.isPending}
               isDisabled={!file || busy}
               onClick={() => upload.mutate()}
             />
             <Button
               label={t("ai_parse_file")}
+              variant="secondary"
               isDisabled={!file || !account || busy}
               isLoading={preview.isPending}
               onClick={() => preview.mutate(true)}
@@ -360,6 +377,7 @@ export function Imports() {
                 </label>
                 <Button
                   label={t("categorize_selection")}
+                  variant="secondary"
                   isLoading={categorize.isPending}
                   isDisabled={!rows.some((row) => row.selected) || busy}
                   onClick={() => categorize.mutate()}
@@ -436,6 +454,7 @@ export function Imports() {
         )}
         <Field label={t("restore_documents")}>
           <input
+            key={mode}
             type="file"
             multiple
             onChange={(e) => setAttachments(Array.from(e.target.files || []))}
@@ -443,6 +462,7 @@ export function Imports() {
         </Field>
         <Field label={t("restore_document_folder")}>
           <input
+            key={mode}
             type="file"
             multiple
             {...{ webkitdirectory: "" }}

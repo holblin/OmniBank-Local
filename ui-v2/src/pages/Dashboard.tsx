@@ -9,7 +9,7 @@ import { MetricCard } from "../components/MetricCard";
 import { BudgetList } from "../components/BudgetList";
 import { TransactionList } from "../components/TransactionList";
 import { legacyUrl, localDate } from "../lib/navigation";
-import { useDashboard, useTrend, useRecent } from "../lib/server/queries";
+import { useDashboard, useTrend, useRecent, useWrite } from "../lib/server/queries";
 import { useLanguage } from "../lib/i18n";
 import { styles as s } from "../components/Dashboard.stylex";
 const BalanceChart = lazy(() =>
@@ -17,12 +17,17 @@ const BalanceChart = lazy(() =>
     default: module.BalanceChart,
   })),
 );
+import { TransactionEditor } from "./History";
+import { HStack } from "@astryxdesign/core/HStack";
+import { Text } from "@astryxdesign/core/Text";
 import { FinanceCockpit } from "./FinanceCockpit";
 export function Dashboard({ overview = false }: { overview?: boolean }) {
   const { compact } = useAppTheme();
   const [showControls, setShowControls] = useState(overview);
   const { t, money, date, locale } = useLanguage();
   const resource = useDashboard();
+  const [newTransaction, setNewTransaction] = useState(false);
+  const write = useWrite("transactions", resource.profile?.id);
   const data = resource.data && {
     ...resource.data,
     profile: resource.profile,
@@ -71,6 +76,12 @@ export function Dashboard({ overview = false }: { overview?: boolean }) {
   const stats = data?.stats;
   return (
     <Shell profile={data?.profile}>
+      {newTransaction && <TransactionEditor transaction={{ from_account_id: Number(accountId) || undefined }} accounts={data?.accounts || []} budgets={data?.budgets || []}
+        busy={write.isPending} error={write.isError} onClose={() => setNewTransaction(false)}
+        onSave={async body => {
+          try {await write.mutateAsync({path: "/api/transactions/", method: "POST", body}); setNewTransaction(false);}
+          catch { /* Le dialogue conserve la saisie et affiche l'erreur. */ }
+        }} /> }
       <div {...stylex.props(s.pageHeading, compact && s.compactPageHeading)}>
         <div>
           <div {...stylex.props(s.eyebrow)}>
@@ -99,7 +110,8 @@ export function Dashboard({ overview = false }: { overview?: boolean }) {
             label={t("new_transaction")}
             icon={<Icon name="plus" size={17} />}
             variant="primary"
-            href="/v2/history?new=1"
+            onClick={() => {write.reset(); setNewTransaction(true);}}
+            isDisabled={!data?.accounts.length}
             xstyle={[s.actionsButton]}
           />
         </div>
@@ -130,6 +142,14 @@ export function Dashboard({ overview = false }: { overview?: boolean }) {
         </div>
       ) : data && stats ? (
         <>
+          <HStack gap={2} wrap="wrap" vAlign="center" hAlign="between">
+            <Text type="supporting">{t("daily_workflow")}</Text>
+            <HStack gap={2} wrap="wrap">
+              <Button label={t("to_reconcile")} variant="secondary" href="/v2/history?reconciled=unreconciled" />
+              <Button label={t("imports")} variant="secondary" href="/v2/imports" />
+              <Button label={t("bank_sync")} variant="secondary" href="/v2/bank-sync" />
+            </HStack>
+          </HStack>
           <div {...stylex.props(s.sectionLabel)}>
             <span {...stylex.props(s.sectionLabelSpan)}>{t("overview")}</span>
             <span {...stylex.props(s.sectionLabelSpan)}>

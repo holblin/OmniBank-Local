@@ -10,9 +10,17 @@ import { useSearch } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { get } from "../lib/http";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Button } from "@astryxdesign/core/Button";
-import { Badge } from "@astryxdesign/core/Badge";
+import { Token } from "@astryxdesign/core/Token";
+import { TabList, Tab } from "@astryxdesign/core/TabList";
+import { HStack } from "@astryxdesign/core/HStack";
+import { VStack } from "@astryxdesign/core/VStack";
+import { Collapsible } from "@astryxdesign/core/Collapsible";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { Text } from "@astryxdesign/core/Text";
+import { CheckboxInput } from "@astryxdesign/core/CheckboxInput";
+import { workflow } from "../components/Workflow.stylex";
 import { Page, Field, Editor } from "../components/Page";
 import { localDate, legacyUrl } from "../lib/navigation";
 import { useHistory, useWrite } from "../lib/server/queries";
@@ -28,7 +36,7 @@ export const transactionTypes = [
 const PAGE_SIZE = 40;
 import { CrossProfileTransfers } from "./CrossProfileTransfers";
 export function History() {
-  const pagination = useRef<HTMLDivElement>(null);
+  const pagination = useRef<HTMLElement>(null);
   const { compact } = useAppTheme();
   const { t, money, date } = useLanguage();
   const [columns, setColumns] = useState<string[]>(() => {
@@ -44,16 +52,17 @@ export function History() {
   const [filters, setFilters] = useState({
     search: new URLSearchParams(location.search).get("search") || "",
     category: new URLSearchParams(location.search).get("category") || "",
-    account_id: "",
-    date_start: "",
-    date_end: "",
-    transaction_type: "",
-    reconciled: "all",
+    account_id: new URLSearchParams(location.search).get("account_id") || "",
+    date_start: new URLSearchParams(location.search).get("date_start") || "",
+    date_end: new URLSearchParams(location.search).get("date_end") || "",
+    transaction_type: new URLSearchParams(location.search).get("transaction_type") || "",
+    reconciled: new URLSearchParams(location.search).get("reconciled") || "all",
   });
   const [draftSearch, setDraftSearch] = useState(
     new URLSearchParams(location.search).get("search") || "",
   );
   const [offset, setOffset] = useState(0);
+  const [columnsOpen, setColumnsOpen] = useState(false);
   const search = useSearch({
     strict: false,
   });
@@ -69,6 +78,20 @@ export function History() {
       ...previous,
       [key]: value,
     }));
+    setOffset(0);
+  }
+  const [advanced, setAdvanced] = useState(Boolean(filters.date_start || filters.date_end || filters.transaction_type || filters.category));
+  function resetFilters() {
+    setFilters({search: "", category: "", account_id: "", date_start: "", date_end: "", transaction_type: "", reconciled: "all"});
+    setDraftSearch(""); setOffset(0);
+  }
+  const activeFilters = Object.entries(filters).filter(([key, value]) => value && !(key === "reconciled" && value === "all"));
+  const currentMonthStart = `${localDate().slice(0, 7)}-01`;
+  const quickView = filters.reconciled === "unreconciled" && !filters.date_start && !filters.date_end ? "to_reconcile"
+    : filters.date_start === currentMonthStart && filters.date_end === localDate() && filters.reconciled === "all" ? "this_month"
+    : !filters.date_start && !filters.date_end && filters.reconciled === "all" ? "all_operations" : "custom_view";
+  function selectView(view: string) {
+    setFilters(previous => ({...previous, reconciled: view === "to_reconcile" ? "unreconciled" : "all", date_start: view === "this_month" ? currentMonthStart : "", date_end: view === "this_month" ? localDate() : ""}));
     setOffset(0);
   }
   const query = new URLSearchParams(
@@ -119,7 +142,8 @@ export function History() {
         title="history"
         subtitle="history_intro"
         resource={resource}
-        actions={
+        actions={<>
+          <Button label={t("imports")} variant="secondary" href="/v2/imports" />
           <Button
             label={t("new_transaction")}
             variant="primary"
@@ -128,14 +152,18 @@ export function History() {
               setError(false);
             }}
           />
-        }
+        </>}
       >
+        <VStack gap={3} xstyle={workflow.toolbar}>
+          <TabList value={quickView} onChange={selectView} aria-label={t("transaction_views")} hasDivider>
+            {["all_operations", "to_reconcile", "this_month", ...(quickView === "custom_view" ? ["custom_view"] : [])].map(value => <Tab key={value} value={value} label={t(value)} />)}
+          </TabList>
         <form
           onSubmit={(event) => {
             event.preventDefault();
             filter("search", draftSearch);
           }}
-          {...stylex.props(s.filters, compact && s.compactFilters)}
+          {...stylex.props(s.filters, workflow.historyFilters, compact && s.compactFilters)}
         >
           <Field label={t("search")} xstyle={[s.field, s.filtersChild]}>
             <input
@@ -166,6 +194,23 @@ export function History() {
               ))}
             </select>
           </Field>
+          <Field label={t("status")} xstyle={[s.field, s.filtersChild]}>
+            <select
+              value={filters.reconciled}
+              onChange={(e) => filter("reconciled", e.target.value)}
+              {...stylex.props(s.fieldSelect)}
+            >
+              {["all", "reconciled", "unreconciled"].map((v) => (
+                <option key={v} value={v}>
+                  {t(v)}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </form>
+          <HStack gap={3} vAlign="start" width="100%">
+          <Collapsible trigger={t("advanced_filters")} isOpen={advanced} onOpenChange={setAdvanced} xstyle={workflow.flexible} data-testid="history-filter-disclosure">
+            <HStack id="advanced-history-filters" gap={3} wrap="wrap" xstyle={workflow.filters}>
           <Field label={t("date_start")} xstyle={[s.field, s.filtersChild]}>
             <input
               type="date"
@@ -201,20 +246,17 @@ export function History() {
               ))}
             </select>
           </Field>
-          <Field label={t("status")} xstyle={[s.field, s.filtersChild]}>
-            <select
-              value={filters.reconciled}
-              onChange={(e) => filter("reconciled", e.target.value)}
-              {...stylex.props(s.fieldSelect)}
-            >
-              {["all", "reconciled", "unreconciled"].map((v) => (
-                <option key={v} value={v}>
-                  {t(v)}
-                </option>
-              ))}
-            </select>
-          </Field>
-        </form>
+              <Field label={t("category")}><input value={filters.category} onChange={e => filter("category", e.target.value)} {...stylex.props(s.fieldInput)} /></Field>
+            </HStack>
+          </Collapsible>
+          <Button label={t("columns")} variant="ghost" onClick={() => setColumnsOpen(true)} />
+          </HStack>
+          {activeFilters.length > 0 && <HStack gap={2} wrap="wrap" vAlign="center" aria-label={t("active_filters")}>
+            {activeFilters.map(([key, value]) => <Token key={key} label={`${t(({account_id: "accounts", transaction_type: "transaction_type", date_start: "date_start", date_end: "date_end", reconciled: "status"} as Record<string, string>)[key] || key)}: ${key === "account_id" ? accountName(Number(value)) : ["reconciled", "transaction_type"].includes(key) ? t(value) : value}`}
+              onRemove={() => {filter(key as keyof typeof filters, key === "reconciled" ? "all" : ""); if(key === "search") setDraftSearch("");}} />)}
+            {activeFilters.length > 0 && <Button label={t("clear_filters")} variant="ghost" onClick={resetFilters} />}
+          </HStack>}
+        </VStack>
         {error && !editor && !pending && (
           <p role="alert" {...stylex.props(s.error)}>
             {t("save_error")}
@@ -238,12 +280,8 @@ export function History() {
             }
           />
         )}
-        <CrossProfileTransfers
-          profileId={resource.profile?.id}
-          accounts={data?.accounts || []}
-        />
-        <details>
-          <summary>{t("columns")}</summary>
+        {columnsOpen && <Editor title={t("columns")} onClose={() => setColumnsOpen(false)}>
+        <VStack gap={2}>
           {[
             "transaction",
             "date",
@@ -252,25 +290,15 @@ export function History() {
             "amount",
             "actions",
           ].map((key) => (
-            <label key={key}>
-              <input
-                type="checkbox"
-                checked={columns.includes(key)}
-                onChange={(e) => {
-                  const next = e.target.checked
-                    ? [...columns, key]
-                    : columns.filter((value) => value !== key);
-                  setColumns(next);
-                  localStorage.setItem(
-                    "omni_v2_history_columns",
-                    JSON.stringify(next),
-                  );
-                }}
-              />
-              {t(key)}
-            </label>
+            <CheckboxInput key={key} label={t(key)} value={columns.includes(key)}
+              isDisabled={columns.includes(key) && columns.length === 1}
+              onChange={checked => {
+                const next = checked ? [...columns, key] : columns.filter(value => value !== key);
+                setColumns(next); localStorage.setItem("omni_v2_history_columns", JSON.stringify(next));
+              }} />
           ))}
-        </details>
+        </VStack>
+        </Editor>}
         <div {...stylex.props(s.tableWrap)}>
           <VirtualTable
             rows={data?.transactions.slice(0, PAGE_SIZE)}
@@ -313,11 +341,11 @@ export function History() {
                     hidden={!columns.includes("status")}
                     xstyle={[s.tableTd, compact && s.compactTableTd]}
                   >
-                    <Badge
+                    <Token
                       label={t(
                         tx.reconciliation_date ? "reconciled" : "pending",
                       )}
-                      variant={tx.reconciliation_date ? "success" : "neutral"}
+                      color={tx.reconciliation_date ? "green" : "default"}
                     />
                   </TableCell>
                   <TableCell
@@ -465,12 +493,16 @@ export function History() {
             bottomRef={pagination}
             emptyState={
               !data?.transactions.length && (
-                <p {...stylex.props(s.empty)}>{t("no_transactions")}</p>
+                <EmptyState title={t(activeFilters.length ? "no_matching_transactions" : "no_transactions")}
+                  description={t(activeFilters.length ? "adjust_filters" : "add_first_transaction")}
+                  actions={<Button label={t(activeFilters.length ? "clear_filters" : "new_transaction")} onClick={() => activeFilters.length ? resetFilters() : setEditor({})} />} />
               )
             }
           />
         </div>
-        <div ref={pagination} {...stylex.props(s.pagination)}>
+        <section ref={pagination} {...stylex.props(workflow.bottomControls)}>
+        <HStack gap={2} wrap="wrap" xstyle={s.pagination}>
+          <Text type="supporting" role="status" aria-live="polite">{t("displayed_operations")}: {data?.transactions.slice(0, PAGE_SIZE).length || 0}</Text>
           <Button
             label={t("previous")}
             variant="secondary"
@@ -486,12 +518,17 @@ export function History() {
             isDisabled={!data || data.transactions.length <= PAGE_SIZE || busy}
             onClick={() => setOffset((value) => value + PAGE_SIZE)}
           />
-        </div>
+        </HStack>
+        <CrossProfileTransfers
+          profileId={resource.profile?.id}
+          accounts={data?.accounts || []}
+        />
+        </section>
       </Page>
     </>
   );
 }
-function TransactionEditor({
+export function TransactionEditor({
   transaction,
   accounts,
   budgets,
@@ -501,13 +538,14 @@ function TransactionEditor({
   onSave,
 }: {
   transaction: Partial<Transaction>;
-  accounts: Account[];
-  budgets: Budget[];
+  accounts: Pick<Account, "id" | "name">[];
+  budgets: Pick<Budget, "id" | "name" | "is_project" | "envelope_type" | "is_closed">[];
   busy: boolean;
   error: boolean;
   onClose: () => void;
   onSave: (payload: Record<string, unknown>) => unknown;
 }) {
+  const formId = useId();
   const { t } = useLanguage();
   const recurrences = useQuery({
     queryKey: ["recurrences", "editor"],
@@ -576,8 +614,9 @@ function TransactionEditor({
       onClose={onClose}
       busy={busy}
       error={error}
+      actions={<Button form={formId} label={t("save")} variant="primary" type="submit" isLoading={busy} isDisabled={upload.isPending} />}
     >
-      <form onSubmit={submit} {...stylex.props(s.form)}>
+      <form id={formId} onSubmit={submit} {...stylex.props(s.form)}>
         <Field label={t("description")} xstyle={[s.field]}>
           <input
             name="description"
@@ -752,14 +791,7 @@ function TransactionEditor({
           </p>
         )}
         <div {...stylex.props(s.actions, s.formActions)}>
-          <Button
-            label={t("save")}
-            variant="primary"
-            type="submit"
-            isLoading={busy}
-            isDisabled={upload.isPending}
-            xstyle={[s.actionsButton]}
-          />
+
           <Link to="/recurrences" {...stylex.props(s.note)}>
             {t("recurrences")}
           </Link>

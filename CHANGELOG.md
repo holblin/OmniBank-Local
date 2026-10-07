@@ -22,6 +22,10 @@ All notable changes to this project will be documented in this file.
 - French and English support throughout the new dashboard.
 
 ### Improved
+- V2 groups all destinations in its navigation and separates settings into focused sections and preference groups.
+- V2 transactions can be added directly from the dashboard with the current account selected; Save and Cancel stay visible in edit dialogs.
+- History adds reconciliation/month views, removable filters, clear empty results and a separate column picker. Budgets add previous/next-month navigation.
+- Imports show progress from file selection through review and completion; specialist recurrence and budget tools yield space to everyday tasks.
 - V2 now checks every page, configuration and browser test with strict TypeScript before packaging.
 - V2 short pages keep the footer at the bottom, history tables fill available space, and links to the classic interface are marked V1.
 - Summary tables shade larger values more strongly, with adjustable color intensity and theme-aware colors.

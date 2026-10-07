@@ -6,7 +6,7 @@ import { TableRow, TableCell, TableHeaderCell } from "@astryxdesign/core/Table";
 import { VirtualTable } from "../components/VirtualTable";
 import { useAppTheme } from "../lib/theme";
 import * as stylex from "@stylexjs/stylex";
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Button } from "@astryxdesign/core/Button";
 import { ProgressBar } from "@astryxdesign/core/ProgressBar";
 import { Page, Field, Editor } from "../components/Page";
@@ -14,11 +14,19 @@ import { localDate, legacyUrl } from "../lib/navigation";
 import { useBudgets, useBudgetDetail, useWrite } from "../lib/server/queries";
 import { useLanguage } from "../lib/i18n";
 import { styles as s } from "../components/Pages.stylex";
+import { HStack } from "@astryxdesign/core/HStack";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { AdvancedTools } from "../components/AdvancedTools";
 import { BudgetSuggestions } from "./BudgetSuggestions";
 export function Budgets() {
   const { compact } = useAppTheme();
   const { t, money } = useLanguage();
   const [month, setMonth] = useState(localDate().slice(0, 7));
+  function shiftMonth(delta: number) {
+    const [year, monthNumber] = month.split("-").map(Number);
+    setMonth(localDate(new Date(year, monthNumber - 1 + delta, 1)).slice(0, 7));
+    setDetail(null);
+  }
   const [purgeType, setPurgeType] = useState("monthly");
   const [filter, setFilter] = useState("active");
   const [pending, setPending] = useState<
@@ -97,42 +105,9 @@ export function Budgets() {
           />
         }
       >
-        <BudgetSuggestions profileId={resource.profile?.id} />
-        <details>
-          <summary>{t("bulk_budget_delete")}</summary>
-          <Field label={t("budget_type")}>
-            <select
-              value={purgeType}
-              onChange={(e) => setPurgeType(e.target.value)}
-            >
-              {[
-                "monthly",
-                "yearly",
-                "spending",
-                "project",
-                "savings",
-                "all",
-              ].map((value) => (
-                <option key={value} value={value}>
-                  {t(value)}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Button
-            label={t("delete")}
-            onClick={() =>
-              setPending({
-                path: "/api/budgets/bulk_delete",
-                method: "POST",
-                body: { target_type: purgeType },
-                label: t("delete"),
-                description: t("bulk_budget_delete_warning"),
-              })
-            }
-          />
-        </details>
         <div {...stylex.props(s.filters, compact && s.compactFilters)}>
+          <HStack gap={2} vAlign="end" wrap="wrap">
+          <Button label={t("previous_month")} variant="secondary" onClick={() => shiftMonth(-1)} />
           <Field label={t("month")} xstyle={[s.field, s.filtersChild]}>
             <input
               type="month"
@@ -147,6 +122,9 @@ export function Budgets() {
               {...stylex.props(s.fieldInput)}
             />
           </Field>
+          <Button label={t("next_month")} variant="secondary" onClick={() => shiftMonth(1)} />
+          <Button label={t("this_month")} variant="ghost" onClick={() => {setMonth(localDate().slice(0, 7)); setDetail(null);}} />
+          </HStack>
           <Field label={t("show")} xstyle={[s.field, s.filtersChild]}>
             <select
               value={filter}
@@ -198,7 +176,8 @@ export function Budgets() {
           />
         )}
         {!visible.length ? (
-          <div {...stylex.props(s.empty)}>{t("no_budgets")}</div>
+          <EmptyState title={t("no_budgets")} description={t(filter === "closed" ? "no_archived_budgets" : "create_budget_help")}
+            actions={<Button label={t(filter === "closed" ? "active" : "new_budget")} onClick={() => filter === "closed" ? setFilter("active") : setEditor({})} />} />
         ) : (
           <div {...stylex.props(s.grid, compact && s.compactGrid)}>
             {visible.map((b) => {
@@ -339,6 +318,40 @@ export function Budgets() {
             })}
           </div>
         )}
+        <BudgetSuggestions profileId={resource.profile?.id} />
+        <AdvancedTools title={t("bulk_budget_delete")}>
+          <Field label={t("budget_type")}>
+            <select
+              value={purgeType}
+              onChange={(e) => setPurgeType(e.target.value)}
+            >
+              {[
+                "monthly",
+                "yearly",
+                "spending",
+                "project",
+                "savings",
+                "all",
+              ].map((value) => (
+                <option key={value} value={value}>
+                  {t(value)}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Button
+            label={t("delete")}
+            onClick={() =>
+              setPending({
+                path: "/api/budgets/bulk_delete",
+                method: "POST",
+                body: { target_type: purgeType },
+                label: t("delete"),
+                description: t("bulk_budget_delete_warning"),
+              })
+            }
+          />
+        </AdvancedTools>
       </Page>
     </>
   );
@@ -358,6 +371,7 @@ function BudgetEditor({
   onClose: () => void;
   onSave: (payload: Record<string, unknown>) => unknown;
 }) {
+  const formId = useId();
   const { t } = useLanguage();
   const [kind, setKind] = useState(
     budget.envelope_type === "savings"
@@ -395,8 +409,9 @@ function BudgetEditor({
       onClose={onClose}
       busy={busy}
       error={error}
+      actions={<Button form={formId} label={t("save")} variant="primary" type="submit" isLoading={busy} />}
     >
-      <form onSubmit={submit} {...stylex.props(s.form)}>
+      <form id={formId} onSubmit={submit} {...stylex.props(s.form)}>
         <Field label={t("name")} xstyle={[s.field]}>
           <input
             name="name"
@@ -498,13 +513,7 @@ function BudgetEditor({
           {t("locked")}
         </label>
         <div {...stylex.props(s.actions, s.formActions)}>
-          <Button
-            label={t("save")}
-            variant="primary"
-            type="submit"
-            isLoading={busy}
-            xstyle={[s.actionsButton]}
-          />
+
         </div>
       </form>
     </Editor>

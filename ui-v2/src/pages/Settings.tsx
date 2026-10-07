@@ -13,9 +13,16 @@ import type {
 import React, { useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import { Button } from "@astryxdesign/core/Button";
+import { SideNav, SideNavItem, SideNavSection } from "@astryxdesign/core/SideNav";
+import { Selector } from "@astryxdesign/core/Selector";
+import { TabList, Tab } from "@astryxdesign/core/TabList";
+import { Heading } from "@astryxdesign/core/Heading";
+import { Text } from "@astryxdesign/core/Text";
+import { AdvancedTools } from "../components/AdvancedTools";
+import { workflow } from "../components/Workflow.stylex";
 import { VStack } from "@astryxdesign/core/VStack";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { Page, Field } from "../components/Page";
 import { Records } from "../components/Records";
 import { RecordEditor } from "../components/RecordEditor";
@@ -78,7 +85,28 @@ export function Settings() {
   }));
   const a = useRecordActions("configuration", r.profile?.id);
   const { t } = useLanguage();
-  const [section, setSection] = useState("preferences");
+  const sections = [
+    ["workspace", ["preferences", "profiles", "backups"]],
+    ["automation", ["label_rules", "exchange_rates", "assistant_memory"]],
+    ["organization", ["license", "org_users", "shared_storage"]],
+    ["support", ["diagnostics", "maintenance"]],
+  ] as const;
+  const sectionNames = sections.flatMap(([, values]) => [...values]);
+  const routeSearch = useSearch({ from: "/settings" });
+  const navigate = useNavigate();
+  const requested = routeSearch.section || location.hash.slice(1);
+  const section = sectionNames.find(value => value === requested) || "preferences";
+  const [preferenceGroup, setPreferenceGroup] = useState("general_preferences");
+  function selectSection(value: string) {
+    void navigate({ to: "/settings", search: { section: value }, replace: true });
+  }
+  const preferenceGroups: Record<string, string[]> = {
+    general_preferences: ["base_currency", "base_pay_day", "base_pay_amount", "recurrence_generation_months"],
+    feature_preferences: ["enable_bimonthly", "enable_attachments", "enable_simulator", "enable_org_mode", "enable_check_slips", "enable_overview"],
+    ai_preferences: ["enable_ai", "ollama_url", "ollama_model", "ollama_context", "ollama_temperature", "ai_reports_enabled", "ai_reports_frequency"],
+    backup_preferences: ["auto_backup_enabled", "auto_backup_frequency", "auto_backup_max_count"],
+  };
+  const visibleFields = settingsFields.filter(field => preferenceGroups[preferenceGroup].includes(field.name));
   const initial: FormValues = {
     base_currency: r.profile?.currency || "EUR",
     base_pay_day: 28,
@@ -98,56 +126,50 @@ export function Settings() {
     });
   return (
     <Page title="settings" subtitle="settings_body" resource={r}>
-      <VStack gap={5}>
-        <nav aria-label={t("settings")} {...stylex.props(s.actions)}>
-          {[
-            "preferences",
-            "profiles",
-            "backups",
-            "diagnostics",
-            "license",
-            "org_users",
-            "label_rules",
-            "exchange_rates",
-            "assistant_memory",
-            "shared_storage",
-            "maintenance",
-          ].map((value) => (
-            <Button
-              key={value}
-              label={t(value)}
-              variant={section === value ? "primary" : "secondary"}
-              onClick={() => setSection(value)}
-            />
-          ))}
-        </nav>
+      <section aria-label={t("settings")} {...stylex.props(workflow.settings)}>
+        <VStack gap={3} xstyle={workflow.settingsDesktop}>
+          <SideNav aria-label={t("settings")} xstyle={workflow.settingsNav}>
+            {sections.map(([heading, values]) => <SideNavSection title={t(heading)} key={heading}>
+              {values.map(value => <SideNavItem label={t(value)} key={value} isSelected={section === value}
+                aria-controls="settings-panel" onClick={() => selectSection(value)} />)}
+            </SideNavSection>)}
+          </SideNav>
+        </VStack>
+        <VStack gap={4} xstyle={workflow.panel}>
+          <VStack xstyle={workflow.settingsMobile}>
+            <Selector label={t("settings_sections")} value={section} onChange={value => selectSection(String(value))}
+              options={sectionNames.map(value => ({value, label: t(value)}))} presentation="adaptive" />
+          </VStack>
+          <section id="settings-panel" aria-label={t(section)}>
+          <VStack gap={4}>
+          <Heading level={2}>{t(section)}</Heading>
         {section === "preferences" && (
           <>
             <p>{t("theme_settings_help")}</p>
-            <ConfigurationTools profileId={r.profile?.id} />
+            <TabList value={preferenceGroup} onChange={setPreferenceGroup} aria-label={t("preferences")} hasDivider>
+              {Object.keys(preferenceGroups).map(value => <Tab value={value} label={t(value)} key={value} />)}
+            </TabList>
+            <Text type="supporting">{t(`${preferenceGroup}_body`)}</Text>
             <Button
               label={t("edit_preferences")}
               onClick={() => a.edit(initial)}
             />
             <Records
               title="preferences"
-              rows={settingsFields.map((field) => ({
+              rows={visibleFields.map((field) => ({
                 id: field.name,
                 name: t(field.name),
                 value:
                   field.type === "checkbox"
                     ? t(initial[field.name] ? "enabled" : "disabled")
-                    : r.data?.items[field.name] || "—",
+                    : String(initial[field.name] ?? "—"),
               }))}
               columns={[{ key: "name" }, { key: "value" }]}
             />
-            <Link to="/categories">{t("categories")}</Link>
-            <Link to="/journal">{t("journal")}</Link>
-            <Link to="/notifications">{t("notifications")}</Link>
-            <Link to="/imports">{t("imports")}</Link>
-            <Link to="/bank-sync">{t("bank_sync")}</Link>
-            <Link to="/overview">{t("overview")}</Link>
-            <Link to="/setup">{t("setup")}</Link>
+            {preferenceGroup === "ai_preferences" && <AdvancedTools title={t("ai_tools")}>
+              <ConfigurationTools profileId={r.profile?.id} />
+            </AdvancedTools>}
+            <AdvancedTools title={t("setup")}><Link to="/setup">{t("setup")}</Link></AdvancedTools>
           </>
         )}
         {section === "profiles" && <Profiles />}
@@ -160,11 +182,14 @@ export function Settings() {
         ) && <SettingsCollection key={section} name={section} />}
         {section === "shared_storage" && <SharedStorage />}
         {section === "maintenance" && <Maintenance />}
-      </VStack>
+          </VStack>
+          </section>
+        </VStack>
+      </section>
       {a.editor && (
         <RecordEditor
           title={t("edit_preferences")}
-          fields={settingsFields}
+          fields={visibleFields}
           initial={a.editor}
           busy={a.mutation.isPending}
           error={a.mutation.isError}
