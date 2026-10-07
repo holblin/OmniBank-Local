@@ -9,11 +9,11 @@ export async function get<T = unknown>(
   return response.json();
 }
 
-export async function mutate(
+export async function mutate<T = unknown>(
   path: string,
   method: string,
   body?: Record<string, unknown> | number[],
-): Promise<unknown> {
+): Promise<T> {
   const user = sessionStorage.getItem("omni_current_user");
   if (
     user &&

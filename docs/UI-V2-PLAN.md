@@ -148,3 +148,25 @@ GSD entry-point bypass explicitly approved by the user on 2026-10-06.
   six-theme shading and intensity-disable checks, and V1-link checks. Reviewed
   refreshed screenshots; the compact 1279x1111 preview footer ends at pixel 1111,
   with no browser errors and blank space inside one-row/empty table views.
+
+
+## V1 feature parity and complete TypeScript migration
+
+- Migrated every V2 source, StyleX module, configuration and browser test to
+  strict TypeScript. Kept V1 available and removed the GSD workflow requirement.
+- Restored the audited V1 gaps: statement inspection/review and native CSV
+  restoration, document recovery, annual recurrence renewal and propagation,
+  overview/pay/timeline controls, detailed trends and simulations, budget AI
+  suggestions/capacity, advanced bank review, assistant context tools, account
+  colors, configurable history columns, multi-account summary and global privacy,
+  undo/redo, notification and journal controls.
+- Fixed statement-preview row dates and added category filtering before server
+  pagination. Financial engines remain authoritative; overview presentation
+  calculations use integer cents.
+- Strict type checking and production build pass. The complete Chrome suite
+  passes all 47 checks; the final attachment restoration/failure check also passes
+  after the last import refinement. All 32 selected backend checks pass.
+- Backup reference data stays read-only. Its 2,468 transactions round-trip exactly
+  to the cent; its supplied synthesis image differs from the CSV/initial balances.
+  The comparison report records this discrepancy and live bank/Ollama limits.
+- See [V1/V2 comparison](UI-V1-V2-COMPARISON.md) for the updated matrix and gallery.

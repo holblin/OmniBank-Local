@@ -655,6 +655,7 @@ async def analyze_heuristic(
     
     matched_ids = []
     for idx, row in df.iterrows():
+        parsed_date_val = row['_parsed_date']
         amt = row['_parsed_amount']
         if pd.isna(row['_parsed_date']) and amt == 0.0: 
             continue
