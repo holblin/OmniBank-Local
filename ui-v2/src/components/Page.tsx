@@ -106,7 +106,7 @@ export function Editor({
       purpose={busy ? "required" : "form"}
       width={720}
       maxHeight="85dvh"
-      padding={0}
+      padding={4}
       onOpenChange={(open) => {
         if (!open && !busy) onClose();
       }}

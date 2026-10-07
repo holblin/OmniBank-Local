@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- V2 edit dialogs leave space below their titles and above their footers; checkboxes align with their labels. Account import and bank-sync actions show icons and tooltips.
 - V2 automatically opens initial setup when an empty profile enters the dashboard, while keeping setup links and dashboard dismissal usable.
 
 ### Added

@@ -95,15 +95,15 @@ export function Accounts() {
           ]}
           actions={(row) => (
             <>
-              <Button
+              <ActionButton
                 label={t("imports")}
+                icon="arrows"
                 href={`/v2/imports?account=${row.id}`}
-                variant="secondary"
               />
-              <Button
+              <ActionButton
                 label={t("bank_sync")}
+                icon="bank"
                 href="/v2/bank-sync"
-                variant="secondary"
               />
               <ActionButton
                 label={t("edit")}

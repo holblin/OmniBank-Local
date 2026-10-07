@@ -70,9 +70,9 @@ test("all six compact themes keep the editor inside a 320px viewport without tit
     expect(box.y + box.height).toBeLessThanOrEqual(844);
     const title = (await dialog.getByRole("heading").boundingBox())!;
     const first = (await dialog
-      .getByRole("textbox", { name: "Libellé", exact: true })
+      .locator("label").filter({ hasText: /^Libellé$/ })
       .boundingBox())!;
-    expect(first.y).toBeGreaterThan(title.y + title.height);
+    expect(first.y - title.y - title.height).toBeGreaterThanOrEqual(12);
     for (const name of ["Annuler", "Enregistrer"]) {
       const action = dialog.getByRole("button", { name, exact: true });
       await expect(action).toBeInViewport();

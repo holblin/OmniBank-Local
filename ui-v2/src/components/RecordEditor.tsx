@@ -1,6 +1,7 @@
-import React, { useId } from "react";
+import React, { useId, useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import { Button } from "@astryxdesign/core/Button";
+import { CheckboxInput } from "@astryxdesign/core/CheckboxInput";
 import { Field, Editor } from "./Page";
 import { styles as s } from "./Pages.stylex";
 import { useLanguage } from "../lib/i18n";
@@ -26,6 +27,13 @@ export function RecordEditor({
 }) {
   const formId = useId();
   const values = initial as import("../lib/ui-types").FormValues;
+  const [checked, setChecked] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(
+      fields
+        .filter((field) => field.type === "checkbox")
+        .map((field) => [field.name, Boolean(values[field.name])]),
+    ),
+  );
   const { t } = useLanguage();
   return (
     <Editor title={title} busy={busy} error={error} onClose={onClose}
@@ -52,7 +60,18 @@ export function RecordEditor({
           onSave(body);
         }}
       >
-        {fields.map((field) => (
+        {fields.map((field) => field.type === "checkbox" ? (
+          <CheckboxInput
+            key={field.name}
+            label={t(field.label || field.name)}
+            htmlName={field.name}
+            isRequired={field.required}
+            value={checked[field.name] ?? false}
+            onChange={(value) =>
+              setChecked((current) => ({ ...current, [field.name]: value }))
+            }
+          />
+        ) : (
           <Field key={field.name} label={t(field.label || field.name)}>
             {field.options ? (
               <select
@@ -90,19 +109,8 @@ export function RecordEditor({
                 step={
                   field.type === "number" ? (field.step ?? "0.01") : undefined
                 }
-                defaultValue={
-                  field.type === "checkbox"
-                    ? undefined
-                    : String(values[field.name] ?? "")
-                }
-                defaultChecked={
-                  field.type === "checkbox"
-                    ? Boolean(values[field.name])
-                    : undefined
-                }
-                {...stylex.props(
-                  field.type === "checkbox" ? s.check : s.fieldInput,
-                )}
+                defaultValue={String(values[field.name] ?? "")}
+                {...stylex.props(s.fieldInput)}
               />
             )}
           </Field>
