@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- V2 automatically opens initial setup when an empty profile enters the dashboard, while keeping setup links and dashboard dismissal usable.
+
 ### Added
+- A guided V2 welcome dialog with live theme previews, inline account creation and a choice of manual entry, statement import or bank setup.
 - V2 statement inspection and editable import review, native CSV restoration and attachment recovery.
 - V2 annual recurrence renewal, propagation, trend comparisons and detailed scenario projections.
 - V2 overview timeline and pay controls, AI budget suggestions, advanced bank review and assistant context management.

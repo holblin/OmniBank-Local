@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   createRootRoute,
   createRoute,
@@ -6,6 +6,8 @@ import {
   Link,
   Outlet,
   lazyRouteComponent,
+  useLocation,
+  useNavigate,
 } from "@tanstack/react-router";
 import { Budgets } from "./pages/Budgets";
 import { Summary } from "./pages/Summary";
@@ -54,6 +56,30 @@ const Overview = lazyRouteComponent(
 );
 import { Shell } from "./components/Shell";
 import { useLanguage } from "./lib/i18n";
+import { useWorkspace } from "./lib/server/workspaces";
+
+function SetupEntry() {
+  const status = useWorkspace<{ needs_setup: boolean }>("setup", "/api/setup/status");
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const navigate = useNavigate();
+  const checkedProfiles = useRef(new Set<string>());
+  useEffect(() => {
+    const id = status.profile?.id;
+    if (!id || !status.data || checkedProfiles.current.has(id)) return;
+    checkedProfiles.current.add(id);
+    // Check once per profile on entry, so setup links and dismissal stay usable.
+    if (status.data.items.needs_setup && /^\/$/.test(pathname.replace(/^\/v2(?=\/|$)/, "") || "/")) {
+      void navigate({ to: "/setup", replace: true });
+    }
+  }, [status.profile?.id, status.data, pathname, navigate]);
+  return <Outlet />;
+}
+
+function Root() {
+  const pathname = useLocation({ select: (location) => location.pathname });
+  // Unlock must remain accessible before any profile-scoped queries run.
+  return pathname.replace(/^\/v2(?=\/|$)/, "") === "/unlock" ? <Outlet /> : <SetupEntry />;
+}
 
 function NotFound() {
   const { t } = useLanguage();
@@ -67,7 +93,7 @@ function NotFound() {
 }
 
 const rootRoute = createRootRoute({
-  component: Outlet,
+  component: Root,
   notFoundComponent: NotFound,
 });
 const dashboardRoute = createRoute({

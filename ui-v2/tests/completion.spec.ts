@@ -15,7 +15,7 @@ const pages = {
   journal: "Journal des modifications",
   imports: "Importer et exporter",
   notifications: "Notifications",
-  setup: "Premiers pas",
+  setup: "Bienvenue chez vous.",
   overview: "Vue d’ensemble",
 };
 test("every remaining page loads natively in desktop and mobile", async ({

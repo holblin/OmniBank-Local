@@ -121,6 +121,7 @@ const dependencies: Record<string, string[]> = {
     "transactions",
     "recurrences",
     "budgets",
+    "setup",
   ],
   categories: [
     "categories",
@@ -147,6 +148,7 @@ const dependencies: Record<string, string[]> = {
     "budgets",
   ],
   journal: [
+    "setup",
     "journal",
     "accounts",
     "categories",

@@ -2,7 +2,7 @@
 
 Audit du 6 octobre 2026. Base : `codex/ui-v2-dashboard` (ed54ee7), puis migration TypeScript sur `codex/v2-typescript-parity`. L’audit initial a identifié les écarts ci-dessous. Ils ont ensuite été implémentés dans la V2 TypeScript sur cette branche. V1 reste disponible pour comparaison ; les connexions bancaires et Ollama réels restent à valider dans l’environnement utilisateur.
 
-[Ouvrir les captures côte à côte](ui-v2-comparison.html). Six paires montrent les deux interfaces à 1440 × 1000, avec le même backend temporaire et les mêmes données synthétiques. Les captures montrent la première fenêtre visible, pas tous les panneaux ou dialogues. Elles ne contiennent aucune donnée personnelle de la sauvegarde.
+[Ouvrir les captures côte à côte](ui-v2-comparison.html). Six paires montrent les pages financières à 1440 × 1000. Une septième paire compare le premier démarrage de V1 et le nouveau dialogue V2, avec une capture mobile supplémentaire. Les captures utilisent un backend temporaire et des données synthétiques ; elles ne contiennent aucune donnée personnelle de la sauvegarde.
 
 ## Fonctionnalités
 
@@ -10,6 +10,7 @@ Audit du 6 octobre 2026. Base : `codex/ui-v2-dashboard` (ed54ee7), puis migratio
 
 | Domaine | V1 | V2 après migration | Vérification / limite |
 | --- | --- | --- | --- |
+| Premier démarrage | Assistant automatique en sept écrans : accueil, profil/PIN, comptes, paie, guide, IA, confirmation | Dialogue automatique en cinq étapes : accueil, espace/devise/langue/thème, création du premier compte et sélection comme principal, choix saisie/import/banque, confirmation ; démonstration sur confirmation | Mise en page desktop/mobile, six thèmes, clavier/Échap, retour, sauvegarde et reprise sans duplication après échec vérifiés. Le PIN, les réglages de paie et Ollama restent accessibles dans les paramètres et contrôles financiers, hors de ce dialogue. |
 | Vue d'ensemble | Patrimoine, reste à vivre, projection, prochaine paie, moyennes/rythme, rapprochement, graphiques, sélection du compte | Indicateurs, projection de fin de mois, paie, moyennes/rythme, principales dépenses, chronologie et rapprochement groupé | Actions reliées aux API locales ; scénarios de chronologie vérifiés en navigateur. |
 | Tableau de bord | Chronologie financière, contrôles de paie et actions rapides dans le contexte des opérations | Tableau de bord existant et panneau de contrôles financiers à ouvrir ; la vue d’ensemble ouvre ces contrôles directement | Régression des totaux, thèmes et dimensions mobiles. |
 | Comptes | Gestion, couleurs, raccourcis d'import/synchronisation, informations financières | Gestion existante, couleur et raccourcis d’import/synchronisation | Prêts, intérêts et ajustement de solde conservés. |
