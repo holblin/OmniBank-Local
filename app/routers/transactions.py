@@ -17,6 +17,7 @@ def get_transactions(
     skip: int = 0,
     limit: int = 1000,
     search: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
     account_id: Optional[int] = Query(None),
     date_end: Optional[date] = Query(None),
     date_start: Optional[date] = Query(None),
@@ -29,6 +30,8 @@ def get_transactions(
     query = db.query(Transaction).filter(
         (Transaction.cross_profile_status == None) | (Transaction.cross_profile_status != "pending")
     )
+    if category is not None:
+        query = query.filter(Transaction.category == category)
     if account_id is not None:
         query = query.filter(
             or_(

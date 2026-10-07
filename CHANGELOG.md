@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- V2 statement inspection and editable import review, native CSV restoration and attachment recovery.
+- V2 annual recurrence renewal, propagation, trend comparisons and detailed scenario projections.
+- V2 overview timeline and pay controls, AI budget suggestions, advanced bank review and assistant context management.
+- Global V2 amount privacy and undo/redo, configurable history columns and multi-account summaries.
 - Native V2 accounts, categories, recurrences, trends, scenarios, local assistant, bank statement review, imports, notifications, audit journal, setup and profile unlock.
 - V2 settings for profiles, backups, diagnostics, license, teams, label rules, exchange rates, assistant memory, shared storage and confirmed maintenance corrections.
 - Attachment handling, loan details, savings interest and balance adjustments in V2.
@@ -14,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - French and English support throughout the new dashboard.
 
 ### Improved
+- V2 now checks every page, configuration and browser test with strict TypeScript before packaging.
 - V2 short pages keep the footer at the bottom, history tables fill available space, and links to the classic interface are marked V1.
 - Summary tables shade larger values more strongly, with adjustable color intensity and theme-aware colors.
 - V2 keeps loaded data visible during refreshes and reports refresh failures without clearing the page. Reconciliation updates immediately and rolls back if saving fails.
@@ -27,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - **Faster Bank Synchronization (Crédit Agricole) ⚡**: Online statement retrieval is now up to 2× faster by reusing authenticated sessions and stopping pagination early once all relevant transactions have been collected.
 
 ### Fixed
+- Statement previews retain each transaction’s date, and category drilldowns filter the complete history before pagination.
 - **Vault Unlock & Sync Flow Consistency 🔐**: Restored reliable behavior when clicking "Relevé en ligne" — vault unlock prompt, cross-browser session re-authorization, and force-sync now work correctly in all scenarios regardless of anti-spam cooldown state.
 
 ## [1.1.7] - 2026-09-10

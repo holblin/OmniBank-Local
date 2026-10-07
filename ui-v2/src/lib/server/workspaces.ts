@@ -20,11 +20,11 @@ export interface Recurrence {
   category?: string;
   frequency: string;
   day_of_month?: number;
-  month_of_year?: number;
-  max_occurrences?: number;
+  month_of_year?: number | null;
+  max_occurrences?: number | null;
   is_closed: boolean;
-  from_account_id?: number;
-  to_account_id?: number;
+  from_account_id?: number | null;
+  to_account_id?: number | null;
 }
 export interface ScenarioEvent {
   id: number;
@@ -64,6 +64,7 @@ export interface ChatSession {
   role: string;
 }
 export interface ChatMessage {
+  entity_snapshots?: Record<string, unknown> | null;
   id: number;
   role: string;
   content: string;

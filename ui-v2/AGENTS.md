@@ -5,7 +5,7 @@ Project-specific guidance for AI coding agents.
 ## V2 styling configuration
 
 The user requires StyleX for V2. The Vite compiler is configured in
-`vite.config.js`; custom styles live in `src/components/*.stylex.js`.
+`vite.config.ts`; custom styles live in `src/components/*.stylex.ts`.
 The generated “No StyleX compiler here” hint below does not apply to this project.
 Use typed Astryx tokens, `stylex.props()` for DOM nodes and `xstyle` for Astryx
 components. Compact mode is an explicit style variant from `useAppTheme()`.

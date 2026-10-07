@@ -34,6 +34,29 @@ pnpm --dir ui-v2 dev
 Open `http://127.0.0.1:5173/v2`. The Vite server proxies local API requests to
 port 8434; links to classic workflows open the backend's original interface.
 
+## TypeScript checks
+
+All V2 source, StyleX modules, configuration and browser tests use TypeScript.
+`pnpm --dir ui-v2 typecheck` checks the whole frontend in strict mode; production
+builds run this check before bundling. V1 remains available for parity comparison.
+
+Set `OMNIBANK_TEST_PYTHON` to a Python executable with the backend requirements
+when your virtual environment is outside the repository. Browser tests create
+an isolated database and use synthetic records.
+
+## Restored V1 workflows
+
+V2 includes native statement inspection/review and OmniBank CSV restoration,
+annual recurrence renewal and propagation, detailed trends and simulations,
+budget suggestions, bank review controls, assistant context tools, and global
+privacy/undo controls. The overview opens the financial control panel; the
+main dashboard offers a button to open it. History column preferences persist
+locally, and summary categories link to filtered transactions.
+
+See [the parity comparison](../docs/UI-V1-V2-COMPARISON.md) for the complete
+feature matrix, side-by-side screenshots, backup benchmark, and verification
+limits. Real bank authentication and Ollama output require those services.
+
 ## Styling
 
 The four Astryx setup packages are installed, and `pnpm --dir ui-v2 run astryx init`
@@ -57,14 +80,14 @@ The **Compact** toggle reduces card spacing, sidebar rows and transaction row
 height. Its preference is saved independently for each theme in
 `omni_v2_compact_themes`; the selected theme is saved in `omni_v2_theme`.
 
-Run `node tests/capture-themes.mjs` from `ui-v2` against the isolated synthetic
+Run `node tests/capture-themes.ts` from `ui-v2` against the isolated synthetic
 preview to capture compact screenshots for all six themes.
 
 ## Structure
 
 | Directory | Responsibility |
 | --- | --- |
-| `src/router.jsx` | TanStack route tree rooted at `/v2`; unknown-route fallback |
+| `src/router.tsx` | TanStack route tree rooted at `/v2`; unknown-route fallback |
 | `src/pages/` | Page composition and dashboard state |
 | `src/components/` | Reusable UI pieces and compiled StyleX styles |
 | `src/styles/tokens.css` | Document reset and print framing |
@@ -74,7 +97,9 @@ preview to capture compact screenshots for all six themes.
 | `src/locales/` | Small generated V2 dictionaries, extracted from shared i18n |
 | `tests/` | Synthetic fixtures, browser checks and screenshot capture |
 
-Financial totals come from the existing backend. The chart includes all
+Core financial totals come from the existing backend. The overview derives its
+month-end projection and spending rhythm from those balances and ledger entries,
+using integer cents for sums. The chart includes all
 transactions, including pending ones; summary/account cards use reconciled
 balances, matching the original UI. The account selector filters the chart and
 recent activity; summary cards and budgets cover the active profile. Each account
@@ -172,9 +197,9 @@ Allocation deletion replaces the details dialog with a confirmation step to avoi
 nested modals. Closing a dialog restores focus to its trigger, or the table viewport
 if the original record was removed.
 
-Run `node tests/capture-pages.mjs` from `ui-v2` against the isolated preview to
+Run `node tests/capture-pages.ts` from `ui-v2` against the isolated preview to
 capture desktop/mobile screenshots of the original three pages. Use
-`node tests/capture-completion.mjs` for the remaining pages.
+`node tests/capture-completion.ts` for the remaining pages.
 
 When adding a translation, update `scripts/setup_ui_v2_i18n.py` and run it with
 Python from the root. It preserves existing keys and writes French/English JSON
@@ -196,7 +221,7 @@ Set `PLAYWRIGHT_CHANNEL=chrome` to use installed Chrome instead of Playwright's
 downloaded Chromium. The development preview captured for this change uses
 `OMNIBANK_DATA_DIR=./data/ui-v2-preview`, which is also ignored by Git.
 
-`tests/capture.mjs` seeds the local port 8434 server with synthetic data and writes
+`tests/capture.ts` seeds the local port 8434 server with synthetic data and writes
 desktop/mobile PNGs into `screenshots/ui-v2/`. Run it only against a preview server
 started with that isolated data directory.
 

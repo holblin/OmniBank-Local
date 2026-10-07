@@ -1,5 +1,6 @@
 // Read models mirror the existing local FastAPI responses. Amounts are supplied
-// by the backend; this layer never computes or speculates about balances.
+// by the backend. Core balances remain authoritative; overview presentation
+// statistics derive from the supplied ledger using integer cents.
 export interface Account {
   id: number;
   name: string;
@@ -7,19 +8,21 @@ export interface Account {
   currency: string;
   current_balance: number;
   is_closed: boolean;
-  initial_balance:number;
-  color?:string;
-  interest_rate?:number;
-  borrowed_amount?:number;
-  monthly_payment?:number;
-  loan_insurance?:number;
-  loan_end_date?:string;
+  initial_balance: number;
+  color?: string;
+  interest_rate?: number;
+  borrowed_amount?: number;
+  monthly_payment?: number;
+  loan_insurance?: number;
+  loan_end_date?: string;
 }
-export interface AccountBalance extends Omit<Account, "current_balance"> {
+export interface AccountBalance
+  extends Omit<Account, "current_balance" | "initial_balance"> {
   balance: number;
   is_loan: boolean;
 }
 export interface Transaction {
+  is_salary?: boolean;
   id: number;
   description: string;
   amount: number;
@@ -31,9 +34,9 @@ export interface Transaction {
   to_account_id: number | null;
   budget_id: number | null;
   is_skipped: boolean;
-  attachments?:string;
-  check_slip_number?:string;
-  recurrence_id?:number;
+  attachments?: string | null;
+  check_slip_number?: string | null;
+  recurrence_id?: number | null;
 }
 export interface Budget {
   id: number;
@@ -72,6 +75,11 @@ export interface BudgetTransaction {
   amount: number;
 }
 export interface DashboardStats {
+  rest_to_live_with_income: number;
+  total_unreconciled_expenses: number;
+  total_unreconciled_income: number;
+  liquid_net_worth: number;
+  loan_total: number;
   net_worth: number;
   rest_to_live: number;
   unreconciled_expenses: number;

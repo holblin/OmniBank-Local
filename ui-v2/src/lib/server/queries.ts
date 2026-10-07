@@ -25,8 +25,12 @@ import { useProfileLock } from "../useProfileLock";
 
 type ProfileId = string;
 type Filters = Record<string, string>;
-type Profile = { id: ProfileId; currency: string; has_pin: boolean };
-type Configuration = { enable_org_mode?: string };
+type Profile = import("./workspaces").Profile;
+type Configuration = {
+  enable_org_mode?: string;
+  base_pay_day?: string;
+  pay_category?: string;
+};
 type Definition = Pick<UseQueryOptions<unknown>, "queryKey" | "queryFn">;
 type DataOf<T extends Definition> = Awaited<
   ReturnType<Extract<T["queryFn"], (...args: never[]) => unknown>>
@@ -135,7 +139,7 @@ export function useSession() {
   useEffect(() => {
     if (blocked) {
       client.clear();
-      window.location.replace('/v2/unlock');
+      window.location.replace("/v2/unlock");
     }
   }, [blocked, client]);
   useProfileLock(profile.data);
@@ -292,6 +296,7 @@ export function useWrite(
     onSettled: () =>
       Promise.all([
         client.invalidateQueries({ queryKey: [domain, profileId] }),
+        client.invalidateQueries({ queryKey: ["journal", profileId] }),
         client.invalidateQueries({
           queryKey:
             domain === "transactions"
